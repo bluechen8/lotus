@@ -1,0 +1,43 @@
+[connectivity]
+@@memConnects
+
+nk=aurora:1:aurora_0
+
+# The transceivers are on SLR1; in standalone runs, however, Vitis places one
+# of the aurora IPs (generally aurora_1) in SLR0, causing lots of errors
+# (especially ar higher line rates). So force these to SLR1.
+slr=aurora_0:SLR1
+
+# Connect all the things!
+stream_connect=lotus_1.tx0_axis:aurora_0.tx0_axis
+stream_connect=lotus_1.tx1_axis:aurora_0.tx1_axis
+stream_connect=lotus_1.tx2_axis:aurora_0.tx2_axis
+stream_connect=lotus_1.tx3_axis:aurora_0.tx3_axis
+stream_connect=lotus_1.tx4_axis:aurora_0.tx4_axis
+stream_connect=lotus_1.tx5_axis:aurora_0.tx5_axis
+stream_connect=lotus_1.tx6_axis:aurora_0.tx6_axis
+stream_connect=lotus_1.tx7_axis:aurora_0.tx7_axis
+
+stream_connect=aurora_0.rx0_axis:lotus_1.rx0_axis
+stream_connect=aurora_0.rx1_axis:lotus_1.rx1_axis
+stream_connect=aurora_0.rx2_axis:lotus_1.rx2_axis
+stream_connect=aurora_0.rx3_axis:lotus_1.rx3_axis
+stream_connect=aurora_0.rx4_axis:lotus_1.rx4_axis
+stream_connect=aurora_0.rx5_axis:lotus_1.rx5_axis
+stream_connect=aurora_0.rx6_axis:lotus_1.rx6_axis
+stream_connect=aurora_0.rx7_axis:lotus_1.rx7_axis
+
+# Connect GT clocks and ports, and init_clk
+connect=io_clk_qsfp0_refclka_00:aurora_0/gt0_refclk
+connect=aurora_0/gt0_port:io_gt_qsfp0_00
+connect=io_clk_qsfp1_refclka_00:aurora_0/gt1_refclk
+connect=aurora_0/gt1_port:io_gt_qsfp1_00
+connect=aurora_0/init_clk:ii_level0_wire/ulp_m_aclk_freerun_ref_00
+
+[vivado]
+synth.jobs=64
+param=general.maxThreads=32
+prop=fileset.sim_1.xsim.simulate.runtime=5000us
+
+prop=run.impl_1.STEPS.INIT_DESIGN.TCL.POST=@@postinitHook
+prop=run.impl_1.STEPS.PLACE_DESIGN.TCL.PRE=@@preplaceHook

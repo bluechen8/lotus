@@ -1,0 +1,186 @@
+// Global defines; this file is ALWAYS included FIRST into all the files,
+// automatically, BY THE BUILD PROCESS.
+//
+// This file exists to work around shortcomings of Xilinx tools. Vivado
+// doesn't have a good way to specify defines, so the recommended solution is
+// to use global includes. And this works well when packaging the kernel! It
+// actually parses the code following the defines, and includes verilog header
+// files that'd it'd otherwise discard. But we're creating a package for
+// Vitis, and afterwards, Vivado proceeds to ignore global include files:
+// 
+// https://docs.xilinx.com/r/en-US/ug1118-vivado-creating-packaging-custom-ip/Packaging-a-Design-with-Global-Include-Files
+//
+// The recommended solution is to do what this does.
+//
+// NEVER INCLUDE THIS FILE FROM SOURCE CODE. Rest assured that the build
+// system is adding `include this file at the top of absolutely everything:
+// sv, v, and vh files all start with this.
+//
+// Keep this file Verilog-only (not SystemVerilog), since we have Verilog
+// files in the design and this really does get included everywhere.
+//
+// NOTE: This file is TEMPLATED. Template values start with @@, e.g., @@tiles,
+// and are automatically substituted by the build system.
+`ifndef GLOBAL_DEFINES_VH
+`define GLOBAL_DEFINES_VH
+
+// Platform define (u250 or u55c)
+`define PLATFORM_@@platform
+
+// Memory interface code
+`define MEM_AXI_ADDR_WIDTH (64)
+`define MEM_AXI_DATA_WIDTH (64)
+`define MEM_AXI_ID_WIDTH (16)
+
+`define MEM_AXI_DEF(id) \
+  output wire                                    ``id``_axi_awvalid      , \
+  input  wire                                    ``id``_axi_awready      , \
+  output wire [`MEM_AXI_ADDR_WIDTH-1:0]          ``id``_axi_awaddr       , \
+  output wire [8-1:0]                            ``id``_axi_awlen        , \
+  output wire [`MEM_AXI_ID_WIDTH-1:0]            ``id``_axi_awid         , \
+  output wire                                    ``id``_axi_wvalid       , \
+  input  wire                                    ``id``_axi_wready       , \
+  output wire [`MEM_AXI_DATA_WIDTH-1:0]          ``id``_axi_wdata        , \
+  output wire [`MEM_AXI_DATA_WIDTH/8-1:0]        ``id``_axi_wstrb        , \
+  output wire                                    ``id``_axi_wlast        , \
+  output wire [`MEM_AXI_ID_WIDTH-1:0]            ``id``_axi_wid          , \
+  input  wire                                    ``id``_axi_bvalid       , \
+  input  wire [`MEM_AXI_ID_WIDTH-1:0]            ``id``_axi_bid          , \
+  input  wire [1:0]                              ``id``_axi_bresp        , \
+  output wire                                    ``id``_axi_bready       , \
+  output wire                                    ``id``_axi_arvalid      , \
+  input  wire                                    ``id``_axi_arready      , \
+  output wire [`MEM_AXI_ADDR_WIDTH-1:0]          ``id``_axi_araddr       , \
+  output wire [8-1:0]                            ``id``_axi_arlen        , \
+  output wire [`MEM_AXI_ID_WIDTH-1:0]            ``id``_axi_arid         , \
+  input  wire                                    ``id``_axi_rvalid       , \
+  output wire                                    ``id``_axi_rready       , \
+  input  wire [`MEM_AXI_DATA_WIDTH-1:0]          ``id``_axi_rdata        , \
+  input  wire [1:0]                              ``id``_axi_rresp        , \
+  input  wire                                    ``id``_axi_rlast        , \
+  input  wire [`MEM_AXI_ID_WIDTH-1:0]            ``id``_axi_rid          , \
+
+`define MEM_AXI_CONNECT2(toId, fromId) \
+  .``toId``_axi_awvalid ( ``fromId``_axi_awvalid ), \
+  .``toId``_axi_awready ( ``fromId``_axi_awready ), \
+  .``toId``_axi_awaddr  ( ``fromId``_axi_awaddr  ), \
+  .``toId``_axi_awlen   ( ``fromId``_axi_awlen   ), \
+  .``toId``_axi_awid    ( ``fromId``_axi_awid    ), \
+  .``toId``_axi_wvalid  ( ``fromId``_axi_wvalid  ), \
+  .``toId``_axi_wready  ( ``fromId``_axi_wready  ), \
+  .``toId``_axi_wdata   ( ``fromId``_axi_wdata   ), \
+  .``toId``_axi_wstrb   ( ``fromId``_axi_wstrb   ), \
+  .``toId``_axi_wlast   ( ``fromId``_axi_wlast   ), \
+  .``toId``_axi_wid     ( ``fromId``_axi_wid     ), \
+  .``toId``_axi_bvalid  ( ``fromId``_axi_bvalid  ), \
+  .``toId``_axi_bid     ( ``fromId``_axi_bid     ), \
+  .``toId``_axi_bresp   ( ``fromId``_axi_bresp   ), \
+  .``toId``_axi_bready  ( ``fromId``_axi_bready  ), \
+  .``toId``_axi_arvalid ( ``fromId``_axi_arvalid ), \
+  .``toId``_axi_arready ( ``fromId``_axi_arready ), \
+  .``toId``_axi_araddr  ( ``fromId``_axi_araddr  ), \
+  .``toId``_axi_arlen   ( ``fromId``_axi_arlen   ), \
+  .``toId``_axi_arid    ( ``fromId``_axi_arid    ), \
+  .``toId``_axi_rvalid  ( ``fromId``_axi_rvalid  ), \
+  .``toId``_axi_rready  ( ``fromId``_axi_rready  ), \
+  .``toId``_axi_rdata   ( ``fromId``_axi_rdata   ), \
+  .``toId``_axi_rresp   ( ``fromId``_axi_rresp   ), \
+  .``toId``_axi_rlast   ( ``fromId``_axi_rlast   ), \
+  .``toId``_axi_rid     ( ``fromId``_axi_rid     ), \
+
+
+`define MEM_AXI_CONNECT(id) `MEM_AXI_CONNECT2(id, id)
+
+`define MEM_AXI_FIRE(id) \
+    wire ``id``_axi_awfire = ``id``_axi_awvalid && ``id``_axi_awready; \
+    wire ``id``_axi_wfire  = ``id``_axi_wvalid  && ``id``_axi_wready; \
+    wire ``id``_axi_bfire  = ``id``_axi_bvalid  && ``id``_axi_bready; \
+    wire ``id``_axi_rfire  = ``id``_axi_rvalid  && ``id``_axi_rready; \
+    wire ``id``_axi_arfire = ``id``_axi_arvalid && ``id``_axi_arready; \
+
+
+`define MEM_AXI_DESTRUCT(zid) \
+    AxiMemAW_t ``zid``_axi_aw; \
+    assign ``zid``_axi_awaddr = ``zid``_axi_aw.addr; \
+    assign ``zid``_axi_awlen  = ``zid``_axi_aw.len; \
+    assign ``zid``_axi_awid   = ``zid``_axi_aw.id; \
+    AxiMemW_t ``zid``_axi_w; \
+    assign ``zid``_axi_wdata  = ``zid``_axi_w.data ; \
+    assign ``zid``_axi_wstrb  = ``zid``_axi_w.strb ; \
+    assign ``zid``_axi_wlast  = ``zid``_axi_w.last ; \
+    assign ``zid``_axi_wid    = ``zid``_axi_w.id   ; \
+    AxiMemAR_t ``zid``_axi_ar; \
+    assign ``zid``_axi_araddr = ``zid``_axi_ar.addr; \
+    assign ``zid``_axi_arlen  = ``zid``_axi_ar.len ; \
+    assign ``zid``_axi_arid   = ``zid``_axi_ar.id  ; \
+    AxiMemB_t ``zid``_axi_b; \
+    assign ``zid``_axi_b.id   = ``zid``_axi_bid  ; \
+    assign ``zid``_axi_b.resp = ``zid``_axi_bresp; \
+    AxiMemR_t ``zid``_axi_r; \
+    assign ``zid``_axi_r.data = ``zid``_axi_rdata ; \
+    assign ``zid``_axi_r.resp = ``zid``_axi_rresp ; \
+    assign ``zid``_axi_r.last = ``zid``_axi_rlast ; \
+    assign ``zid``_axi_r.id   = ``zid``_axi_rid   ; \
+
+
+`define MEM_AXI_TILE(bid, id) \
+    .EN_axis``bid``_aw(``id``_axi_awfire), \
+    .RDY_axis``bid``_aw(``id``_axi_awvalid), \
+    .axis``bid``_aw(``id``_axi_aw), \
+    .EN_axis``bid``_w(``id``_axi_wfire), \
+    .RDY_axis``bid``_w(``id``_axi_wvalid), \
+    .axis``bid``_w(``id``_axi_w), \
+    .EN_axis``bid``_ar(``id``_axi_arfire), \
+    .RDY_axis``bid``_ar(``id``_axi_arvalid), \
+    .axis``bid``_ar(``id``_axi_ar), \
+    .EN_axis``bid``_r(``id``_axi_rfire), \
+    .RDY_axis``bid``_r(``id``_axi_rready), \
+    .axis``bid``_r_rdRsp(``id``_axi_r), \
+    .EN_axis``bid``_b(``id``_axi_bfire), \
+    .RDY_axis``bid``_b(``id``_axi_bready), \
+    .axis``bid``_b_bResp(``id``_axi_b), \
+
+
+`define MEM_AXI_DEFS @@memAxiDefs
+`define MEM_AXI_CONNECTS @@memAxiConnects
+`define MEM_AXI_TO_TILE_IFCS(ifcName) @@memAxiToTileIfcs
+`define MEM_AXI_FIRES @@memAxiFires
+`define MEM_AXI_DESTRUCTS @@memAxiDestructs
+`define MEM_AXI_TILES @@memAxiTiles
+
+
+// Cross-device interface code
+// NOTE(dsm): To simplify the interfaces, let's use a fixed width of 96 bits.
+// Not having config-dependent length simplifies Aurora and Verilator
+// interfaces quite a bit!
+`define CROSS_DEVICE_AXIS_WIDTH (96)
+
+`define CROSS_DEVICE_AXIS_DEF(id) \
+    input                            rx``id``_axis_tvalid, \
+    input [`CROSS_DEVICE_AXIS_WIDTH-1:0]  rx``id``_axis_tdata, \
+    output                           rx``id``_axis_tready, \
+    output                           tx``id``_axis_tvalid, \
+    output [`CROSS_DEVICE_AXIS_WIDTH-1:0] tx``id``_axis_tdata, \
+    input                            tx``id``_axis_tready, \
+
+`define CROSS_DEVICE_AXIS_CONNECT(id) \
+    .rx``id``_axis_tvalid(rx``id``_axis_tvalid), \
+    .rx``id``_axis_tdata (rx``id``_axis_tdata ), \
+    .rx``id``_axis_tready(rx``id``_axis_tready), \
+    .tx``id``_axis_tvalid(tx``id``_axis_tvalid), \
+    .tx``id``_axis_tdata (tx``id``_axis_tdata ), \
+    .tx``id``_axis_tready(tx``id``_axis_tready), \
+
+`define CROSS_DEVICE_AXIS_TILE(id) \
+    .crossDeviceAxis_``id``_out_dataout(tx``id``_axis_tdata), \
+    .RDY_crossDeviceAxis_``id``_out_dataout(tx``id``_axis_tvalid), \
+    .EN_crossDeviceAxis_``id``_out_ack(tx``id``_axis_tready), \
+    .crossDeviceAxis_``id``_in_datain_din(rx``id``_axis_tdata), \
+    .EN_crossDeviceAxis_``id``_in_datain(rx``id``_axis_tvalid), \
+    .crossDeviceAxis_``id``_in_accept(rx``id``_axis_tready), \
+
+`define CROSS_DEVICE_AXIS_DEFS @@crossDeviceAxisDefs
+`define CROSS_DEVICE_AXIS_CONNECTS @@crossDeviceAxisConnects
+`define CROSS_DEVICE_AXIS_TILES @@crossDeviceAxisTiles
+
+`endif

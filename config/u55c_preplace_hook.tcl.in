@@ -1,0 +1,11 @@
+create_pblock pblock_ts
+resize_pblock pblock_ts -add @@tokenSwitchPblock
+add_cells_to_pblock pblock_ts [get_cells -hierarchical -filter "NAME=~level0_i/ulp/lotus_1/inst/lotus_inst/multiTile/tokenSwitch/*"]
+
+# Fix nets near the critical path (improves WNS in fastflow, at the expense of elongating routing a bit)
+set criticalNets [get_nets -of [get_timing_paths -slack_lesser_than 0.5 -max_paths 40000] -filter {ROUTE_STATUS==ROUTED}]
+puts "Fixing routing for [llength $criticalNets] near-critical nets"
+set_property IS_ROUTE_FIXED TRUE $criticalNets
+
+# Auto-generated placement commands
+@@placeCmds

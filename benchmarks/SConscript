@@ -1,0 +1,545 @@
+# $lic$
+# Copyright (C) 2024-2026 by Massachusetts Institute of Technology.
+#
+# This file is part of Lotus. Lotus is free software; you can redistribute it
+# and/or modify it under the terms of the GNU General Public License as
+# published by the Free Software Foundation, version 2.
+
+import os, re, math
+
+Import("env buildDir cfg isBaseline trace hostPlatformFlags hostVlLib hostVlDir withXrt")
+
+def topFile(path):
+    if os.path.isabs(path) or path.startswith("#"):
+        return File(path).abspath
+    return File("#" + path).abspath
+
+def topDir(path):
+    if os.path.isabs(path) or path.startswith("#"):
+        return Dir(path).abspath
+    return Dir("#" + path).abspath
+
+buildDir = topDir(buildDir)
+hostVlDir = topDir(hostVlDir)
+hostVlLib = topFile(hostVlLib)
+
+
+class NMFile:
+    class NMRecord:
+        NM4Re = re.compile(r"([A-Fa-f0-9]{8}) ([A-Fa-f0-9]{8}) (\w) (.*)")
+        NM3Re = re.compile(r"([A-Fa-f0-9]{8}) (\w) (.*)")
+        def __init__(self, taskFn, size, symbol, taskName):
+            self.taskFn = taskFn
+            self.size   = size
+            self.symbol = symbol
+            self.taskName = taskName
+        def __str__(self):
+            return f"NMRecord(taskFn={self.taskFn}, size={self.size}, symbol={self.symbol}, taskName={self.taskName})"
+        def __repr__(self):
+            return f"NMRecord(taskFn={self.taskFn}, size={self.size}, symbol={self.symbol}, taskName={self.taskName})"
+        def createRecord(line):
+            result = NMFile.NMRecord.NM3Re.match(line)
+            if result is not None:
+                taskFn = result.group(1)
+                size   = None
+                symbol = result.group(2)
+                taskName = result.group(3)
+                return NMFile.NMRecord(taskFn, size, symbol, taskName)
+            result = NMFile.NMRecord.NM4Re.match(line)
+            if result is not None:
+                taskFn = result.group(1)
+                size   = result.group(2)
+                symbol = result.group(3)
+                taskName = result.group(4)
+                return NMFile.NMRecord(taskFn, size, symbol, taskName)
+            return None
+
+    def __init__(self, binary):
+        self.binary = binary
+        self.records  = []
+        self.fillRecords()
+
+    def fillRecords(self):
+        def cmd(args):
+            import subprocess
+            res = subprocess.run(args, capture_output=True)
+            lines = res.stdout.decode().split("\n")
+            lines = [l.replace("\n", "") for l in lines]
+            lines = [l for l in lines if l]
+            return lines
+        lines = cmd([os.path.join(env["RISCV_TOOLCHAIN"], "bin", "riscv32-unknown-elf-nm"), "-SC", self.binary])
+        lines = [l for l in lines if l]
+        for l in lines:
+            r = NMFile.NMRecord.createRecord(l)
+            if r:
+                self.records.append(r)
+
+    def getRecordByName(self, taskName):
+        matchWith = taskName + "("
+        for record in self.records:
+            if matchWith in record.taskName:
+                return record
+        assert False, "Record not found"
+
+class MemAllocator:
+    class SingleTileAllocator:
+        def ALIGN_TO(value, align_to):
+            return (value + align_to - 1) & ~(align_to - 1)
+        def __init__(self, name, startAddr):
+            self.name      = name
+            self.startAddr = startAddr
+            self.endAddr   = self.startAddr
+            self.vars      = {}
+            self.bytes     = []
+        def align(self, align_to):
+            oldAddr = self.endAddr
+            self.endAddr = MemAllocator.SingleTileAllocator.ALIGN_TO(self.endAddr, align_to)
+            assert self.endAddr >= oldAddr
+            for _ in range(self.endAddr - oldAddr):
+                self.bytes.append(0xff)
+        def add_var(self, var):
+            # Align first
+            self.align(var["align"])
+            self.vars[var["name"]] = self.endAddr
+            var["addr"] = hex(self.endAddr)
+            total_bytes = var["size"]
+            self.endAddr = self.endAddr + total_bytes
+            if type(var["init"]) is str:
+                for _ in range(total_bytes):
+                    self.bytes.append(0)
+            elif type(var["init"]) is list:
+                def get_init_size(init):
+                    bs = 0
+                    for b in init:
+                        if isinstance(b, str):
+                            bs += 4
+                        else:
+                            bs += 1
+                    return bs
+                assert get_init_size(var["init"]) == var["size"], f" {get_init_size(var['init'])} != {var['size']}  -- Var: {var}"
+                for e in var["init"]:
+                    self.bytes.append(e)
+            else:
+                assert False, f"Unknown {var['init']}"
+
+        def fix_init(self):
+            for i, b in enumerate(self.bytes):
+                if isinstance(b, str):
+                    var_name = b.split(".", 1)[1]
+                    addr = int(self.vars[var_name])
+                    addr = list(addr.to_bytes(4, byteorder="little"))
+                    self.bytes[i] = addr
+            self.bytes = [x for item in self.bytes for x in (item if isinstance(item, list) else [item])]
+
+    def __init__(self, allocators):
+        self.allocators = allocators
+        self.vars = {}
+        for alloc in self.allocators:
+            for var, addr in alloc.vars.items():
+                self.vars[f"{alloc.name}.{var}"] = addr
+    def get_addr(self, var):
+        assert var in self.vars, f"Couldn't find var: {var} in vars: {self.vars}"
+        return self.vars[var]
+
+    def generate(hostInit):
+        hostInitMem = hostInit["mem"]
+        numTiles = 1 << ( 1 if cfg["tiles"] == 1 else int(math.ceil(math.log2(cfg["tiles"]))))
+        assert(len(hostInitMem) == (numTiles*cfg["devices"]))
+        startAddr = 0xa0000000
+        allocators = []
+        for tile_struct in hostInitMem:
+            alloc = MemAllocator.SingleTileAllocator(tile_struct["name"], startAddr)
+            for var in tile_struct["vars"]:
+                alloc.add_var(var)
+            alloc.fix_init()
+            allocators.append(alloc)
+            CACHE_LINE_SIZE = 64
+            startAddr = MemAllocator.SingleTileAllocator.ALIGN_TO(alloc.endAddr, CACHE_LINE_SIZE)
+
+        master_alloc = MemAllocator(allocators)
+        return master_alloc
+
+def GenHostInitFunc(target, source, env):
+    assert len(target) == 1, "hostInit.h path"
+    assert len(source) == 2, "[initHostInit, rv32.elf]"
+    hostInitHeader = target[0].get_abspath()
+    initHostInit   = source[0].get_abspath()
+    rvBin          = source[1].get_abspath()
+
+    nmFile = NMFile(rvBin)
+
+    import json
+    hostInit = None
+    with open(initHostInit, "r") as f:
+        hostInit = json.load(f)
+    assert hostInit is not None
+
+    mem = MemAllocator.generate(hostInit)
+
+    for t in hostInit["tasks"]:
+        taskName = t["taskName"]
+        r = nmFile.getRecordByName(taskName)
+        t["taskFn"] = r.taskFn
+        sizeBytes = int(r.size, 16)
+        t["numInstructions"] = str(sizeBytes // 4)
+
+        startAddr = int(r.taskFn, 16)
+        startLine = startAddr // 64
+        endLine   = (startAddr + sizeBytes) // 64
+        numLines  = endLine - startLine + 1
+        t["taskCacheLines"] = str(numLines)
+
+        t["disablePrefetching"] = "0"
+
+        doubleArgs = t["args"]
+
+
+        for args in doubleArgs:
+            for i, a in enumerate(args):
+                a = a.strip()
+                if "&" == a[0]:
+                    args[i] = hex(mem.get_addr(a[1:]))
+
+        addCurly = lambda t: "{" + t + "}"
+
+        args = addCurly(", ".join(doubleArgs[0])) + ", " + addCurly(", ".join(doubleArgs[1]))
+
+        t["stringArgs"] = args
+
+
+    with open(initHostInit, "w") as f:
+        json.dump(hostInit, f, indent=4)
+
+    def cast(castTo, val):
+        if castTo == "bool":
+            return f"static_cast<bool>({val})"
+        elif castTo == "uint32_t":
+            return f"static_cast<uint32_t>({val})"
+        else:
+            return f"static_cast<lotus::{castTo}>({val})"
+
+    def getTask(t):
+        l = f"    // {t['taskName']}\n"
+        meta = []
+        meta.append(cast("TileId_t"       , t["destTile"]))
+        meta.append(cast("TaskId_t"       , t["taskId"]))
+        meta.append(cast("Arg_t"          , "0x" + t["taskFn"]))
+        meta.append(cast("Arg_t"          , t["taskCacheLines"]))
+        meta.append(cast("ArgIdx_t"       , t["numArgs"]))
+        meta.append(cast("NEdges_t"       , t["numOutEdges"]))
+        meta.append(cast("NEdges_t"       , t["numOutArgs"]))
+        meta.append(cast("EdgeTableIdx_t" , t["firstEdgeIdxStart"]))
+        meta.append(cast("bool"           , "true" if t["canSkip"] else "false"))
+        meta.append("{ {" + t["stringArgs"].strip() + "} }")
+        meta = ", ".join(meta)
+        l += "    {" + meta + "}"
+        return l
+
+    def getRecipe(r):
+        meta = []
+        meta.append(cast("TileId_t"       , r["tileId"]))
+        meta.append(cast("EdgeTableIdx_t" , r["entryIdx"]))
+        meta.append(cast("TileId_t"       , r["targetTileId"]))
+        meta.append(cast("TaskId_t"       , r["targetTaskId"]))
+        meta.append(cast("CycleDelta_t"   , r["cycleDelta"]))
+        meta.append(cast("ArgIdx_t"       , r["firstArg"]))
+        meta.append(cast("bool"           , r["hasMemDataDep"]))
+        meta.append("{" + r["args"].strip() + "}")
+        meta = ", ".join(meta)
+        l = "    {" + meta + "}"
+        return l
+
+    with open(hostInitHeader, "w") as f:
+        f.write("\n")
+        f.write('#include "lotus_init.h"\n')
+        f.write("\n")
+
+        f.write("const lotus::TaskInfo_t taskInfo[] = {\n")
+        tasks = [getTask(t) for t in hostInit["tasks"]]
+        f.write(",\n".join(tasks))
+        f.write("\n};\n")
+
+        f.write("\n\n")
+
+        f.write("const lotus::EdgeInfo_t edgeInfo[] = {\n")
+        recipes = [getRecipe(t) for tr in hostInit["recipes"] for t in tr]
+        f.write(",\n".join(recipes))
+        f.write("\n};\n")
+
+        f.write("\n\n")
+
+        format_bytes = lambda byte_list, bytes_per_line=10: "{" + ',\n'.join(
+            ', '.join(f"{hex(byte)}" for byte in byte_list[i:i + bytes_per_line])
+                for i in range(0, len(byte_list), bytes_per_line)
+            ) + "}"
+        scopeStructs = []
+        for id, alloc in enumerate(mem.allocators):
+            f.write(f"uint8_t scope_{id}_data[{len(alloc.bytes)}] = " + format_bytes(alloc.bytes, 200) + ";\n\n")
+            fields = [cast(type, val) for (type, val) in [
+                ("uint32_t", id),
+                ("Arg_t", f"{hex(alloc.startAddr)}")
+            ]] + [f"&scope_{id}_data[0]", f"{len(alloc.bytes)}"]
+            scopeStructs.append("    {" + ", ".join(fields) + "}")
+        f.write("const lotus::ScopeInfo_t scopeInfo[] = {\n" + ",\n".join(scopeStructs) + "\n};\n\n");
+
+GenHostInit = Action(GenHostInitFunc, strfunction=None)
+
+def BuildLotusBenchmark(env, application, benchName, genCpps, tasksIncludes, otherFiles, genArgs, defines):
+    # benchName    = ntt4
+    # genCpps      = ["benchmarks/ntt/genNtt.cpp"]
+    # tasksIncludes  = ["benchmarks/ntt/ntt.h"]
+    # genArgs      = "4"
+    unrollFactor = GetOption("unrollFactor")
+    enableCoarsening = GetOption("enableCoarsening")
+    enableCoarsening = "y" if enableCoarsening else "n"
+    benchName = f"{benchName}__{unrollFactor}u_{enableCoarsening}c"
+    benchDir = os.path.join(buildDir, benchName)
+
+    defines = [d for d in defines]
+    if GetOption("checkOutputs"):
+        defines.append("CHECK_OUTPUTS")
+    defines = " ".join([f"-D{d}" for d in defines])
+
+    def copyToBenchDir(origFiles):
+        nonlocal benchDir
+        copiedFiles = []
+        for f in origFiles:
+            filename = os.path.basename(f)
+            copyTo = os.path.join(benchDir, filename)
+            env.Command(copyTo, topFile(f), "cp $SOURCE $TARGET")
+            copiedFiles.append(copyTo)
+        return copiedFiles
+
+    genCpps       = copyToBenchDir(genCpps)
+    tasksIncludes = copyToBenchDir(tasksIncludes)
+    otherFiles    = copyToBenchDir(otherFiles)
+
+    ####################################################
+    # Compile Generator
+    genLib = copyToBenchDir(["benchmarks/lib/taskflow.h", "benchmarks/lib/lotus_task_api.h"])
+    genElf = os.path.join(benchDir, f"{benchName}.generator")
+    assert len(genCpps) == 1
+    env.Command([genElf],
+                genCpps + tasksIncludes + genLib,
+                f"g++ -O3 -std=c++20 {defines} -I{benchDir} {genCpps[0]} -o {genElf}")
+
+    ####################################################
+    # Run Generator to get tasks
+    genOut = os.path.join(benchDir, f"{benchName}.generator.output")
+    env.Command([genOut],
+                [genElf] + otherFiles,
+                f"cd {benchDir} && ./{benchName}.generator {genArgs} > {benchName}.generator.output")
+
+    ####################################################
+    # Generate lotus C++
+    lotusCpp = os.path.join(benchDir, f"{benchName}.cpp")
+    initHostInit = os.path.join(benchDir, f"{benchName}.host_init")
+    coarsenedTasks = os.path.join(benchDir, f"coarsenedTasks.h")
+    baselineMakefile = os.path.join(benchDir, f"Makefile")
+    lotus_exec_args = []
+    lotus_exec_args.append(f"--benchName {benchName}")
+    lotus_exec_args.append(f"--application {application}")
+    lotus_exec_args.append(f"--outPath {benchDir}")
+    assert len(tasksIncludes) == 1
+    lotus_exec_args.append(f"--tasksInclude {os.path.basename(tasksIncludes[0])}")
+    lotus_exec_args.append(f"--devices {cfg['devices']}")
+    lotus_exec_args.append(f"--tilesPerDevice {cfg['tiles']}")
+    lotus_exec_args.append(f"--coresPerTile {cfg['coresPerTile']}")
+    lotus_exec_args.append(f"--maxArgsPerTask {cfg['maxArgsPerTask']}")
+    lotus_exec_args.append(f"--avgArgsPerTask {cfg['avgArgsPerTask']}")
+    lotus_exec_args.append(f"--recipesPerTask {cfg['maxOutEdgesPerTask']}")
+    lotus_exec_args.append(f"--outRegsBits {6}")
+    lotus_exec_args.append(f"--tasksPerTile {cfg['tasksPerTile']}")
+    unrollFactor = GetOption("unrollFactor")
+    lotus_exec_args.append(f"--unrollFactor {unrollFactor}")
+    enableCoarsening = GetOption("enableCoarsening")
+    if enableCoarsening:
+        lotus_exec_args.append(f"--enableCoarsening")
+    lotus_exec_args.append(f"--backend {'cpu' if isBaseline else 'lotus'}")
+    lotus_exec_args.append(f'--defines="{defines}" ')
+    lotus_exec_args = " ".join(lotus_exec_args)
+    lotus_exec = "benchmarks/lib/lotus_exec.py"
+    lotus_exec_src = topFile(lotus_exec)
+    env.Command([lotusCpp, initHostInit, coarsenedTasks] + ([baselineMakefile] if isBaseline else []),
+                [genOut, lotus_exec_src],
+                f"python3 {lotus_exec_src} {lotus_exec_args} < {genOut}" + (" >/dev/null" if GetOption("shh") else ""))
+
+    if not isBaseline:
+        ####################################################
+        # Compile lotus C++
+        #     Warnings
+        flags = "-Wall -Wextra -Wfloat-conversion -Wno-attributes -Werror"
+        flags += " -Wno-unused-parameter -Wno-unused-variable "
+        #     Features
+        flags += " -faligned-new -fno-stack-protector -fno-PIE -static "
+        flags += " -ftrivial-auto-var-init=zero "
+        flags += " -gdwarf-4 -g1 "
+        flags += " -std=c++20 -O3 "
+        flags += f" {defines} "
+        #     Include
+        flags += " -Ilotus/core/runtime/include "
+        #     Arch
+        flags += " -march=rv32ima -mabi=ilp32 -mtune=rocket "
+
+        #     clang
+        cxx = f"{env['LOTUS_LLVM']}/bin/clang --target=riscv32 --gcc-toolchain={env['RISCV_TOOLCHAIN']} --sysroot={env['RISCV_TOOLCHAIN']}/riscv32-unknown-elf -Wno-multilib-not-found"
+        #     gcc (NOTE: Useful only for testing, will not work with tasks of > 7 args due to calling convention; use LOTUS_LLVM!)
+        #cxx = f"{env['RISCV_TOOLCHAIN']}/bin/riscv32-unknown-elf-g++"
+        def get_file_name(src):
+            dest = os.path.basename(src)
+            dest = dest.split(".")[0]
+            return dest
+
+        ofiles = []
+        runtimeStart = topFile("lotus/core/runtime/src/lotus_start.S")
+        for src in [lotusCpp, runtimeStart]:
+            target_name = get_file_name(src)
+            target_path = os.path.join(benchDir, target_name + ".o")
+            ofiles.append(target_path)
+            env.Command(target_path,
+                        [src] + tasksIncludes + [coarsenedTasks],
+                        f"{cxx} {flags} -c -o {target_path} {src} >> {benchDir}/cout.{target_name}.log")
+
+        tBin = os.path.join(benchDir, benchName + ".rv32.elf")
+        env.Command(tBin,
+                    ofiles,
+                    f"{cxx} {flags} -Wl,--whole-archive {' '.join(ofiles[:-1])} -Wl,--no-whole-archive {ofiles[-1]} -Wl,-Bstatic,-T,lotus/core/runtime/linker/lotus_link.ld -ffreestanding -nostartfiles -static -o $TARGET >> {benchDir}/cout.log")
+
+        # Dump the binary as a hex file, then produce an ELF object to embed it in the host
+        benchHexObjFile = os.path.join(benchDir, "program.hex.o")
+        env.Command(benchHexObjFile, tBin, f"cd {benchDir} && objcopy -O ihex --output-target=ihex {benchName}.rv32.elf program.hex && ld -r -b binary -z noexecstack -o program.hex.o program.hex && rm program.hex")
+
+
+        ####################################################
+        # generate host_init.cpp
+        hostInitHeader = os.path.join(benchDir, "hostInit.h")
+        env.Command(hostInitHeader,
+                    [initHostInit, tBin],
+                    GenHostInit)
+
+        ####################################################
+        # Final compilation
+        benchHostBinFile = os.path.join(buildDir, benchName + ".vl")
+        hostBuildDir = os.path.join(buildDir, benchName)
+        hostEnv = env.Clone()
+        hostEnv.VariantDir(hostBuildDir, "#.")
+
+        vlRoot = env["VERILATOR_ROOT"]
+        vlRootDir = topDir(vlRoot)
+        hostSrcs = ["host/" + f for f in ["host.cpp", "hw_verilator.cpp", "network.cpp"]]
+        hostSrcs += [f"{vlRoot}/include/{f}" for f in ["verilated.cpp", "verilated_dpi.cpp"]]
+
+        if trace:
+            hostSrcs.append(f"{vlRoot}/include/verilated_vcd_c.cpp")
+            hostEnv.Append(CPPFLAGS = ["-DVM_TRACE"])
+
+        hostEnv.Append(CPPFLAGS = hostPlatformFlags + ["-DINCLUDE_INIT", "-include", "host/vl_printf.h"])
+        hostEnv.Program(benchHostBinFile,
+                [os.path.join(hostBuildDir, f) for f in hostSrcs] + [hostVlLib, benchHexObjFile],
+                CPPPATH = [topDir("host"), benchDir, hostVlDir, os.path.join(vlRootDir, "include"), os.path.join(vlRootDir, "include/vltstd"), topDir("lotus/core/runtime/include")])
+
+        if withXrt:
+            xrtBase = env['ENV']['XILINX_XRT']
+            for mode in ["hw_emu", "hw"]:
+                xrtHostBuildDir = os.path.join(buildDir, benchName, "xrt_" + mode)
+                xrtHostEnv = env.Clone()
+                xrtHostEnv.VariantDir(xrtHostBuildDir, "#.")
+                benchHostBinFile = os.path.join(buildDir, benchName + "." + mode)
+                hostSrcs = ["host/" + f for f in ["host.cpp", "hw_xrt.cpp", "network.cpp"]]
+                xclbinFile = os.path.join(buildDir, "lotus.%s.xclbin" % mode)
+                xrtHostEnv.Program(benchHostBinFile,
+                    [os.path.join(xrtHostBuildDir, f) for f in hostSrcs]  + [benchHexObjFile],
+                    CPPPATH = [topDir("host"), os.path.join(xrtBase, "include"), benchDir, topDir("lotus/core/runtime/include")],
+                    LIBS = ['rt', "xrt_hwemu", "xrt_coreutil", "dl", "uuid", "pthread"],
+                    LINKFLAGS = ["-L%s/lib" % xrtBase, "-Wl,-rpath-link,%s/lib" % xrtBase, "-fopenmp"],
+                    CPPFLAGS = ["-g", "-std=c++14", "-fopenmp", "-DINCLUDE_INIT", "-DTARGET_" + mode, '-DXCLBIN_PATH=\"%s\"' % os.path.abspath(xclbinFile)] + hostPlatformFlags)
+    else:
+        benchHostBinFile = os.path.join(buildDir, benchName + ".baseline")
+
+        makefileElf = os.path.join(benchDir, f"cpu.elf")
+
+        env.Command(makefileElf,
+                    [baselineMakefile, lotusCpp],
+                    f"make -j`nproc` -f {baselineMakefile}")
+
+        env.Command(benchHostBinFile,
+                    makefileElf,
+                    f"cp {makefileElf} {benchHostBinFile}")
+
+
+nttSize = GetOption("nttSize")
+BuildLotusBenchmark(env, "ntt", f"ntt{nttSize}",
+        ["benchmarks/ntt/genNtt.cpp"],
+        ["benchmarks/ntt/ntt.h"],
+        [],
+        f" {nttSize} ",
+        [])
+BuildLotusBenchmark(env, "nttRetimed", f"nttRetimed{nttSize}",
+        ["benchmarks/nttRetimed/genNttRetimed.cpp"],
+        ["benchmarks/nttRetimed/nttRetimed.h"],
+        [],
+        f" {nttSize} ",
+        []
+        )
+BuildLotusBenchmark(env, "nttVirtualized", f"nttVirtualized{nttSize}",
+        ["benchmarks/nttVirtualized/genNttVirtualized.cpp"],
+        ["benchmarks/nttVirtualized/nttVirtualized.h"],
+        [],
+        f" {nttSize} ",
+        [])
+
+systolicSize = GetOption("systolicSize")
+BuildLotusBenchmark(env, "systolic", f"systolic{systolicSize}",
+        ["benchmarks/systolic/genSystolic.cpp"],
+        ["benchmarks/systolic/systolic.h"],
+        [],
+        f" {systolicSize} ",
+        [])
+BuildLotusBenchmark(env, "systolicRetimed", f"systolicRetimed{systolicSize}",
+        ["benchmarks/systolicRetimed/genSystolicRetimed.cpp"],
+        ["benchmarks/systolicRetimed/systolicRetimed.h"],
+        [],
+        f" {systolicSize} ",
+        [])
+BuildLotusBenchmark(env, "systolicVirtualized", f"systolicVirtualized{systolicSize}",
+        ["benchmarks/systolicVirtualized/genSystolicVirtualized.cpp"],
+        ["benchmarks/systolicVirtualized/systolicVirtualized.h"],
+        [],
+        f" {systolicSize} ",
+        [])
+
+coresSize = GetOption("coresSize")
+BuildLotusBenchmark(env, "cores", f"cores{coresSize}",
+        ["benchmarks/cores/genCores.cpp"],
+        ["benchmarks/cores/cores.h"],
+        ["benchmarks/cores/software/quicksort.hex"],
+        f" {coresSize} ",
+        [])
+BuildLotusBenchmark(env, "coresWithCaches", f"coresWithCaches{coresSize}",
+        ["benchmarks/coresWithCaches/genCoresWithCaches.cpp"],
+        ["benchmarks/coresWithCaches/coresWithCaches.h"],
+        ["benchmarks/coresWithCaches/software/quicksort.hex"],
+        f" {coresSize} ",
+        [f"NUM_CORES={coresSize}"])
+
+fibs = ["basic_reg_fib", "basic_mem_fib"]
+n_custom_type = 5
+custom_type = [f"custom_type_{i}" for i in range(n_custom_type)]
+n_packing = 4
+packing = [f"packing_{i}" for i in range(n_packing)]
+n_overflow = 1
+overflow = [f"overflow_{i}" for i in range(n_overflow)]
+n_same_cycle = 1
+same_cycle = [f"same_cycle_{i}" for i in range(n_same_cycle)]
+n_selective = 1
+selective = [f"selective_{i}" for i in range(n_selective)]
+n_pipeline = 3
+pipeline = [f"pipeline_{i}" for i in range(n_pipeline)]
+unit_tests = fibs + custom_type + packing + overflow + same_cycle + selective + pipeline
+for unit_name in unit_tests:
+    BuildLotusBenchmark(env, "unit", f"unit_{unit_name}",
+            ["benchmarks/unit/genUnit.cpp"],
+            ["benchmarks/unit/unit.h"],
+            [],
+            f" {unit_name} ",
+            [])

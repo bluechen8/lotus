@@ -1,0 +1,7 @@
+[connectivity]
+@memConnects
+
+[vivado]
+synth.jobs=64
+param=general.maxThreads=32
+prop=fileset.sim_1.xsim.simulate.runtime=5000us

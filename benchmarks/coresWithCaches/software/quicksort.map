@@ -1,0 +1,43 @@
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+*default*        0x00000000         0xffffffff
+
+Linker script and memory map
+
+                0x00000000                        . = 0x0
+
+.text           0x00000000      0x110
+ *(.text.core_entry)
+ .text.core_entry
+                0x00000000      0x110 /tmp/ccJmF9SL.o
+                0x00000000                core_entry
+ *(.text*)
+ .text          0x00000110        0x0 /tmp/ccJmF9SL.o
+
+.rodata
+ *(.rodata*)
+
+.eh_frame       0x00000110       0x2c
+ .eh_frame      0x00000110       0x2c /tmp/ccJmF9SL.o
+
+.data           0x0000013c        0x0
+ *(.data*)
+ .data          0x0000013c        0x0 /tmp/ccJmF9SL.o
+
+.bss            0x0000013c        0x0
+ *(.bss*)
+ .bss           0x0000013c        0x0 /tmp/ccJmF9SL.o
+ *(COMMON)
+LOAD /tmp/ccJmF9SL.o
+OUTPUT(quicksort.elf elf32-littleriscv)
+
+.comment        0x00000000       0x21
+ .comment       0x00000000       0x21 /tmp/ccJmF9SL.o
+                                 0x22 (size before relaxing)
+
+.riscv.attributes
+                0x00000000       0x2a
+ .riscv.attributes
+                0x00000000       0x2a /tmp/ccJmF9SL.o

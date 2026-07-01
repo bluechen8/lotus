@@ -1,0 +1,3 @@
+place_directives=AltSpreadLogic_medium,AltSpreadLogic_high,AltSpreadLogic_low,ExtraNetDelay_low,ExtraNetDelay_high,ExtraPostPlacementOpt,Default,Explore,ExtraTimingOpt
+route_directives=AggressiveExplore,AlternateCLBRouting,HigherDelayCost
+clock_uncertainty=-0.1:0.25:0.025

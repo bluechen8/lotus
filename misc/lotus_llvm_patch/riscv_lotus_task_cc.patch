@@ -1,0 +1,513 @@
+diff --git a/clang/include/clang-c/Index.h b/clang/include/clang-c/Index.h
+index b92958520..a3bbac789 100644
+--- a/clang/include/clang-c/Index.h
++++ b/clang/include/clang-c/Index.h
+@@ -3078,6 +3078,7 @@ enum CXCallingConv {
+   CXCallingConv_RISCVVLSCall_16384 = 31,
+   CXCallingConv_RISCVVLSCall_32768 = 32,
+   CXCallingConv_RISCVVLSCall_65536 = 33,
++  CXCallingConv_RISCVLotusTaskCall = 34,
+ 
+   CXCallingConv_Invalid = 100,
+   CXCallingConv_Unexposed = 200
+diff --git a/clang/include/clang/Basic/Attr.td b/clang/include/clang/Basic/Attr.td
+index 224cb6a32..ee9f7e8a7 100644
+--- a/clang/include/clang/Basic/Attr.td
++++ b/clang/include/clang/Basic/Attr.td
+@@ -3480,6 +3480,13 @@ def RISCVVLSCC: DeclOrTypeAttr, TargetSpecificAttr<TargetRISCV> {
+  let Documentation = [RISCVVLSCCDocs];
+ }
+ 
++def RISCVLotusTaskCC: DeclOrTypeAttr, TargetSpecificAttr<TargetRISCV> {
++ let Spellings = [CXX11<"riscv", "lotus_task_cc">,
++                  C23<"riscv", "lotus_task_cc">,
++                  Clang<"riscv_lotus_task_cc">];
++ let Documentation = [RISCVLotusTaskCCDocs];
++}
++
+ def Target : InheritableAttr {
+   let Spellings = [GCC<"target">];
+   let Args = [StringArgument<"featuresStr">];
+diff --git a/clang/include/clang/Basic/AttrDocs.td b/clang/include/clang/Basic/AttrDocs.td
+index 76747d2b1..e88e1e7c5 100644
+--- a/clang/include/clang/Basic/AttrDocs.td
++++ b/clang/include/clang/Basic/AttrDocs.td
+@@ -6327,6 +6327,14 @@ the ABI. This variant aims to pass fixed-length vectors via vector registers,
+ if possible, rather than through general-purpose registers.}];
+ }
+ 
++def RISCVLotusTaskCCDocs : Documentation {
++ let Category = DocCatCallingConvs;
++ let Heading = "riscv::lotus_task_cc, riscv_lotus_task_cc, clang::riscv_lotus_task_cc";
++ let Content = [{
++The ``riscv_lotus_task_cc`` attribute can be applied to a function. It follows the calling convention of Lotus tasks (up to 15 arguments through registers) and has no preserved registers (since Lotus tasks have no caller). 
++ }];
++}
++
+ def PreferredNameDocs : Documentation {
+   let Category = DocCatDecl;
+   let Content = [{
+diff --git a/clang/include/clang/Basic/Specifiers.h b/clang/include/clang/Basic/Specifiers.h
+index 698fd9da5..8f6d908b3 100644
+--- a/clang/include/clang/Basic/Specifiers.h
++++ b/clang/include/clang/Basic/Specifiers.h
+@@ -312,6 +312,7 @@ namespace clang {
+     CC_RISCVVLSCall_16384, // __attribute__((riscv_vls_cc(16384)))
+     CC_RISCVVLSCall_32768, // __attribute__((riscv_vls_cc(32768)))
+     CC_RISCVVLSCall_65536, // __attribute__((riscv_vls_cc(65536)))
++    CC_RISCVLotusTaskCall,   // __attribute__((riscv_lotus_task_cc))
+   };
+ 
+   /// Checks whether the given calling convention supports variadic
+@@ -329,6 +330,7 @@ namespace clang {
+     case CC_Swift:
+     case CC_SwiftAsync:
+     case CC_M68kRTD:
++    case CC_RISCVLotusTaskCall:
+       return false;
+     default:
+       return true;
+diff --git a/clang/lib/AST/ItaniumMangle.cpp b/clang/lib/AST/ItaniumMangle.cpp
+index 0520987ce..d8ddf707a 100644
+--- a/clang/lib/AST/ItaniumMangle.cpp
++++ b/clang/lib/AST/ItaniumMangle.cpp
+@@ -3558,6 +3558,7 @@ StringRef CXXNameMangler::getCallingConvQualifierName(CallingConv CC) {
+     CC_VLS_CASE(32768)
+     CC_VLS_CASE(65536)
+ #undef CC_VLS_CASE
++  case CC_RISCVLotusTaskCall:
+     // FIXME: we should be mangling all of the above.
+     return "";
+ 
+diff --git a/clang/lib/AST/Type.cpp b/clang/lib/AST/Type.cpp
+index bd3dd983b..7504422d5 100644
+--- a/clang/lib/AST/Type.cpp
++++ b/clang/lib/AST/Type.cpp
+@@ -3662,6 +3662,7 @@ StringRef FunctionType::getNameForCallConv(CallingConv CC) {
+   CC_VLS_CASE(65536)
+ #undef CC_VLS_CASE
+     // clang-format on
++  case CC_RISCVLotusTaskCall: return "riscv_lotus_task_cc";
+   }
+ 
+   llvm_unreachable("Invalid calling convention.");
+@@ -4355,6 +4356,7 @@ bool AttributedType::isCallingConv() const {
+   case attr::PreserveNone:
+   case attr::RISCVVectorCC:
+   case attr::RISCVVLSCC:
++  case attr::RISCVLotusTaskCC:
+     return true;
+   }
+   llvm_unreachable("invalid attr kind");
+diff --git a/clang/lib/AST/TypePrinter.cpp b/clang/lib/AST/TypePrinter.cpp
+index 818d21396..8f791584c 100644
+--- a/clang/lib/AST/TypePrinter.cpp
++++ b/clang/lib/AST/TypePrinter.cpp
+@@ -1156,6 +1156,9 @@ void TypePrinter::printFunctionAfter(const FunctionType::ExtInfo &Info,
+       CC_VLS_CASE(32768)
+       CC_VLS_CASE(65536)
+ #undef CC_VLS_CASE
++    case CC_RISCVLotusTaskCall:
++      OS << "__attribute__((riscv_lotus_task_cc))";
++      break;
+     }
+   }
+ 
+@@ -2104,6 +2107,9 @@ void TypePrinter::printAttributedAfter(const AttributedType *T,
+   case attr::RISCVVLSCC:
+     OS << "riscv_vls_cc";
+     break;
++  case attr::RISCVLotusTaskCC:
++    OS << "riscv_lotus_task_cc";
++    break;
+   case attr::NoDeref:
+     OS << "noderef";
+     break;
+diff --git a/clang/lib/Basic/Targets/RISCV.cpp b/clang/lib/Basic/Targets/RISCV.cpp
+index 8a28c0788..05804d326 100644
+--- a/clang/lib/Basic/Targets/RISCV.cpp
++++ b/clang/lib/Basic/Targets/RISCV.cpp
+@@ -607,6 +607,7 @@ RISCVTargetInfo::checkCallingConvention(CallingConv CC) const {
+   case CC_RISCVVLSCall_16384:
+   case CC_RISCVVLSCall_32768:
+   case CC_RISCVVLSCall_65536:
++  case CC_RISCVLotusTaskCall:
+     return CCCR_OK;
+   }
+ }
+diff --git a/clang/lib/CodeGen/CGCall.cpp b/clang/lib/CodeGen/CGCall.cpp
+index 5344a9710..0a5783e39 100644
+--- a/clang/lib/CodeGen/CGCall.cpp
++++ b/clang/lib/CodeGen/CGCall.cpp
+@@ -116,6 +116,8 @@ unsigned CodeGenTypes::ClangCallConvToLLVMCallConv(CallingConv CC) {
+     CC_VLS_CASE(32768)
+     CC_VLS_CASE(65536)
+ #undef CC_VLS_CASE
++  case CC_RISCVLotusTaskCall:
++    return llvm::CallingConv::RISCV_LotusTaskCall;
+   }
+ }
+ 
+@@ -332,6 +334,9 @@ static CallingConv getCallingConventionForDecl(const ObjCMethodDecl *D,
+     }
+   }
+ 
++  if (D->hasAttr<RISCVLotusTaskCCAttr>())
++    return CC_RISCVLotusTaskCall;
++
+   return CC_C;
+ }
+ 
+diff --git a/clang/lib/Sema/SemaDeclAttr.cpp b/clang/lib/Sema/SemaDeclAttr.cpp
+index a7897bdfe..7948753b5 100644
+--- a/clang/lib/Sema/SemaDeclAttr.cpp
++++ b/clang/lib/Sema/SemaDeclAttr.cpp
+@@ -5374,6 +5374,9 @@ static void handleCallConvAttr(Sema &S, Decl *D, const ParsedAttr &AL) {
+     D->addAttr(::new (S.Context) RISCVVLSCCAttr(S.Context, AL, VectorLength));
+     return;
+   }
++  case ParsedAttr::AT_RISCVLotusTaskCC:
++    D->addAttr(::new (S.Context) RISCVLotusTaskCCAttr(S.Context, AL));
++    return;
+   default:
+     llvm_unreachable("unexpected attribute kind");
+   }
+@@ -5639,6 +5642,9 @@ bool Sema::CheckCallingConvAttr(const ParsedAttr &Attrs, CallingConv &CC,
+                                   llvm::Log2_64(ABIVLen) - 5);
+     break;
+   }
++  case ParsedAttr::AT_RISCVLotusTaskCC:
++    CC = CC_RISCVLotusTaskCall;
++    break;
+   case ParsedAttr::AT_DeviceKernel: {
+     // Validation was handled in handleDeviceKernelAttr.
+     CC = CC_DeviceKernel;
+@@ -7558,6 +7564,7 @@ ProcessDeclAttribute(Sema &S, Scope *scope, Decl *D, const ParsedAttr &AL,
+   case ParsedAttr::AT_PreserveNone:
+   case ParsedAttr::AT_RISCVVectorCC:
+   case ParsedAttr::AT_RISCVVLSCC:
++  case ParsedAttr::AT_RISCVLotusTaskCC:
+     handleCallConvAttr(S, D, AL);
+     break;
+   case ParsedAttr::AT_DeviceKernel:
+diff --git a/clang/lib/Sema/SemaType.cpp b/clang/lib/Sema/SemaType.cpp
+index bb114aff2..d7c874a40 100644
+--- a/clang/lib/Sema/SemaType.cpp
++++ b/clang/lib/Sema/SemaType.cpp
+@@ -144,7 +144,8 @@ static void diagnoseBadTypeAttribute(Sema &S, const ParsedAttr &attr,
+   case ParsedAttr::AT_M68kRTD:                                                 \
+   case ParsedAttr::AT_PreserveNone:                                            \
+   case ParsedAttr::AT_RISCVVectorCC:                                           \
+-  case ParsedAttr::AT_RISCVVLSCC
++  case ParsedAttr::AT_RISCVVLSCC:                                              \
++  case ParsedAttr::AT_RISCVLotusTaskCC
+ 
+ // Function type attributes.
+ #define FUNCTION_TYPE_ATTRS_CASELIST                                           \
+@@ -7576,6 +7577,8 @@ static Attr *getCCTypeAttr(ASTContext &Ctx, ParsedAttr &Attr) {
+ 
+     return ::new (Ctx) RISCVVLSCCAttr(Ctx, Attr, ABIVLen);
+   }
++  case ParsedAttr::AT_RISCVLotusTaskCC:
++    return createSimpleAttr<RISCVLotusTaskCCAttr>(Ctx, Attr);
+   }
+   llvm_unreachable("unexpected attribute kind!");
+ }
+diff --git a/clang/tools/libclang/CXType.cpp b/clang/tools/libclang/CXType.cpp
+index e7864e6d6..071e4b138 100644
+--- a/clang/tools/libclang/CXType.cpp
++++ b/clang/tools/libclang/CXType.cpp
+@@ -566,7 +566,7 @@ try_again:
+     D = cast<InjectedClassNameType>(TP)->getDecl();
+     break;
+ 
+-  // FIXME: Template type parameters!      
++  // FIXME: Template type parameters!
+ 
+   case Type::Elaborated:
+     TP = cast<ElaboratedType>(TP)->getNamedType().getTypePtrOrNull();
+@@ -686,7 +686,7 @@ unsigned clang_isFunctionTypeVariadic(CXType X) {
+ 
+   if (T->getAs<FunctionNoProtoType>())
+     return 1;
+-  
++
+   return 0;
+ }
+ 
+@@ -694,7 +694,7 @@ CXCallingConv clang_getFunctionTypeCallingConv(CXType X) {
+   QualType T = GetQualType(X);
+   if (T.isNull())
+     return CXCallingConv_Invalid;
+-  
++
+   if (const FunctionType *FD = T->getAs<FunctionType>()) {
+ #define TCALLINGCONV(X) case CC_##X: return CXCallingConv_##X
+     switch (FD->getCallConv()) {
+@@ -731,6 +731,7 @@ CXCallingConv clang_getFunctionTypeCallingConv(CXType X) {
+       TCALLINGCONV(RISCVVLSCall_16384);
+       TCALLINGCONV(RISCVVLSCall_32768);
+       TCALLINGCONV(RISCVVLSCall_65536);
++      TCALLINGCONV(RISCVLotusTaskCall);
+     case CC_SpirFunction: return CXCallingConv_Unexposed;
+     case CC_DeviceKernel:
+       return CXCallingConv_Unexposed;
+@@ -738,7 +739,7 @@ CXCallingConv clang_getFunctionTypeCallingConv(CXType X) {
+     }
+ #undef TCALLINGCONV
+   }
+-  
++
+   return CXCallingConv_Invalid;
+ }
+ 
+@@ -746,15 +747,15 @@ int clang_getNumArgTypes(CXType X) {
+   QualType T = GetQualType(X);
+   if (T.isNull())
+     return -1;
+-  
++
+   if (const FunctionProtoType *FD = T->getAs<FunctionProtoType>()) {
+     return FD->getNumParams();
+   }
+-  
++
+   if (T->getAs<FunctionNoProtoType>()) {
+     return 0;
+   }
+-  
++
+   return -1;
+ }
+ 
+@@ -770,7 +771,7 @@ CXType clang_getArgType(CXType X, unsigned i) {
+ 
+     return MakeCXType(FD->getParamType(i), GetTU(X));
+   }
+-  
++
+   return MakeCXType(QualType(), GetTU(X));
+ }
+ 
+@@ -778,7 +779,7 @@ CXType clang_getResultType(CXType X) {
+   QualType T = GetQualType(X);
+   if (T.isNull())
+     return MakeCXType(QualType(), GetTU(X));
+-  
++
+   if (const FunctionType *FD = T->getAs<FunctionType>())
+     return MakeCXType(FD->getReturnType(), GetTU(X));
+ 
+@@ -849,7 +850,7 @@ unsigned clang_isPODType(CXType X) {
+   QualType T = GetQualType(X);
+   if (T.isNull())
+     return 0;
+-  
++
+   CXTranslationUnit TU = GetTU(X);
+ 
+   return T.isPODType(cxtu::getASTUnit(TU)->getASTContext()) ? 1 : 0;
+diff --git a/llvm/include/llvm/AsmParser/LLToken.h b/llvm/include/llvm/AsmParser/LLToken.h
+index c7e4bdf3f..904571844 100644
+--- a/llvm/include/llvm/AsmParser/LLToken.h
++++ b/llvm/include/llvm/AsmParser/LLToken.h
+@@ -186,6 +186,7 @@ enum Kind {
+   kw_graalcc,
+   kw_riscv_vector_cc,
+   kw_riscv_vls_cc,
++  kw_riscv_lotus_task_cc,
+ 
+   // Attributes:
+   kw_attributes,
+diff --git a/llvm/include/llvm/IR/CallingConv.h b/llvm/include/llvm/IR/CallingConv.h
+index d68491eb5..17fac780d 100644
+--- a/llvm/include/llvm/IR/CallingConv.h
++++ b/llvm/include/llvm/IR/CallingConv.h
+@@ -284,6 +284,8 @@ namespace CallingConv {
+     RISCV_VLSCall_32768 = 122,
+     RISCV_VLSCall_65536 = 123,
+ 
++    RISCV_LotusTaskCall = 124,
++
+     /// The highest possible ID. Must be some 2^k - 1.
+     MaxID = 1023
+   };
+diff --git a/llvm/lib/AsmParser/LLParser.cpp b/llvm/lib/AsmParser/LLParser.cpp
+index b7f6950f6..16ffe7c65 100644
+--- a/llvm/lib/AsmParser/LLParser.cpp
++++ b/llvm/lib/AsmParser/LLParser.cpp
+@@ -2202,6 +2202,7 @@ void LLParser::parseOptionalDLLStorageClass(unsigned &Res) {
+ ///   ::= 'graalcc'
+ ///   ::= 'riscv_vector_cc'
+ ///   ::= 'riscv_vls_cc'
++///   ::= 'riscv_lotus_task_cc'
+ ///   ::= 'cc' UINT
+ ///
+ bool LLParser::parseOptionalCallingConv(unsigned &CC) {
+@@ -2309,6 +2310,9 @@ bool LLParser::parseOptionalCallingConv(unsigned &CC) {
+ #undef CC_VLS_CASE
+     }
+     return false;
++  case lltok::kw_riscv_lotus_task_cc:
++    CC = CallingConv::RISCV_LotusTaskCall;
++    break;
+   case lltok::kw_cc: {
+       Lex.Lex();
+       return parseUInt32(CC);
+diff --git a/llvm/lib/IR/AsmWriter.cpp b/llvm/lib/IR/AsmWriter.cpp
+index 145ef10f2..2a2f2292c 100644
+--- a/llvm/lib/IR/AsmWriter.cpp
++++ b/llvm/lib/IR/AsmWriter.cpp
+@@ -425,6 +425,9 @@ static void PrintCallingConv(unsigned cc, raw_ostream &Out) {
+     CC_VLS_CASE(32768)
+     CC_VLS_CASE(65536)
+ #undef CC_VLS_CASE
++  case CallingConv::RISCV_LotusTaskCall:
++    Out << "riscv_lotus_task_cc";
++    break;
+   }
+ }
+ 
+diff --git a/llvm/lib/Target/RISCV/RISCVCallingConv.cpp b/llvm/lib/Target/RISCV/RISCVCallingConv.cpp
+index cb6117eb0..a6f08ba29 100644
+--- a/llvm/lib/Target/RISCV/RISCVCallingConv.cpp
++++ b/llvm/lib/Target/RISCV/RISCVCallingConv.cpp
+@@ -808,3 +808,31 @@ bool llvm::CC_RISCV_GHC(unsigned ValNo, MVT ValVT, MVT LocVT,
+   report_fatal_error("No registers left in GHC calling convention");
+   return true;
+ }
++
++// dsm: Modeled after GHC
++bool llvm::CC_RISCV_LotusTask(unsigned ValNo, MVT ValVT, MVT LocVT,
++                        CCValAssign::LocInfo LocInfo, ISD::ArgFlagsTy ArgFlags,
++                        CCState &State) {
++  if (ArgFlags.isNest()) {
++    report_fatal_error(
++        "Attribute 'nest' is not supported in LotusTask calling convention");
++  }
++
++  static const MCPhysReg GPRList[] = {
++      RISCV::X10, RISCV::X11, RISCV::X12, RISCV::X13, RISCV::X14, RISCV::X15, RISCV::X16, RISCV::X17,
++      RISCV::X1,  RISCV::X4,  RISCV::X5,  RISCV::X6,  RISCV::X7,  RISCV::X28, RISCV::X29};
++
++  if (LocVT == MVT::i32 || LocVT == MVT::i64) {
++    // Pass in STG registers: Base, Sp, Hp, R1, R2, R3, R4, R5, R6, R7, SpLim
++    //                        s1    s2  s3  s4  s5  s6  s7  s8  s9  s10 s11
++    if (MCRegister Reg = State.AllocateReg(GPRList)) {
++      State.addLoc(CCValAssign::getReg(ValNo, ValVT, Reg, LocVT, LocInfo));
++      return false;
++    }
++  }
++
++  // Floating-point handling is unnecessary, Lotus is RV32I
++
++  report_fatal_error("No registers left in LotusTask calling convention");
++  return true;
++}
+diff --git a/llvm/lib/Target/RISCV/RISCVCallingConv.h b/llvm/lib/Target/RISCV/RISCVCallingConv.h
+index bf823b783..4b420c1fd 100644
+--- a/llvm/lib/Target/RISCV/RISCVCallingConv.h
++++ b/llvm/lib/Target/RISCV/RISCVCallingConv.h
+@@ -35,6 +35,10 @@ bool CC_RISCV_GHC(unsigned ValNo, MVT ValVT, MVT LocVT,
+                   CCValAssign::LocInfo LocInfo, ISD::ArgFlagsTy ArgFlags,
+                   CCState &State);
+ 
++bool CC_RISCV_LotusTask(unsigned ValNo, MVT ValVT, MVT LocVT,
++                  CCValAssign::LocInfo LocInfo, ISD::ArgFlagsTy ArgFlags,
++                  CCState &State);
++
+ namespace RISCV {
+ 
+ ArrayRef<MCPhysReg> getArgGPRs(const RISCVABI::ABI ABI);
+diff --git a/llvm/lib/Target/RISCV/RISCVFrameLowering.cpp b/llvm/lib/Target/RISCV/RISCVFrameLowering.cpp
+index 6c8e3da80..1930363d2 100644
+--- a/llvm/lib/Target/RISCV/RISCVFrameLowering.cpp
++++ b/llvm/lib/Target/RISCV/RISCVFrameLowering.cpp
+@@ -909,6 +909,10 @@ void RISCVFrameLowering::emitPrologue(MachineFunction &MF,
+   if (MF.getFunction().getCallingConv() == CallingConv::GHC)
+     return;
+ 
++  // Ditto for LotusTask calls :)
++  if (MF.getFunction().getCallingConv() == CallingConv::RISCV_LotusTaskCall)
++    return;
++
+   // SiFive CLIC needs to swap `sp` into `sf.mscratchcsw`
+   emitSiFiveCLICStackSwap(MF, MBB, MBBI, DL);
+ 
+@@ -1186,6 +1190,10 @@ void RISCVFrameLowering::emitEpilogue(MachineFunction &MF,
+   if (MF.getFunction().getCallingConv() == CallingConv::GHC)
+     return;
+ 
++  // Ditto for LotusTask calls :)
++  if (MF.getFunction().getCallingConv() == CallingConv::RISCV_LotusTaskCall)
++    return;
++
+   // Get the insert location for the epilogue. If there were no terminators in
+   // the block, get the last instruction.
+   MachineBasicBlock::iterator MBBI = MBB.end();
+diff --git a/llvm/lib/Target/RISCV/RISCVISelLowering.cpp b/llvm/lib/Target/RISCV/RISCVISelLowering.cpp
+index 567ef2ff1..76476794e 100644
+--- a/llvm/lib/Target/RISCV/RISCVISelLowering.cpp
++++ b/llvm/lib/Target/RISCV/RISCVISelLowering.cpp
+@@ -22260,6 +22260,10 @@ SDValue RISCVTargetLowering::LowerFormalArguments(
+     if (!Subtarget.hasStdExtFOrZfinx() || !Subtarget.hasStdExtDOrZdinx())
+       report_fatal_error("GHC calling convention requires the (Zfinx/F) and "
+                          "(Zdinx/D) instruction set extensions");
++    break;
++  case CallingConv::RISCV_LotusTaskCall:
++     if (Subtarget.hasStdExtE())
++      report_fatal_error("LotusTask calling convention is not supported on RVE!");
+   }
+ 
+   const Function &Func = MF.getFunction();
+@@ -22309,6 +22313,8 @@ SDValue RISCVTargetLowering::LowerFormalArguments(
+ 
+   if (CallConv == CallingConv::GHC)
+     CCInfo.AnalyzeFormalArguments(Ins, CC_RISCV_GHC);
++  else if (CallConv == CallingConv::RISCV_LotusTaskCall)
++    CCInfo.AnalyzeFormalArguments(Ins, CC_RISCV_LotusTask);
+   else
+     analyzeInputArgs(MF, CCInfo, Ins, /*IsRet=*/false,
+                      CallConv == CallingConv::Fast ? CC_RISCV_FastCC
+@@ -22517,7 +22523,9 @@ SDValue RISCVTargetLowering::LowerCall(CallLoweringInfo &CLI,
+     if (Subtarget.hasStdExtE())
+       report_fatal_error("GHC calling convention is not supported on RVE!");
+     ArgCCInfo.AnalyzeCallOperands(Outs, CC_RISCV_GHC);
+-  } else
++  } else if (CallConv == CallingConv::RISCV_LotusTaskCall)
++    ArgCCInfo.AnalyzeCallOperands(Outs, CC_RISCV_LotusTask);
++  else
+     analyzeOutputArgs(MF, ArgCCInfo, Outs, /*IsRet=*/false, &CLI,
+                       CallConv == CallingConv::Fast ? CC_RISCV_FastCC
+                                                     : CC_RISCV);
+@@ -22849,6 +22857,8 @@ RISCVTargetLowering::LowerReturn(SDValue Chain, CallingConv::ID CallConv,
+ 
+   if (CallConv == CallingConv::GHC && !RVLocs.empty())
+     report_fatal_error("GHC functions return void only");
++  if (CallConv == CallingConv::RISCV_LotusTaskCall && !RVLocs.empty())
++    report_fatal_error("LotusTask functions return void only");
+ 
+   SDValue Glue;
+   SmallVector<SDValue, 4> RetOps(1, Chain);
+diff --git a/llvm/lib/Target/RISCV/RISCVRegisterInfo.cpp b/llvm/lib/Target/RISCV/RISCVRegisterInfo.cpp
+index 214536d7f..6286fa086 100644
+--- a/llvm/lib/Target/RISCV/RISCVRegisterInfo.cpp
++++ b/llvm/lib/Target/RISCV/RISCVRegisterInfo.cpp
+@@ -66,7 +66,7 @@ RISCVRegisterInfo::getIPRACSRegs(const MachineFunction *MF) const {
+ const MCPhysReg *
+ RISCVRegisterInfo::getCalleeSavedRegs(const MachineFunction *MF) const {
+   auto &Subtarget = MF->getSubtarget<RISCVSubtarget>();
+-  if (MF->getFunction().getCallingConv() == CallingConv::GHC)
++  if (MF->getFunction().getCallingConv() == CallingConv::GHC || MF->getFunction().getCallingConv() == CallingConv::RISCV_LotusTaskCall)
+     return CSR_NoRegs_SaveList;
+   if (MF->getFunction().getCallingConv() == CallingConv::PreserveMost)
+     return Subtarget.hasStdExtE() ? CSR_RT_MostRegs_RVE_SaveList
+@@ -812,7 +812,7 @@ RISCVRegisterInfo::getCallPreservedMask(const MachineFunction & MF,
+                                         CallingConv::ID CC) const {
+   auto &Subtarget = MF.getSubtarget<RISCVSubtarget>();
+ 
+-  if (CC == CallingConv::GHC)
++  if (CC == CallingConv::GHC || CC == CallingConv::RISCV_LotusTaskCall)
+     return CSR_NoRegs_RegMask;
+   RISCVABI::ABI ABI = Subtarget.getTargetABI();
+   if (CC == CallingConv::PreserveMost) {

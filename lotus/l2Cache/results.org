@@ -1,0 +1,379 @@
+#+title: Results
+
+* FIFO bits to Area:
+| FIFO 1 Bits | Cells |
+|           2 |    17 |
+|          17 |    30 |
+|          23 |   221 |
+|          34 |    92 |
+|          74 |   258 |
+|         256 |   518 |
+|         288 |  1171 |
+
+* Results
+** 128KB, 4mshr, 1-DA req in flight
+*** CLB Logic
++--------------------------------------------+------+-------+------------+-----------+-------+
+|                  Site Type                 | Used | Fixed | Prohibited | Available | Util% |
++--------------------------------------------+------+-------+------------+-----------+-------+
+| CLB                                        |  334 |     0 |          0 |    216000 |  0.15 |
+|   CLBL                                     |  148 |     0 |            |           |       |
+|   CLBM                                     |  186 |     0 |            |           |       |
+| LUT as Logic                               | 1534 |     0 |          0 |   1728000 |  0.09 |
+|   using O5 output only                     |    7 |       |            |           |       |
+|   using O6 output only                     | 1261 |       |            |           |       |
+|   using O5 and O6                          |  266 |       |            |           |       |
+| LUT as Memory                              |    0 |     0 |          0 |    791040 |  0.00 |
+|   LUT as Distributed RAM                   |    0 |     0 |            |           |       |
+|   LUT as Shift Register                    |    0 |     0 |            |           |       |
+| CLB Registers                              | 2302 |     0 |          0 |   3456000 |  0.07 |
+|   Register driven from within the CLB      | 1217 |       |            |           |       |
+|   Register driven from outside the CLB     | 1085 |       |            |           |       |
+|     LUT in front of the register is unused |  666 |       |            |           |       |
+|     LUT in front of the register is used   |  419 |       |            |           |       |
+| Unique Control Sets                        |   18 |       |          0 |    432000 | <0.01 |
++--------------------------------------------+------+-------+------------+-----------+-------+
+*** Critical Path
+  Data Path Delay:        3.767ns  (logic 1.689ns (44.837%)  route 2.078ns (55.163%))
+*** Instance Area:
++------+---------------------------------------+----------------------+------+
+|      |Instance                               |Module                |Cells |
++------+---------------------------------------+----------------------+------+
+|1     |top                                    |                      |  4117|
+|2     |  cacheLinePort_controlQueue_ff        |FIFO1                 |   166|
+|3     |  cacheLinePort_readQueue_ff           |FIFO1__parameterized0 |   518|
+|4     |  cacheLineXRAM__                      |XRAM1BE               |     4|
+|5     |  dirtySinglePort_pqbe_controlQueue_ff |FIFO10                |     1|
+|6     |  dirtySinglePort_pqbe_readQueue_ff    |FIFO1__parameterized1 |    17|
+|7     |  dirtyXRAM__                          |XRAM1                 |     1|
+|8     |  evictWay                             |Counter               |     2|
+|9     |  missRequestPendingFIFO               |FIFO1__parameterized2 |   221|
+|10    |  tagArrPort_pqbe_controlQueue_ff      |FIFO1__parameterized3 |   258|
+|11    |  tagArrPort_pqbe_readQueue_ff         |FIFO1__parameterized4 |    92|
+|12    |  tagSinglePort_pqbe_controlQueue_ff   |FIFO1__parameterized5 |  1172|
+|13    |  tagSinglePort_pqbe_readQueue_ff      |FIFO1__parameterized6 |    30|
+|14    |  tagXRAM__                            |XRAM2                 |    53|
+|15    |    xram2                              |XRAM2Async            |    53|
++------+---------------------------------------+----------------------+------+
+*** Complexity Characteristics (Cells)
++-------------------------------------+-----------------------+------+----------------+-----------------+-----------+---------+------------+----------+------------+------------+------------+------------+-----+------+------+------+
+|               Instance              |         Module        | Rent | Average Fanout | Total Instances | Registers |   LUT1  |    LUT2    |   LUT3   |    LUT4    |    LUT5    |    LUT6    | Memory LUT | DSP | RAMB | MUXF | URAM |
++-------------------------------------+-----------------------+------+----------------+-----------------+-----------+---------+------------+----------+------------+------------+------------+------------+-----+------+------+------+
+| (top)                               |             mkb2Cache | 0.69 |           2.68 |            4109 |      2302 | 1(0.1%) | 257(14.3%) | 44(2.4%) | 277(15.4%) | 389(21.6%) | 832(46.2%) |          0 |   0 |    3 |    0 |    4 |
+|  tagSinglePort_pqbe_controlQueue_ff | FIFO1__parameterized5 | 0.15 |           2.40 |            1168 |       269 | 0(0.0%) | 222(24.7%) |  5(0.6%) | 200(22.2%) | 338(37.6%) | 134(14.9%) |          0 |   0 |    0 |    0 |    0 |
++-------------------------------------+-----------------------+------+----------------+-----------------+-----------+---------+------------+----------+------------+------------+------------+------------+-----+------+------+------+
+
+** 128KB, 4mshr, 3F-DA req in flight
+*** CLB Logic Distribution
++--------------------------------------------+------+-------+------------+-----------+-------+
+|                  Site Type                 | Used | Fixed | Prohibited | Available | Util% |
++--------------------------------------------+------+-------+------------+-----------+-------+
+| CLB                                        |  401 |     0 |          0 |    216000 |  0.19 |
+|   CLBL                                     |  179 |     0 |            |           |       |
+|   CLBM                                     |  222 |     0 |            |           |       |
+| LUT as Logic                               | 1841 |     0 |          0 |   1728000 |  0.11 |
+|   using O5 output only                     |    9 |       |            |           |       |
+|   using O6 output only                     | 1564 |       |            |           |       |
+|   using O5 and O6                          |  268 |       |            |           |       |
+| LUT as Memory                              |  164 |     0 |          0 |    791040 |  0.02 |
+|   LUT as Distributed RAM                   |  164 |     0 |            |           |       |
+|     using O5 output only                   |    0 |       |            |           |       |
+|     using O6 output only                   |    0 |       |            |           |       |
+|     using O5 and O6                        |  164 |       |            |           |       |
+|   LUT as Shift Register                    |    0 |     0 |            |           |       |
+| CLB Registers                              | 2313 |     0 |          0 |   3456000 |  0.07 |
+|   Register driven from within the CLB      | 1478 |       |            |           |       |
+|   Register driven from outside the CLB     |  835 |       |            |           |       |
+|     LUT in front of the register is unused |  259 |       |            |           |       |
+|     LUT in front of the register is used   |  576 |       |            |           |       |
+| Unique Control Sets                        |   22 |       |          0 |    432000 | <0.01 |
++--------------------------------------------+------+-------+------------+-----------+-------+
+*** Critical Path
+  Data Path Delay:        3.435ns  (logic 1.550ns (45.124%)  route 1.885ns (54.876%))
+*** Instance Area:
++------+---------------------------------------+--------------------------+------+
+|      |Instance                               |Module                    |Cells |
++------+---------------------------------------+--------------------------+------+
+|1     |top                                    |                          |  4458|
+|2     |  cacheLinePort_controlQueue_ff        |SizedFIFO                 |   218|
+|3     |  cacheLinePort_readQueue_ff           |SizedFIFO__parameterized0 |   816|
+|4     |  cacheLineXRAM__                      |XRAM1BE                   |     4|
+|5     |  dirtySinglePort_pqbe_controlQueue_ff |FIFO10                    |     1|
+|6     |  dirtySinglePort_pqbe_readQueue_ff    |FIFO1                     |     9|
+|7     |  dirtyXRAM__                          |XRAM1                     |     1|
+|8     |  evictWay                             |Counter                   |     2|
+|9     |  missRequestPendingFIFO               |FIFO1__parameterized0     |   222|
+|10    |  tagArrPort_pqbe_controlQueue_ff      |FIFO1__parameterized1     |   241|
+|11    |  tagArrPort_pqbe_readQueue_ff         |FIFO1__parameterized2     |    95|
+|12    |  tagSinglePort_pqbe_controlQueue_ff   |FIFO1__parameterized3     |  1172|
+|13    |  tagSinglePort_pqbe_readQueue_ff      |FIFO1__parameterized4     |    42|
+|14    |  tagXRAM__                            |XRAM2                     |    53|
+|15    |    xram2                              |XRAM2Async                |    53|
++------+---------------------------------------+--------------------------+------+
+*** Complexity Characteristics (Cells)
++-------------------------------------+-----------------------+------+----------------+-----------------+-----------+---------+------------+----------+------------+------------+------------+------------+-----+------+------+------+
+|               Instance              |         Module        | Rent | Average Fanout | Total Instances | Registers |   LUT1  |    LUT2    |   LUT3   |    LUT4    |    LUT5    |    LUT6    | Memory LUT | DSP | RAMB | MUXF | URAM |
++-------------------------------------+-----------------------+------+----------------+-----------------+-----------+---------+------------+----------+------------+------------+------------+------------+-----+------+------+------+
+| (top)                               |             mkb2Cache | 0.63 |           2.91 |            4429 |      2313 | 1(0.0%) | 258(12.2%) | 52(2.5%) | 291(13.8%) | 656(31.1%) | 851(40.4%) |          0 |   0 |    3 |    0 |    4 |
+|  tagSinglePort_pqbe_controlQueue_ff | FIFO1__parameterized3 | 0.15 |           2.41 |            1168 |       269 | 0(0.0%) | 222(24.7%) |  5(0.6%) | 200(22.2%) | 338(37.6%) | 134(14.9%) |          0 |   0 |    0 |    0 |    0 |
++-------------------------------------+-----------------------+------+----------------+-----------------+-----------+---------+------------+----------+------------+------------+------------+------------+-----+------+------+------+
+** 128KB, 8mshr, F-DA req in flight
+*** CLB Logic Distribution
++--------------------------------------------+------+-------+------------+-----------+-------+
+|                  Site Type                 | Used | Fixed | Prohibited | Available | Util% |
++--------------------------------------------+------+-------+------------+-----------+-------+
+| CLB                                        |  479 |     0 |          0 |    216000 |  0.22 |
+|   CLBL                                     |  221 |     0 |            |           |       |
+|   CLBM                                     |  258 |     0 |            |           |       |
+| LUT as Logic                               | 2035 |     0 |          0 |   1728000 |  0.12 |
+|   using O5 output only                     |    5 |       |            |           |       |
+|   using O6 output only                     | 1719 |       |            |           |       |
+|   using O5 and O6                          |  311 |       |            |           |       |
+| LUT as Memory                              |  164 |     0 |          0 |    791040 |  0.02 |
+|   LUT as Distributed RAM                   |  164 |     0 |            |           |       |
+|     using O5 output only                   |    0 |       |            |           |       |
+|     using O6 output only                   |    0 |       |            |           |       |
+|     using O5 and O6                        |  164 |       |            |           |       |
+|   LUT as Shift Register                    |    0 |     0 |            |           |       |
+| CLB Registers                              | 2714 |     0 |          0 |   3456000 |  0.08 |
+|   Register driven from within the CLB      | 1315 |       |            |           |       |
+|   Register driven from outside the CLB     | 1399 |       |            |           |       |
+|     LUT in front of the register is unused |  704 |       |            |           |       |
+|     LUT in front of the register is used   |  695 |       |            |           |       |
+| Unique Control Sets                        |   26 |       |          0 |    432000 | <0.01 |
++--------------------------------------------+------+-------+------------+-----------+-------+
+*** Critical Path
+  Data Path Delay:        3.545ns  (logic 1.596ns (45.023%)  route 1.949ns (54.977%))
+*** Instance Area:
++------+---------------------------------------+--------------------------+------+
+|      |Instance                               |Module                    |Cells |
++------+---------------------------------------+--------------------------+------+
+|1     |top                                    |                          |  5182|
+|2     |  cacheLinePort_controlQueue_ff        |SizedFIFO                 |    86|
+|3     |  cacheLinePort_readQueue_ff           |SizedFIFO__parameterized0 |  1075|
+|4     |  cacheLineXRAM__                      |XRAM1BE                   |     4|
+|5     |  dirtySinglePort_pqbe_controlQueue_ff |FIFO10                    |     1|
+|6     |  dirtySinglePort_pqbe_readQueue_ff    |FIFO1                     |   316|
+|7     |  dirtyXRAM__                          |XRAM1                     |     1|
+|8     |  evictWay                             |Counter                   |     1|
+|9     |  missRequestPendingFIFO               |FIFO1__parameterized0     |    37|
+|10    |  tagArrPort_pqbe_controlQueue_ff      |FIFO1__parameterized1     |   296|
+|11    |  tagArrPort_pqbe_readQueue_ff         |FIFO1__parameterized2     |    94|
+|12    |  tagSinglePort_pqbe_controlQueue_ff   |FIFO1__parameterized3     |  1130|
+|13    |  tagSinglePort_pqbe_readQueue_ff      |FIFO1__parameterized4     |    25|
+|14    |  tagXRAM__                            |XRAM2                     |   130|
+|15    |    xram2                              |XRAM2Async                |   130|
++------+---------------------------------------+--------------------------+------+
+*** Complexity Characteristics (Cells)
++-------------------------------------+---------------------------+------+----------------+-----------------+-----------+---------+------------+------------+-----------+------------+-------------+------------+-----+------+------+------+
+|               Instance              |           Module          | Rent | Average Fanout | Total Instances | Registers |   LUT1  |    LUT2    |    LUT3    |    LUT4   |    LUT5    |     LUT6    | Memory LUT | DSP | RAMB | MUXF | URAM |
++-------------------------------------+---------------------------+------+----------------+-----------------+-----------+---------+------------+------------+-----------+------------+-------------+------------+-----+------+------+------+
+| (top)                               |                 mkb2Cache | 0.60 |           2.88 |            5166 |      2714 | 0(0.0%) |  228(9.7%) | 314(13.4%) | 201(8.6%) | 594(25.3%) | 1009(43.0%) |          0 |   0 |    3 |   99 |    4 |
+|  cacheLinePort_readQueue_ff         | SizedFIFO__parameterized0 | 0.26 |           2.86 |            1055 |       269 | 0(0.0%) |    0(0.0%) | 257(32.7%) |   1(0.1%) | 267(34.0%) |  261(33.2%) |          0 |   0 |    0 |    0 |    0 |
+|  tagSinglePort_pqbe_controlQueue_ff |     FIFO1__parameterized3 | 0.17 |           3.23 |            1136 |       269 | 0(0.0%) | 222(27.0%) |   12(1.5%) | 84(10.2%) |    9(1.1%) |  495(60.2%) |          0 |   0 |    0 |   45 |    0 |
++-------------------------------------+---------------------------+------+----------------+-----------------+-----------+---------+------------+------------+-----------+------------+-------------+------------+-----+------+------+------+
+
+** 128KB, 8mshr, F-DA req in flight -- storageRegs as RegFile
+*** CLB Logic Distribution
++--------------------------------------------+------+-------+------------+-----------+-------+
+|                  Site Type                 | Used | Fixed | Prohibited | Available | Util% |
++--------------------------------------------+------+-------+------------+-----------+-------+
+| CLB                                        |  388 |     0 |          0 |    216000 |  0.18 |
+|   CLBL                                     |  172 |     0 |            |           |       |
+|   CLBM                                     |  216 |     0 |            |           |       |
+| LUT as Logic                               | 1873 |     0 |          0 |   1728000 |  0.11 |
+|   using O5 output only                     |   11 |       |            |           |       |
+|   using O6 output only                     | 1585 |       |            |           |       |
+|   using O5 and O6                          |  277 |       |            |           |       |
+| LUT as Memory                              |  206 |     0 |          0 |    791040 |  0.03 |
+|   LUT as Distributed RAM                   |  206 |     0 |            |           |       |
+|     using O5 output only                   |    0 |       |            |           |       |
+|     using O6 output only                   |    0 |       |            |           |       |
+|     using O5 and O6                        |  206 |       |            |           |       |
+|   LUT as Shift Register                    |    0 |     0 |            |           |       |
+| CLB Registers                              | 2142 |     0 |          0 |   3456000 |  0.06 |
+|   Register driven from within the CLB      | 1435 |       |            |           |       |
+|   Register driven from outside the CLB     |  707 |       |            |           |       |
+|     LUT in front of the register is unused |  210 |       |            |           |       |
+|     LUT in front of the register is used   |  497 |       |            |           |       |
+| Unique Control Sets                        |   27 |       |          0 |    432000 | <0.01 |
++--------------------------------------------+------+-------+------------+-----------+-------+
+*** Critical Path
+  Data Path Delay:        3.626ns  (logic 1.578ns (43.516%)  route 2.048ns (56.484%))
+*** Complexity Characteristics (Cells)
++-------------------------------------+-----------------------+------+----------------+-----------------+-----------+---------+------------+----------+------------+------------+------------+------------+-----+------+------+------+
+|               Instance              |         Module        | Rent | Average Fanout | Total Instances | Registers |   LUT1  |    LUT2    |   LUT3   |    LUT4    |    LUT5    |    LUT6    | Memory LUT | DSP | RAMB | MUXF | URAM |
++-------------------------------------+-----------------------+------+----------------+-----------------+-----------+---------+------------+----------+------------+------------+------------+------------+-----+------+------+------+
+| (top)                               |             mkb2Cache | 0.63 |           3.03 |            4326 |      2142 | 1(0.0%) | 266(12.4%) | 61(2.8%) | 314(14.6%) | 673(31.3%) | 835(38.8%) |          0 |   0 |    3 |   27 |    4 |
+|  tagSinglePort_pqbe_controlQueue_ff | FIFO1__parameterized3 | 0.01 |           2.08 |            1148 |       269 | 0(0.0%) | 231(26.3%) |  7(0.8%) | 221(25.1%) | 346(39.4%) |   74(8.4%) |          0 |   0 |    0 |    0 |    0 |
++-------------------------------------+-----------------------+------+----------------+-----------------+-----------+---------+------------+----------+------------+------------+------------+------------+-----+------+------+------+
+
+** 128KB, 8mshr, F-DA req in flight -- storageRegs as RegFile -- packed clAddr
+*** CLB Logic Distribution
++--------------------------------------------+------+-------+------------+-----------+-------+
+|                  Site Type                 | Used | Fixed | Prohibited | Available | Util% |
++--------------------------------------------+------+-------+------------+-----------+-------+
+| CLB                                        |  387 |     0 |          0 |    216000 |  0.18 |
+|   CLBL                                     |  174 |     0 |            |           |       |
+|   CLBM                                     |  213 |     0 |            |           |       |
+| LUT as Logic                               | 1871 |     0 |          0 |   1728000 |  0.11 |
+|   using O5 output only                     |   11 |       |            |           |       |
+|   using O6 output only                     | 1583 |       |            |           |       |
+|   using O5 and O6                          |  277 |       |            |           |       |
+| LUT as Memory                              |  206 |     0 |          0 |    791040 |  0.03 |
+|   LUT as Distributed RAM                   |  206 |     0 |            |           |       |
+|     using O5 output only                   |    0 |       |            |           |       |
+|     using O6 output only                   |    0 |       |            |           |       |
+|     using O5 and O6                        |  206 |       |            |           |       |
+|   LUT as Shift Register                    |    0 |     0 |            |           |       |
+| CLB Registers                              | 2143 |     0 |          0 |   3456000 |  0.06 |
+|   Register driven from within the CLB      | 1442 |       |            |           |       |
+|   Register driven from outside the CLB     |  701 |       |            |           |       |
+|     LUT in front of the register is unused |  203 |       |            |           |       |
+|     LUT in front of the register is used   |  498 |       |            |           |       |
+| Unique Control Sets                        |   27 |       |          0 |    432000 | <0.01 |
++--------------------------------------------+------+-------+------------+-----------+-------+
+*** Critical Path
+  Data Path Delay:        3.679ns  (logic 1.526ns (41.480%)  route 2.153ns (58.520%))
+*** Complexity Characteristics (Cells)
++----------+-----------+------+----------------+-----------------+-----------+---------+------------+----------+------------+------------+------------+------------+-----+------+------+------+
+| Instance |   Module  | Rent | Average Fanout | Total Instances | Registers |   LUT1  |    LUT2    |   LUT3   |    LUT4    |    LUT5    |    LUT6    | Memory LUT | DSP | RAMB | MUXF | URAM |
++----------+-----------+------+----------------+-----------------+-----------+---------+------------+----------+------------+------------+------------+------------+-----+------+------+------+
+| (top)    | mkb2Cache | 0.65 |           3.03 |            4325 |      2143 | 1(0.0%) | 266(12.4%) | 48(2.2%) | 335(15.6%) | 673(31.3%) | 825(38.4%) |          0 |   0 |    3 |   27 |    4 |
++----------+-----------+------+----------------+-----------------+-----------+---------+------------+----------+------------+------------+------------+------------+-----+------+------+------+
+
+** 128KB, 8mshr, F-DA req in flight -- CHUKY
+*** CLB Logic Distribution
++--------------------------------------------+------+-------+------------+-----------+-------+
+|                  Site Type                 | Used | Fixed | Prohibited | Available | Util% |
++--------------------------------------------+------+-------+------------+-----------+-------+
+| CLB                                        |  165 |     0 |          0 |    216000 |  0.08 |
+|   CLBL                                     |   77 |     0 |            |           |       |
+|   CLBM                                     |   88 |     0 |            |           |       |
+| LUT as Logic                               |  861 |     0 |          0 |   1728000 |  0.05 |
+|   using O5 output only                     |    8 |       |            |           |       |
+|   using O6 output only                     |  771 |       |            |           |       |
+|   using O5 and O6                          |   82 |       |            |           |       |
+| LUT as Memory                              |   98 |     0 |          0 |    791040 |  0.01 |
+|   LUT as Distributed RAM                   |   98 |     0 |            |           |       |
+|     using O5 output only                   |    0 |       |            |           |       |
+|     using O6 output only                   |    0 |       |            |           |       |
+|     using O5 and O6                        |   98 |       |            |           |       |
+|   LUT as Shift Register                    |    0 |     0 |            |           |       |
+| CLB Registers                              |  903 |     0 |          0 |   3456000 |  0.03 |
+|   Register driven from within the CLB      |  472 |       |            |           |       |
+|   Register driven from outside the CLB     |  431 |       |            |           |       |
+|     LUT in front of the register is unused |  118 |       |            |           |       |
+|     LUT in front of the register is used   |  313 |       |            |           |       |
+| Unique Control Sets                        |   28 |       |          0 |    432000 | <0.01 |
++--------------------------------------------+------+-------+------------+-----------+-------+
+*** Critical Path
+  Data Path Delay:        3.600ns  (logic 1.524ns (42.337%)  route 2.076ns (57.663%))
+    Location             Delay type                Incr(ns)  Path(ns)    PBlock               Netlist Resource(s)
+  -------------------------------------------------------------------    ----------------------------------------
+                         (clock CLK rise edge)        0.000     0.000 r
+                                                      0.000     0.000 r                       CLK (IN)
+                         net (fo=1107, unset)         4.380     4.380                         dirtyXRAM__/CLK
+    RAMB18_X2Y312        RAMB18E2                                     r  pblock_1             dirtyXRAM__/ram_reg_bram_0/CLKARDCLK
+  -------------------------------------------------------------------    ----------------------------------------
+    RAMB18_X2Y312        RAMB18E2 (Prop_RAMB18E2_L_RAMB180_CLKARDCLK_DOUTADOUT[0])
+                                                      1.015     5.395 f  pblock_1             dirtyXRAM__/ram_reg_bram_0/DOUTADOUT[0]
+                         net (fo=4, routed)           0.426     5.821                         dirtySinglePort_pqbe_readQueue_ff/DOUTADOUT[0]
+    SLICE_X37Y781        LUT6 (Prop_F6LUT_SLICEM_I1_O)
+                                                      0.098     5.919 f  pblock_1             dirtySinglePort_pqbe_readQueue_ff/ring_empty_i_4/O
+                         net (fo=3, routed)           0.093     6.012                         cacheLinePort_controlQueue_ff/hasodata_reg_0
+    SLICE_X37Y781        LUT6 (Prop_C6LUT_SLICEM_I1_O)
+                                                      0.051     6.063 r  pblock_1             cacheLinePort_controlQueue_ff/ring_empty_i_3/O
+                         net (fo=111, routed)         0.164     6.227                         cacheLinePort_controlQueue_ff/p_54_in
+    SLICE_X38Y780        LUT3 (Prop_C5LUT_SLICEL_I1_O)
+                                                      0.110     6.337 f  pblock_1             cacheLinePort_controlQueue_ff/RDY_core_req_INST_0_i_20/O
+                         net (fo=1, routed)           0.172     6.509                         tagArrPort_pqbe_readQueue_ff/coreReqFifo_rv[69]_i_3_0
+    SLICE_X38Y780        LUT6 (Prop_F6LUT_SLICEL_I5_O)
+                                                      0.089     6.598 r  pblock_1             tagArrPort_pqbe_readQueue_ff/RDY_core_req_INST_0_i_10/O
+                         net (fo=3, routed)           0.145     6.744                         tagArrPort_pqbe_readQueue_ff/p_42_in
+    SLICE_X39Y781        LUT4 (Prop_B6LUT_SLICEM_I3_O)
+                                                      0.052     6.796 r  pblock_1             tagArrPort_pqbe_readQueue_ff/D_OUT[33]_i_2/O
+                         net (fo=4, routed)           0.258     7.053                         tagArrPort_pqbe_readQueue_ff/tagArrPort_pqbe_controlQueue_ff$DEQ
+    SLICE_X41Y781        LUT6 (Prop_F6LUT_SLICEM_I2_O)
+                                                      0.037     7.090 r  pblock_1             tagArrPort_pqbe_readQueue_ff/ram_reg_bram_0_i_33/O
+                         net (fo=3, routed)           0.091     7.182                         tagArrPort_pqbe_readQueue_ff/p_59_in
+    SLICE_X41Y781        LUT2 (Prop_B5LUT_SLICEM_I0_O)
+                                                      0.072     7.254 r  pblock_1             tagArrPort_pqbe_readQueue_ff/ram_reg_bram_0_i_1/O
+                         net (fo=76, routed)          0.726     7.980                         tagXRAM__/xram2/enB
+    RAMB36_X2Y154        RAMB36E2                                     r  pblock_1             tagXRAM__/xram2/ram_reg_bram_0/ENBWREN
+  -------------------------------------------------------------------    ----------------------------------------
+
+                         (clock CLK rise edge)        5.000     5.000 r
+                                                      0.000     5.000 r                       CLK (IN)
+                         net (fo=1107, unset)         3.793     8.793                         tagXRAM__/xram2/CLK
+    RAMB36_X2Y154        RAMB36E2                                     r  pblock_1             tagXRAM__/xram2/ram_reg_bram_0/CLKBWRCLK
+                         clock pessimism              0.313     9.106
+                         clock uncertainty           -0.035     9.071
+    RAMB36_X2Y154        RAMB36E2 (Setup_RAMB36E2_RAMB36_CLKBWRCLK_ENBWREN)
+                                                     -0.342     8.729    pblock_1               tagXRAM__/xram2/ram_reg_bram_0
+  -------------------------------------------------------------------
+                         required time                          8.729
+                         arrival time                          -7.980
+  -------------------------------------------------------------------
+                         slack                                  0.749
+*** Complexity Characteristics (Cells)
++----------+-----------+------+----------------+-----------------+-----------+---------+----------+----------+------------+------------+------------+------------+-----+------+------+------+
+| Instance |   Module  | Rent | Average Fanout | Total Instances | Registers |   LUT1  |   LUT2   |   LUT3   |    LUT4    |    LUT5    |    LUT6    | Memory LUT | DSP | RAMB | MUXF | URAM |
++----------+-----------+------+----------------+-----------------+-----------+---------+----------+----------+------------+------------+------------+------------+-----+------+------+------+
+| (top)    | mkb2Cache | 0.58 |           2.49 |            1880 |       903 | 1(0.1%) | 56(5.9%) | 59(6.3%) | 171(18.1%) | 244(25.9%) | 412(43.7%) |          0 |   0 |    3 |   27 |    4 |
++----------+-----------+------+----------------+-----------------+-----------+---------+----------+----------+------------+------------+------------+------------+-----+------+------+------+
+** 32KB, 4mshr, F-DA req in flight -- Chunky
+*** CLB Logic Distribution
++--------------------------------------------+------+-------+------------+-----------+-------+
+|                  Site Type                 | Used | Fixed | Prohibited | Available | Util% |
++--------------------------------------------+------+-------+------------+-----------+-------+
+| CLB                                        |  201 |     0 |          0 |    216000 |  0.09 |
+|   CLBL                                     |   88 |     0 |            |           |       |
+|   CLBM                                     |  113 |     0 |            |           |       |
+| LUT as Logic                               |  755 |     0 |          0 |   1728000 |  0.04 |
+|   using O5 output only                     |   33 |       |            |           |       |
+|   using O6 output only                     |  620 |       |            |           |       |
+|   using O5 and O6                          |  102 |       |            |           |       |
+| LUT as Memory                              |   98 |     0 |          0 |    791040 |  0.01 |
+|   LUT as Distributed RAM                   |   98 |     0 |            |           |       |
+|     using O5 output only                   |    0 |       |            |           |       |
+|     using O6 output only                   |    0 |       |            |           |       |
+|     using O5 and O6                        |   98 |       |            |           |       |
+|   LUT as Shift Register                    |    0 |     0 |            |           |       |
+| CLB Registers                              |  897 |     0 |          0 |   3456000 |  0.03 |
+|   Register driven from within the CLB      |  490 |       |            |           |       |
+|   Register driven from outside the CLB     |  407 |       |            |           |       |
+|     LUT in front of the register is unused |  248 |       |            |           |       |
+|     LUT in front of the register is used   |  159 |       |            |           |       |
+| Unique Control Sets                        |   24 |       |          0 |    432000 | <0.01 |
++--------------------------------------------+------+-------+------------+-----------+-------+
+
+*** Critical Path:
+  Data Path Delay:        3.919ns  (logic 1.695ns (43.246%)  route 2.224ns (56.754%))
+*** Complexity Characteristics
++----------+-----------+------+----------------+-----------------+-----------+---------+----------+-----------+------------+------------+------------+------------+-----+------+------+------+
+| Instance |   Module  | Rent | Average Fanout | Total Instances | Registers |   LUT1  |   LUT2   |    LUT3   |    LUT4    |    LUT5    |    LUT6    | Memory LUT | DSP | RAMB | MUXF | URAM |
++----------+-----------+------+----------------+-----------------+-----------+---------+----------+-----------+------------+------------+------------+------------+-----+------+------+------+
+| (top)    | mkb2Cache | 0.56 |           2.97 |            1764 |       897 | 2(0.2%) | 54(6.3%) | 88(10.3%) | 146(17.0%) | 214(25.0%) | 353(41.2%) |          0 |   0 |    3 |    0 |    1 |
++----------+-----------+------+----------------+-----------------+-----------+---------+----------+-----------+------------+------------+------------+------------+-----+------+------+------+
+
+* Discussions With Daniel:
+** On FPGA
+*** 2k BRAM (4kb)
+*** 1k URAM (32kb)
+*** 1M LUTS
+*** 8k DSPs
+** rv32i
+*** 800 LUTs
+*** 2 BRAMs
+** rv32im
+*** 1125 LUTs
+*** 2 BRAMs
+*** 4 DSPs
+** 48 cores
+*** 576 overall cores
+*** 650k
+*** 1.2k BRAMs
+** 8 cores/tile
+*** 128 kb/tile for 8 cores URAM
+** L2 makes sense around ~128-256
