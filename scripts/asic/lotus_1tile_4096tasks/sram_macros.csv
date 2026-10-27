@@ -1,0 +1,17 @@
+module,instance,logical_instances,logical_bits_per_instance,macro_id,depth_words,width_bits,read_write,exclusive_read,exclusive_write,depth_banks,width_slices,macros_per_instance,total_macros,uncalibrated_area_um2_per_macro,uncalibrated_sram_area_um2
+mkCoreBsv,core_dCache_dataArray,4,32768,sram_1024x8_75ec716fe44d,1024,8,2,0,0,1,4,4,16,674.785,10796.56
+mkCoreBsv,core_iCache_dataArray,4,32768,sram_512x32_2e9397644096,512,32,0,1,1,1,2,2,8,1298.74,10389.92
+mkL2CacheBank,dataArray,2,524288,sram_8192x8_951fbdca9fd8,8192,8,2,0,0,1,8,8,16,4608.65,73738.4
+mkL2CacheBank,statusArray,2,2560,sram_256x16_384ff074f5d9,256,16,0,1,1,1,1,1,2,370.252,740.504
+mkL2CacheBank,tagArray,2,18432,sram_256x24_45eaf7ed8a6a,256,24,0,1,1,1,4,4,8,543.787,4350.296
+mkTaskUnit,argsMemXram_0,1,524288,sram_8192x32_6ad57cb9da85,8192,32,1,1,0,1,2,2,2,17524.7,35049.4
+mkTaskUnit,argsMemXram_1,1,524288,sram_8192x32_6ad57cb9da85,8192,32,1,1,0,1,2,2,2,17524.7,35049.4
+mkTaskUnit,firstArgIdxMem,1,53248,sram_4096x16_7c7aa5036603,4096,16,1,1,0,1,1,1,1,4628.66,4628.66
+mkTaskUnit,inEdgesArrivedMem,1,49152,sram_8192x8_1922f8e21c59,8192,8,0,1,1,1,1,1,1,4524.41,4524.41
+mkTaskUnit,numInEdgesMinusOneMem,1,24576,sram_4096x8_94aa910732d1,4096,8,0,1,1,1,1,1,1,2356,2356
+mkTaskUnit,taskInfoMemXram,1,282624,sram_4096x72_fdd8fe6be325,4096,72,1,0,0,1,1,1,1,9660.47,9660.47
+mkTaskUnit,taskIsSkippableMem,1,8192,sram_8192x8_b81b1cdd3863,8192,8,1,0,1,1,1,1,1,4524.41,4524.41
+mkTaskPrioQueue,l1_bitmap,1,32768,sram_2048x8_573e729c89e0,2048,8,1,0,1,1,16,16,16,1245.14,19922.24
+mkTaskPrioQueue,l2_bitmap,1,2048,sram_128x8_3804d2eb04fe,128,8,1,0,1,1,16,16,16,112.568,1801.088
+mkTaskPrioQueue,l3_bitmap,1,128,sram_64x8_c248dd081b00,64,8,1,0,1,1,16,16,16,65.5723,1049.1568
+mkTokenSender,edgeTable_edgeTable,1,1179648,sram_16384x72_b652e875328b,16384,72,0,1,1,1,1,1,1,76364,76364

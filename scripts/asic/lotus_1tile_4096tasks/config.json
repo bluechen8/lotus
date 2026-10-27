@@ -27,5 +27,5 @@
   "clock_uncertainty_ns": 0,
   "clock_gating": "off",
   "standard_cell_corner": "ASAP7 v28 RVT TT 0.7V 25C",
-  "sram_evaluation": "Excluded; evaluated separately with FNCACTI"
+  "sram_evaluation": "Separate uncalibrated FN-CACTI macro estimate added to Genus logic area; see sram_result.json"
 }

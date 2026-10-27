@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "status": "validated",
+  "status": "validated_logic_with_uncalibrated_sram",
   "configuration": {
     "synthesized_top": "mkTile",
     "evaluated_tiles": 1,
@@ -30,7 +30,7 @@
     "clock_uncertainty_ns": 0,
     "clock_gating": "off",
     "standard_cell_corner": "ASAP7 v28 RVT TT 0.7V 25C",
-    "sram_evaluation": "Excluded; evaluated separately with FNCACTI"
+    "sram_evaluation": "Separate uncalibrated FN-CACTI macro estimate added to Genus logic area; see sram_result.json"
   },
   "logic_area_um2": 28362.9114,
   "logic_area_mm2": 0.0283629114,
@@ -41,42 +41,58 @@
     {
       "block": "cores_0",
       "standard_cells": 28488,
-      "logic_area_um2": 3891.37284
+      "logic_area_um2": 3891.37284,
+      "uncalibrated_sram_area_um2": 5296.62,
+      "combined_area_estimate_um2": 9187.99284
     },
     {
       "block": "cores_1",
       "standard_cells": 28318,
-      "logic_area_um2": 3886.96968
+      "logic_area_um2": 3886.96968,
+      "uncalibrated_sram_area_um2": 5296.62,
+      "combined_area_estimate_um2": 9183.58968
     },
     {
       "block": "cores_2",
       "standard_cells": 28487,
-      "logic_area_um2": 3891.16872
+      "logic_area_um2": 3891.16872,
+      "uncalibrated_sram_area_um2": 5296.62,
+      "combined_area_estimate_um2": 9187.78872
     },
     {
       "block": "cores_3",
       "standard_cells": 28401,
-      "logic_area_um2": 3888.80676
+      "logic_area_um2": 3888.80676,
+      "uncalibrated_sram_area_um2": 5296.62,
+      "combined_area_estimate_um2": 9185.42676
     },
     {
       "block": "l2",
       "standard_cells": 25754,
-      "logic_area_um2": 3973.98312
+      "logic_area_um2": 3973.98312,
+      "uncalibrated_sram_area_um2": 78829.2,
+      "combined_area_estimate_um2": 82803.18312
     },
     {
       "block": "other_tile_logic",
       "standard_cells": 10086,
-      "logic_area_um2": 1608.07194
+      "logic_area_um2": 1608.07194,
+      "uncalibrated_sram_area_um2": 0.0,
+      "combined_area_estimate_um2": 1608.07194
     },
     {
       "block": "taskUnit",
       "standard_cells": 26734,
-      "logic_area_um2": 4179.9402
+      "logic_area_um2": 4179.9402,
+      "uncalibrated_sram_area_um2": 118565.2348,
+      "combined_area_estimate_um2": 122745.175
     },
     {
       "block": "tokenSender",
       "standard_cells": 20831,
-      "logic_area_um2": 3042.59814
+      "logic_area_um2": 3042.59814,
+      "uncalibrated_sram_area_um2": 76364.0,
+      "combined_area_estimate_um2": 79406.59814
     }
   ],
   "timing": {
@@ -98,12 +114,14 @@
     "genus": "25.11-s095_1",
     "hammer": "1.2.0"
   },
-  "scope": "Standard cells outside logical XRAM boundaries; includes XRegFile",
+  "scope": "Genus standard cells outside logical XRAM boundaries (including XRegFile), plus separately modeled FN-CACTI SRAM macro footprints for one tile",
   "limitations": [
-    "SRAM storage and internal initialization, banking, masks, bypass and latency adapters excluded",
+    "Logic area excludes logical XRAM storage and internal adapters; FN-CACTI adds macro footprints but not external initialization, banking, mask, bypass or latency adapter logic",
     "FPGA power-up initialization disabled; no added ASIC startup/reset circuitry",
     "No placement/utilization, clock tree, routing, or inter-tile area",
-    "SRAM area is excluded and will be evaluated separately with FNCACTI."
+    "FN-CACTI uses 14 nm devices and 7 nm ASAP7 wires; SRAM and combined area are uncalibrated estimates, not characterized ASAP7 macro results",
+    "Macro allocation uses the configured analytical candidate grid and DefaultMetric; FN-CACTI minimizes internal area without a 1 ns SRAM timing constraint",
+    "Independent local elaboration of the same configuration; original Genus manifest unavailable locally. No claim of byte-identical RTL or exact Genus SRAM inventory equivalence."
   ],
   "validation": {
     "normal_exit": true,
@@ -112,7 +130,10 @@
     "netlist_inventory_timing_hashes_verified": true,
     "liberty_inventory_areas_verified": true,
     "logical_memory_retention_verified": true,
-    "full_timing_closure": false
+    "full_timing_closure": false,
+    "sram_model_outputs_and_mapping_revalidated": true,
+    "sram_elaboration_configuration_matches": true,
+    "exact_genus_sram_inventory_compared": false
   },
   "provenance": {
     "lotus_commit": "0cc42debea55d12c90a7c0fe72664a08385dec53",
@@ -228,5 +249,24 @@
       "build/hammer-genus-1ns-final/obj/syn-rundir/reports/final_area.rpt": "3dab55cfd2fc81db8d665a371932b23c5e3700be45c79387245e0805869ada32",
       "build/hammer-genus-1ns-final/obj/syn-rundir/reports/lotus_timing.rpt": "c5bcc76791f9cab69f4e05593b8f04bdc24e99c0b8793f6bd31de7b905469c30"
     }
+  },
+  "uncalibrated_sram_area_um2": 294944.9148,
+  "uncalibrated_sram_area_mm2": 0.2949449148,
+  "combined_area_estimate_um2": 323307.8262,
+  "combined_area_estimate_mm2": 0.3233078262,
+  "sram": {
+    "status": "complete_uncalibrated",
+    "logical_instances": 25,
+    "logical_bits": 4033664,
+    "macro_instances": 108,
+    "allocated_bits": 4407296,
+    "padding_bits": 373632,
+    "uncalibrated_sram_area_um2": 294944.9148,
+    "unique_macro_models": 15,
+    "evidence": "sram_result.json",
+    "evidence_sha256": "32dd8ee3f179c1414f28337f4db15bfe4c18512e7dd107d7dffe18bdcd62b01c",
+    "technology_note": "Uncalibrated 14 nm FinFET devices with 7 nm ASAP7 wires; do not add this area to ASAP7 standard-cell area as a calibrated 7 nm total.",
+    "scope": "Macro footprints only; external adapters excluded; no SRAM timing closure claim",
+    "provenance_note": "Independent local elaboration of the same configuration; original Genus manifest unavailable locally. No claim of byte-identical RTL or exact Genus SRAM inventory equivalence."
   }
 }

@@ -1,0 +1,2971 @@
+{
+  "schema_version": 1,
+  "kind": "SRAM area report snapshot; not a synthesis manifest",
+  "provenance": {
+    "source_manifest": "build/hammer-native-1.3ns/manifest.json",
+    "source_manifest_sha256": "e40ce265c4a276ebe80ff808e524db6b444dc4c86cbb32d9ca17d2c2592bb8c9",
+    "source_build": "build/fast64t4096e",
+    "source_sha256": {
+      "mkTile": "489e292eceb5029f12e78e12cbe494be360525ec8fff4b60a8e3387e58005f99",
+      "mkCoreBsv": "5f9800b17b019e6e02caf31d12ae6f1ee43b3c10b7dc6a0d24b2b536b7983022",
+      "mkL2Cache": "853737f8dd5b24e6611e63ccbc2fe39542df7679301557968056c6373cedb151",
+      "mkL2CacheBank": "f67113521594bb6f5ec3ccc95744b0dab1e4585afe20a44d2aa6f1b450e662d7",
+      "mkCoreReqSwitch": "0a74d9f3c71e58fda51ab751a31334a03ed1e7e19f1edee5db95be336cf6146c",
+      "mkCoreRespSwitchEven": "5c2e0138037d1baad0ea3b9324d98d6a61c12efb3ef7382177a873aa826e5a92",
+      "mkCoreRespSwitchOdd": "d46132c17eb1b579930768ab7403ec26c9ee73c67e9a8db27b1c48d49f12cf76",
+      "mkMemToSIP": "4b58f58a47ed65297a6df474b4331492dd2ffe166ab729264d4166de1d6bd969",
+      "mkTaskUnit": "9deab60c53732a18f7f165549ba63fa69c246406c23d28e37ee241650ef07738",
+      "mkTaskPrioQueue": "ca7b152315b5008449a6cf0c65cd138933d6ac6b5fe4b0418b4dab2a7a53ee22",
+      "mkTokenSender": "daafdfa17f87a5b79878113627b0c1dd218ec9ed8f4ec3b239e1c5e19fe98ea0"
+    },
+    "report_base_commit": "ce71f1d3db2a8940f7a506f2a3a218f68df5246b",
+    "elaboration_defines": {
+      "NUM_TILES_DEFINE": 64,
+      "NUM_DEVICES_DEFINE": 1,
+      "NUM_CORES_PER_TILE_DEFINE": 4,
+      "NUM_TASKS_PER_TILE_DEFINE": 4096,
+      "AVG_OUT_EDGES_PER_TASK_DEFINE": 8,
+      "MAX_OUT_EDGES_PER_TASK_DEFINE": 63,
+      "AVG_ARGS_PER_TASK_DEFINE": 4,
+      "MAX_ARGS_PER_TASK_DEFINE": 15,
+      "L2_CACHE_SIZE_KB": 128,
+      "L2_CACHE_BANKS": 2,
+      "NUM_TILES_PER_SWITCH_PORT": 4,
+      "NUM_TILES_PER_MEM_CHANNEL": 4,
+      "LOTUS_API_VERSION_DEFINE": 2026041401
+    },
+    "elaboration_action": "reports/sram_source_build.txt",
+    "elaboration_action_sha256": "f9f999a51224baab1d68437ee2d4a03b4bf559aea316385bd78a63eb3c523279",
+    "elaboration_action_matches_genus_configuration": true,
+    "elaboration_output_md5_matches_scons_record": true,
+    "declaration_sources_match_genus_commit": true,
+    "exact_genus_raw_rtl_hashes_match": false,
+    "exact_genus_memory_inventory_compared": false,
+    "note": "Independent local elaboration of the same configuration; original Genus manifest unavailable locally. No claim of byte-identical RTL or exact Genus SRAM inventory equivalence.",
+    "scripts_sha256": {
+      "scripts/asic/fncacti.py": "d95fac3ab58eca641698cfbf9b28f7cf5ec42655c4bee9318cbb0aad6a6fc20f",
+      "scripts/asic/sram.py": "c0e3338ae877d16a3159553dd960374fef601f99589c8539dc26dca71e10eae4",
+      "scripts/asic/fncacti_policy.json": "11d7499c093239c998591da149c37ed03041b0b33b8c75e6122e1014d73b1987"
+    }
+  },
+  "memory_inventory": [
+    {
+      "logical": {
+        "module": "mkCoreBsv",
+        "instance": "core_dCache_dataArray",
+        "type": "XRAM2BE",
+        "multiplicity": 4,
+        "parameters": {
+          "ADDR_WIDTH": 10,
+          "DATA_WIDTH": 32,
+          "CHUNK_SIZE": 8,
+          "READ_LATENCY": 1,
+          "MODEA": 1,
+          "MODEB": 1,
+          "NUM_WORDS": 1024
+        },
+        "raw_bits": 32768,
+        "ports": [
+          {
+            "name": "A",
+            "role": "RW",
+            "mode": "WRITE_FIRST",
+            "depth_words": 1024,
+            "width_bits": 32,
+            "write_granularity_bits": 8
+          },
+          {
+            "name": "B",
+            "role": "RW",
+            "mode": "WRITE_FIRST",
+            "depth_words": 1024,
+            "width_bits": 32,
+            "write_granularity_bits": 8
+          }
+        ],
+        "source": {
+          "declaration": {
+            "path": "lotus/core/DCache.ms",
+            "line": 88,
+            "sha256": "055c78d369a6fb3164bb0e8ed3df3268a5ac81be6703bad9458897093dd8ae7f"
+          },
+          "verilog": {
+            "path": "/home/ubuntu/lotus_boru/build/fast64t4096e/hdl/bsv/mkCoreBsv.v",
+            "line": 1042
+          }
+        }
+      },
+      "mapping": {
+        "status": "mapped",
+        "macros": [
+          {
+            "id": "sram_1024x8_75ec716fe44d",
+            "depth_words": 1024,
+            "width_bits": 8,
+            "ports": {
+              "read_write": 2,
+              "exclusive_read": 0,
+              "exclusive_write": 0
+            },
+            "uca_banks": 1,
+            "depth_banks": 1,
+            "width_slices": 4,
+            "macros_per_instance": 4,
+            "total_macros": 16
+          }
+        ],
+        "logical_row_depth_words": 1024,
+        "independent_boundary_bits": 8,
+        "bit_slices": [
+          {
+            "lsb": 0,
+            "msb": 7
+          },
+          {
+            "lsb": 8,
+            "msb": 15
+          },
+          {
+            "lsb": 16,
+            "msb": 23
+          },
+          {
+            "lsb": 24,
+            "msb": 31
+          }
+        ],
+        "allocated_bits_per_instance": 32768,
+        "padding_bits_per_instance": 0,
+        "selection": {
+          "metric": "MacroCompiler DefaultMetric (unmasked candidates)",
+          "cost": 0.2,
+          "wasted_fraction": 0.0,
+          "instance_penalty": 0.2,
+          "mask_penalty": 0,
+          "evaluated_candidates": 198,
+          "tie_break": "cost, instance count, allocated bits, width, depth",
+          "scope": "One repeated geometry per logical RAM; Lotus mask/asymmetric-port normalization precedes search"
+        },
+        "port_addressing": [
+          {
+            "port": "A",
+            "slices_per_access": 4,
+            "lane_groups": 1,
+            "rule": "group = address % lane_groups; row = address // lane_groups; wide-word bit = group * port width + port bit; locate in bit_slices; macro bit = wide-word bit - slice lsb; depth bank = row // macro depth; macro address = row % macro depth"
+          },
+          {
+            "port": "B",
+            "slices_per_access": 4,
+            "lane_groups": 1,
+            "rule": "group = address % lane_groups; row = address // lane_groups; wide-word bit = group * port width + port bit; locate in bit_slices; macro bit = wide-word bit - slice lsb; depth bank = row // macro depth; macro address = row % macro depth"
+          }
+        ],
+        "decision": "Search the explicit analytical width/depth grid. Split on port-word/write-mask boundaries and at candidate width; allow partially used final slices. Minimize wasted fraction + 0.05 per macro.",
+        "external_adapters": "Address/lane selection, output muxes, mask enables and any bypass/latency/initialization logic are not generated or included in modeled macro area"
+      },
+      "estimation": {
+        "status": "complete",
+        "macro_ids": [
+          "sram_1024x8_75ec716fe44d"
+        ],
+        "area_um2_per_instance": 2699.14,
+        "area_um2_all_instances": 10796.56,
+        "physical_dimensions": "See sram_model.runs[macro_id].result.physical_dimensions_um",
+        "scope": "Uncalibrated macro footprint only; external adapters excluded"
+      }
+    },
+    {
+      "logical": {
+        "module": "mkCoreBsv",
+        "instance": "core_iCache_dataArray",
+        "type": "XRAM2",
+        "multiplicity": 4,
+        "parameters": {
+          "ADDR_WIDTH": 10,
+          "DATA_WIDTH": 32,
+          "READ_LATENCY": 1,
+          "MODEA": 4,
+          "MODEB": 3,
+          "NUM_WORDS": 1024,
+          "LOG_RATIOB": 1
+        },
+        "raw_bits": 32768,
+        "ports": [
+          {
+            "name": "A",
+            "role": "R",
+            "mode": "READ_ONLY",
+            "depth_words": 1024,
+            "width_bits": 32,
+            "write_granularity_bits": null
+          },
+          {
+            "name": "B",
+            "role": "W",
+            "mode": "WRITE_ONLY",
+            "depth_words": 512,
+            "width_bits": 64,
+            "write_granularity_bits": 64
+          }
+        ],
+        "source": {
+          "declaration": {
+            "path": "lotus/core/ICache.ms",
+            "line": 73,
+            "sha256": "3f55cf5866710d223eca3dcd6ac9ae0a6ad130c4b5de380d7f9df0bddfcd07f7"
+          },
+          "verilog": {
+            "path": "/home/ubuntu/lotus_boru/build/fast64t4096e/hdl/bsv/mkCoreBsv.v",
+            "line": 1102
+          }
+        }
+      },
+      "mapping": {
+        "status": "mapped",
+        "macros": [
+          {
+            "id": "sram_512x32_2e9397644096",
+            "depth_words": 512,
+            "width_bits": 32,
+            "ports": {
+              "read_write": 0,
+              "exclusive_read": 1,
+              "exclusive_write": 1
+            },
+            "uca_banks": 1,
+            "depth_banks": 1,
+            "width_slices": 2,
+            "macros_per_instance": 2,
+            "total_macros": 8
+          }
+        ],
+        "logical_row_depth_words": 512,
+        "independent_boundary_bits": 32,
+        "bit_slices": [
+          {
+            "lsb": 0,
+            "msb": 31
+          },
+          {
+            "lsb": 32,
+            "msb": 63
+          }
+        ],
+        "allocated_bits_per_instance": 32768,
+        "padding_bits_per_instance": 0,
+        "selection": {
+          "metric": "MacroCompiler DefaultMetric (unmasked candidates)",
+          "cost": 0.1,
+          "wasted_fraction": 0.0,
+          "instance_penalty": 0.1,
+          "mask_penalty": 0,
+          "evaluated_candidates": 198,
+          "tie_break": "cost, instance count, allocated bits, width, depth",
+          "scope": "One repeated geometry per logical RAM; Lotus mask/asymmetric-port normalization precedes search"
+        },
+        "port_addressing": [
+          {
+            "port": "A",
+            "slices_per_access": 1,
+            "lane_groups": 2,
+            "rule": "group = address % lane_groups; row = address // lane_groups; wide-word bit = group * port width + port bit; locate in bit_slices; macro bit = wide-word bit - slice lsb; depth bank = row // macro depth; macro address = row % macro depth"
+          },
+          {
+            "port": "B",
+            "slices_per_access": 2,
+            "lane_groups": 1,
+            "rule": "group = address % lane_groups; row = address // lane_groups; wide-word bit = group * port width + port bit; locate in bit_slices; macro bit = wide-word bit - slice lsb; depth bank = row // macro depth; macro address = row % macro depth"
+          }
+        ],
+        "decision": "Search the explicit analytical width/depth grid. Split on port-word/write-mask boundaries and at candidate width; allow partially used final slices. Minimize wasted fraction + 0.05 per macro.",
+        "external_adapters": "Address/lane selection, output muxes, mask enables and any bypass/latency/initialization logic are not generated or included in modeled macro area"
+      },
+      "estimation": {
+        "status": "complete",
+        "macro_ids": [
+          "sram_512x32_2e9397644096"
+        ],
+        "area_um2_per_instance": 2597.48,
+        "area_um2_all_instances": 10389.92,
+        "physical_dimensions": "See sram_model.runs[macro_id].result.physical_dimensions_um",
+        "scope": "Uncalibrated macro footprint only; external adapters excluded"
+      }
+    },
+    {
+      "logical": {
+        "module": "mkL2CacheBank",
+        "instance": "dataArray",
+        "type": "XRAM2BE",
+        "multiplicity": 2,
+        "parameters": {
+          "ADDR_WIDTH": 13,
+          "DATA_WIDTH": 64,
+          "CHUNK_SIZE": 8,
+          "READ_LATENCY": 2,
+          "MODEA": 0,
+          "MODEB": 0,
+          "NUM_WORDS": 8192
+        },
+        "raw_bits": 524288,
+        "ports": [
+          {
+            "name": "A",
+            "role": "RW",
+            "mode": "NO_CHANGE",
+            "depth_words": 8192,
+            "width_bits": 64,
+            "write_granularity_bits": 8
+          },
+          {
+            "name": "B",
+            "role": "RW",
+            "mode": "NO_CHANGE",
+            "depth_words": 8192,
+            "width_bits": 64,
+            "write_granularity_bits": 8
+          }
+        ],
+        "source": {
+          "declaration": {
+            "path": "lotus/l2Cache/L2CacheBank.bsv",
+            "line": 473,
+            "sha256": "5e5d1892c1a2f71f55dc7c890514ed35897151f2996c18af50202f0fa48dde59"
+          },
+          "verilog": {
+            "path": "/home/ubuntu/lotus_boru/build/fast64t4096e/hdl/bsv/mkL2CacheBank.v",
+            "line": 913
+          }
+        }
+      },
+      "mapping": {
+        "status": "mapped",
+        "macros": [
+          {
+            "id": "sram_8192x8_951fbdca9fd8",
+            "depth_words": 8192,
+            "width_bits": 8,
+            "ports": {
+              "read_write": 2,
+              "exclusive_read": 0,
+              "exclusive_write": 0
+            },
+            "uca_banks": 1,
+            "depth_banks": 1,
+            "width_slices": 8,
+            "macros_per_instance": 8,
+            "total_macros": 16
+          }
+        ],
+        "logical_row_depth_words": 8192,
+        "independent_boundary_bits": 8,
+        "bit_slices": [
+          {
+            "lsb": 0,
+            "msb": 7
+          },
+          {
+            "lsb": 8,
+            "msb": 15
+          },
+          {
+            "lsb": 16,
+            "msb": 23
+          },
+          {
+            "lsb": 24,
+            "msb": 31
+          },
+          {
+            "lsb": 32,
+            "msb": 39
+          },
+          {
+            "lsb": 40,
+            "msb": 47
+          },
+          {
+            "lsb": 48,
+            "msb": 55
+          },
+          {
+            "lsb": 56,
+            "msb": 63
+          }
+        ],
+        "allocated_bits_per_instance": 524288,
+        "padding_bits_per_instance": 0,
+        "selection": {
+          "metric": "MacroCompiler DefaultMetric (unmasked candidates)",
+          "cost": 0.4,
+          "wasted_fraction": 0.0,
+          "instance_penalty": 0.4,
+          "mask_penalty": 0,
+          "evaluated_candidates": 198,
+          "tie_break": "cost, instance count, allocated bits, width, depth",
+          "scope": "One repeated geometry per logical RAM; Lotus mask/asymmetric-port normalization precedes search"
+        },
+        "port_addressing": [
+          {
+            "port": "A",
+            "slices_per_access": 8,
+            "lane_groups": 1,
+            "rule": "group = address % lane_groups; row = address // lane_groups; wide-word bit = group * port width + port bit; locate in bit_slices; macro bit = wide-word bit - slice lsb; depth bank = row // macro depth; macro address = row % macro depth"
+          },
+          {
+            "port": "B",
+            "slices_per_access": 8,
+            "lane_groups": 1,
+            "rule": "group = address % lane_groups; row = address // lane_groups; wide-word bit = group * port width + port bit; locate in bit_slices; macro bit = wide-word bit - slice lsb; depth bank = row // macro depth; macro address = row % macro depth"
+          }
+        ],
+        "decision": "Search the explicit analytical width/depth grid. Split on port-word/write-mask boundaries and at candidate width; allow partially used final slices. Minimize wasted fraction + 0.05 per macro.",
+        "external_adapters": "Address/lane selection, output muxes, mask enables and any bypass/latency/initialization logic are not generated or included in modeled macro area"
+      },
+      "estimation": {
+        "status": "complete",
+        "macro_ids": [
+          "sram_8192x8_951fbdca9fd8"
+        ],
+        "area_um2_per_instance": 36869.2,
+        "area_um2_all_instances": 73738.4,
+        "physical_dimensions": "See sram_model.runs[macro_id].result.physical_dimensions_um",
+        "scope": "Uncalibrated macro footprint only; external adapters excluded"
+      }
+    },
+    {
+      "logical": {
+        "module": "mkL2CacheBank",
+        "instance": "statusArray",
+        "type": "XRAM2",
+        "multiplicity": 2,
+        "parameters": {
+          "ADDR_WIDTH": 8,
+          "DATA_WIDTH": 10,
+          "READ_LATENCY": 1,
+          "MODEA": 3,
+          "MODEB": 4,
+          "NUM_WORDS": 256,
+          "LOG_RATIOB": 0
+        },
+        "raw_bits": 2560,
+        "ports": [
+          {
+            "name": "A",
+            "role": "W",
+            "mode": "WRITE_ONLY",
+            "depth_words": 256,
+            "width_bits": 10,
+            "write_granularity_bits": 10
+          },
+          {
+            "name": "B",
+            "role": "R",
+            "mode": "READ_ONLY",
+            "depth_words": 256,
+            "width_bits": 10,
+            "write_granularity_bits": null
+          }
+        ],
+        "source": {
+          "declaration": {
+            "path": "lotus/l2Cache/L2CacheBank.bsv",
+            "line": 469,
+            "sha256": "5e5d1892c1a2f71f55dc7c890514ed35897151f2996c18af50202f0fa48dde59"
+          },
+          "verilog": {
+            "path": "/home/ubuntu/lotus_boru/build/fast64t4096e/hdl/bsv/mkL2CacheBank.v",
+            "line": 1081
+          }
+        }
+      },
+      "mapping": {
+        "status": "mapped",
+        "macros": [
+          {
+            "id": "sram_256x16_384ff074f5d9",
+            "depth_words": 256,
+            "width_bits": 16,
+            "ports": {
+              "read_write": 0,
+              "exclusive_read": 1,
+              "exclusive_write": 1
+            },
+            "uca_banks": 1,
+            "depth_banks": 1,
+            "width_slices": 1,
+            "macros_per_instance": 1,
+            "total_macros": 2
+          }
+        ],
+        "logical_row_depth_words": 256,
+        "independent_boundary_bits": 10,
+        "bit_slices": [
+          {
+            "lsb": 0,
+            "msb": 9
+          }
+        ],
+        "allocated_bits_per_instance": 4096,
+        "padding_bits_per_instance": 1536,
+        "selection": {
+          "metric": "MacroCompiler DefaultMetric (unmasked candidates)",
+          "cost": 0.65,
+          "wasted_fraction": 0.6,
+          "instance_penalty": 0.05,
+          "mask_penalty": 0,
+          "evaluated_candidates": 198,
+          "tie_break": "cost, instance count, allocated bits, width, depth",
+          "scope": "One repeated geometry per logical RAM; Lotus mask/asymmetric-port normalization precedes search"
+        },
+        "port_addressing": [
+          {
+            "port": "A",
+            "slices_per_access": 1,
+            "lane_groups": 1,
+            "rule": "group = address % lane_groups; row = address // lane_groups; wide-word bit = group * port width + port bit; locate in bit_slices; macro bit = wide-word bit - slice lsb; depth bank = row // macro depth; macro address = row % macro depth"
+          },
+          {
+            "port": "B",
+            "slices_per_access": 1,
+            "lane_groups": 1,
+            "rule": "group = address % lane_groups; row = address // lane_groups; wide-word bit = group * port width + port bit; locate in bit_slices; macro bit = wide-word bit - slice lsb; depth bank = row // macro depth; macro address = row % macro depth"
+          }
+        ],
+        "decision": "Search the explicit analytical width/depth grid. Split on port-word/write-mask boundaries and at candidate width; allow partially used final slices. Minimize wasted fraction + 0.05 per macro.",
+        "external_adapters": "Address/lane selection, output muxes, mask enables and any bypass/latency/initialization logic are not generated or included in modeled macro area"
+      },
+      "estimation": {
+        "status": "complete",
+        "macro_ids": [
+          "sram_256x16_384ff074f5d9"
+        ],
+        "area_um2_per_instance": 370.252,
+        "area_um2_all_instances": 740.504,
+        "physical_dimensions": "See sram_model.runs[macro_id].result.physical_dimensions_um",
+        "scope": "Uncalibrated macro footprint only; external adapters excluded"
+      }
+    },
+    {
+      "logical": {
+        "module": "mkL2CacheBank",
+        "instance": "tagArray",
+        "type": "XRAM2",
+        "multiplicity": 2,
+        "parameters": {
+          "ADDR_WIDTH": 10,
+          "DATA_WIDTH": 18,
+          "READ_LATENCY": 1,
+          "MODEA": 3,
+          "MODEB": 4,
+          "NUM_WORDS": 1024,
+          "LOG_RATIOB": 2
+        },
+        "raw_bits": 18432,
+        "ports": [
+          {
+            "name": "A",
+            "role": "W",
+            "mode": "WRITE_ONLY",
+            "depth_words": 1024,
+            "width_bits": 18,
+            "write_granularity_bits": 18
+          },
+          {
+            "name": "B",
+            "role": "R",
+            "mode": "READ_ONLY",
+            "depth_words": 256,
+            "width_bits": 72,
+            "write_granularity_bits": null
+          }
+        ],
+        "source": {
+          "declaration": {
+            "path": "lotus/l2Cache/L2CacheBank.bsv",
+            "line": 465,
+            "sha256": "5e5d1892c1a2f71f55dc7c890514ed35897151f2996c18af50202f0fa48dde59"
+          },
+          "verilog": {
+            "path": "/home/ubuntu/lotus_boru/build/fast64t4096e/hdl/bsv/mkL2CacheBank.v",
+            "line": 1103
+          }
+        }
+      },
+      "mapping": {
+        "status": "mapped",
+        "macros": [
+          {
+            "id": "sram_256x24_45eaf7ed8a6a",
+            "depth_words": 256,
+            "width_bits": 24,
+            "ports": {
+              "read_write": 0,
+              "exclusive_read": 1,
+              "exclusive_write": 1
+            },
+            "uca_banks": 1,
+            "depth_banks": 1,
+            "width_slices": 4,
+            "macros_per_instance": 4,
+            "total_macros": 8
+          }
+        ],
+        "logical_row_depth_words": 256,
+        "independent_boundary_bits": 18,
+        "bit_slices": [
+          {
+            "lsb": 0,
+            "msb": 17
+          },
+          {
+            "lsb": 18,
+            "msb": 35
+          },
+          {
+            "lsb": 36,
+            "msb": 53
+          },
+          {
+            "lsb": 54,
+            "msb": 71
+          }
+        ],
+        "allocated_bits_per_instance": 24576,
+        "padding_bits_per_instance": 6144,
+        "selection": {
+          "metric": "MacroCompiler DefaultMetric (unmasked candidates)",
+          "cost": 0.5333333333333333,
+          "wasted_fraction": 0.3333333333333333,
+          "instance_penalty": 0.2,
+          "mask_penalty": 0,
+          "evaluated_candidates": 198,
+          "tie_break": "cost, instance count, allocated bits, width, depth",
+          "scope": "One repeated geometry per logical RAM; Lotus mask/asymmetric-port normalization precedes search"
+        },
+        "port_addressing": [
+          {
+            "port": "A",
+            "slices_per_access": 1,
+            "lane_groups": 4,
+            "rule": "group = address % lane_groups; row = address // lane_groups; wide-word bit = group * port width + port bit; locate in bit_slices; macro bit = wide-word bit - slice lsb; depth bank = row // macro depth; macro address = row % macro depth"
+          },
+          {
+            "port": "B",
+            "slices_per_access": 4,
+            "lane_groups": 1,
+            "rule": "group = address % lane_groups; row = address // lane_groups; wide-word bit = group * port width + port bit; locate in bit_slices; macro bit = wide-word bit - slice lsb; depth bank = row // macro depth; macro address = row % macro depth"
+          }
+        ],
+        "decision": "Search the explicit analytical width/depth grid. Split on port-word/write-mask boundaries and at candidate width; allow partially used final slices. Minimize wasted fraction + 0.05 per macro.",
+        "external_adapters": "Address/lane selection, output muxes, mask enables and any bypass/latency/initialization logic are not generated or included in modeled macro area"
+      },
+      "estimation": {
+        "status": "complete",
+        "macro_ids": [
+          "sram_256x24_45eaf7ed8a6a"
+        ],
+        "area_um2_per_instance": 2175.148,
+        "area_um2_all_instances": 4350.296,
+        "physical_dimensions": "See sram_model.runs[macro_id].result.physical_dimensions_um",
+        "scope": "Uncalibrated macro footprint only; external adapters excluded"
+      }
+    },
+    {
+      "logical": {
+        "module": "mkTaskUnit",
+        "instance": "argsMemXram_0",
+        "type": "XRAM2BE",
+        "multiplicity": 1,
+        "parameters": {
+          "ADDR_WIDTH": 13,
+          "DATA_WIDTH": 64,
+          "CHUNK_SIZE": 32,
+          "READ_LATENCY": 2,
+          "MODEA": 4,
+          "MODEB": 0,
+          "NUM_WORDS": 8192
+        },
+        "raw_bits": 524288,
+        "ports": [
+          {
+            "name": "A",
+            "role": "R",
+            "mode": "READ_ONLY",
+            "depth_words": 8192,
+            "width_bits": 64,
+            "write_granularity_bits": null
+          },
+          {
+            "name": "B",
+            "role": "RW",
+            "mode": "NO_CHANGE",
+            "depth_words": 8192,
+            "width_bits": 64,
+            "write_granularity_bits": 32
+          }
+        ],
+        "source": {
+          "declaration": {
+            "path": "lotus/taskUnit/TaskUnit.bsv",
+            "line": 412,
+            "sha256": "09b50cd7c40f8e70dedd4f2da422e16f2f7a7769ed5d0a0eb6235826bf41694a"
+          },
+          "verilog": {
+            "path": "/home/ubuntu/lotus_boru/build/fast64t4096e/hdl/bsv/mkTaskUnit.v",
+            "line": 1350
+          }
+        }
+      },
+      "mapping": {
+        "status": "mapped",
+        "macros": [
+          {
+            "id": "sram_8192x32_6ad57cb9da85",
+            "depth_words": 8192,
+            "width_bits": 32,
+            "ports": {
+              "read_write": 1,
+              "exclusive_read": 1,
+              "exclusive_write": 0
+            },
+            "uca_banks": 1,
+            "depth_banks": 1,
+            "width_slices": 2,
+            "macros_per_instance": 2,
+            "total_macros": 2
+          }
+        ],
+        "logical_row_depth_words": 8192,
+        "independent_boundary_bits": 32,
+        "bit_slices": [
+          {
+            "lsb": 0,
+            "msb": 31
+          },
+          {
+            "lsb": 32,
+            "msb": 63
+          }
+        ],
+        "allocated_bits_per_instance": 524288,
+        "padding_bits_per_instance": 0,
+        "selection": {
+          "metric": "MacroCompiler DefaultMetric (unmasked candidates)",
+          "cost": 0.1,
+          "wasted_fraction": 0.0,
+          "instance_penalty": 0.1,
+          "mask_penalty": 0,
+          "evaluated_candidates": 198,
+          "tie_break": "cost, instance count, allocated bits, width, depth",
+          "scope": "One repeated geometry per logical RAM; Lotus mask/asymmetric-port normalization precedes search"
+        },
+        "port_addressing": [
+          {
+            "port": "A",
+            "slices_per_access": 2,
+            "lane_groups": 1,
+            "rule": "group = address % lane_groups; row = address // lane_groups; wide-word bit = group * port width + port bit; locate in bit_slices; macro bit = wide-word bit - slice lsb; depth bank = row // macro depth; macro address = row % macro depth"
+          },
+          {
+            "port": "B",
+            "slices_per_access": 2,
+            "lane_groups": 1,
+            "rule": "group = address % lane_groups; row = address // lane_groups; wide-word bit = group * port width + port bit; locate in bit_slices; macro bit = wide-word bit - slice lsb; depth bank = row // macro depth; macro address = row % macro depth"
+          }
+        ],
+        "decision": "Search the explicit analytical width/depth grid. Split on port-word/write-mask boundaries and at candidate width; allow partially used final slices. Minimize wasted fraction + 0.05 per macro.",
+        "external_adapters": "Address/lane selection, output muxes, mask enables and any bypass/latency/initialization logic are not generated or included in modeled macro area"
+      },
+      "estimation": {
+        "status": "complete",
+        "macro_ids": [
+          "sram_8192x32_6ad57cb9da85"
+        ],
+        "area_um2_per_instance": 35049.4,
+        "area_um2_all_instances": 35049.4,
+        "physical_dimensions": "See sram_model.runs[macro_id].result.physical_dimensions_um",
+        "scope": "Uncalibrated macro footprint only; external adapters excluded"
+      }
+    },
+    {
+      "logical": {
+        "module": "mkTaskUnit",
+        "instance": "argsMemXram_1",
+        "type": "XRAM2BE",
+        "multiplicity": 1,
+        "parameters": {
+          "ADDR_WIDTH": 13,
+          "DATA_WIDTH": 64,
+          "CHUNK_SIZE": 32,
+          "READ_LATENCY": 2,
+          "MODEA": 4,
+          "MODEB": 0,
+          "NUM_WORDS": 8192
+        },
+        "raw_bits": 524288,
+        "ports": [
+          {
+            "name": "A",
+            "role": "R",
+            "mode": "READ_ONLY",
+            "depth_words": 8192,
+            "width_bits": 64,
+            "write_granularity_bits": null
+          },
+          {
+            "name": "B",
+            "role": "RW",
+            "mode": "NO_CHANGE",
+            "depth_words": 8192,
+            "width_bits": 64,
+            "write_granularity_bits": 32
+          }
+        ],
+        "source": {
+          "declaration": {
+            "path": "lotus/taskUnit/TaskUnit.bsv",
+            "line": 412,
+            "sha256": "09b50cd7c40f8e70dedd4f2da422e16f2f7a7769ed5d0a0eb6235826bf41694a"
+          },
+          "verilog": {
+            "path": "/home/ubuntu/lotus_boru/build/fast64t4096e/hdl/bsv/mkTaskUnit.v",
+            "line": 1370
+          }
+        }
+      },
+      "mapping": {
+        "status": "mapped",
+        "macros": [
+          {
+            "id": "sram_8192x32_6ad57cb9da85",
+            "depth_words": 8192,
+            "width_bits": 32,
+            "ports": {
+              "read_write": 1,
+              "exclusive_read": 1,
+              "exclusive_write": 0
+            },
+            "uca_banks": 1,
+            "depth_banks": 1,
+            "width_slices": 2,
+            "macros_per_instance": 2,
+            "total_macros": 2
+          }
+        ],
+        "logical_row_depth_words": 8192,
+        "independent_boundary_bits": 32,
+        "bit_slices": [
+          {
+            "lsb": 0,
+            "msb": 31
+          },
+          {
+            "lsb": 32,
+            "msb": 63
+          }
+        ],
+        "allocated_bits_per_instance": 524288,
+        "padding_bits_per_instance": 0,
+        "selection": {
+          "metric": "MacroCompiler DefaultMetric (unmasked candidates)",
+          "cost": 0.1,
+          "wasted_fraction": 0.0,
+          "instance_penalty": 0.1,
+          "mask_penalty": 0,
+          "evaluated_candidates": 198,
+          "tie_break": "cost, instance count, allocated bits, width, depth",
+          "scope": "One repeated geometry per logical RAM; Lotus mask/asymmetric-port normalization precedes search"
+        },
+        "port_addressing": [
+          {
+            "port": "A",
+            "slices_per_access": 2,
+            "lane_groups": 1,
+            "rule": "group = address % lane_groups; row = address // lane_groups; wide-word bit = group * port width + port bit; locate in bit_slices; macro bit = wide-word bit - slice lsb; depth bank = row // macro depth; macro address = row % macro depth"
+          },
+          {
+            "port": "B",
+            "slices_per_access": 2,
+            "lane_groups": 1,
+            "rule": "group = address % lane_groups; row = address // lane_groups; wide-word bit = group * port width + port bit; locate in bit_slices; macro bit = wide-word bit - slice lsb; depth bank = row // macro depth; macro address = row % macro depth"
+          }
+        ],
+        "decision": "Search the explicit analytical width/depth grid. Split on port-word/write-mask boundaries and at candidate width; allow partially used final slices. Minimize wasted fraction + 0.05 per macro.",
+        "external_adapters": "Address/lane selection, output muxes, mask enables and any bypass/latency/initialization logic are not generated or included in modeled macro area"
+      },
+      "estimation": {
+        "status": "complete",
+        "macro_ids": [
+          "sram_8192x32_6ad57cb9da85"
+        ],
+        "area_um2_per_instance": 35049.4,
+        "area_um2_all_instances": 35049.4,
+        "physical_dimensions": "See sram_model.runs[macro_id].result.physical_dimensions_um",
+        "scope": "Uncalibrated macro footprint only; external adapters excluded"
+      }
+    },
+    {
+      "logical": {
+        "module": "mkTaskUnit",
+        "instance": "firstArgIdxMem",
+        "type": "XRAM2",
+        "multiplicity": 1,
+        "parameters": {
+          "ADDR_WIDTH": 12,
+          "DATA_WIDTH": 13,
+          "READ_LATENCY": 2,
+          "MODEA": 4,
+          "MODEB": 0,
+          "NUM_WORDS": 4096,
+          "LOG_RATIOB": 0
+        },
+        "raw_bits": 53248,
+        "ports": [
+          {
+            "name": "A",
+            "role": "R",
+            "mode": "READ_ONLY",
+            "depth_words": 4096,
+            "width_bits": 13,
+            "write_granularity_bits": null
+          },
+          {
+            "name": "B",
+            "role": "RW",
+            "mode": "NO_CHANGE",
+            "depth_words": 4096,
+            "width_bits": 13,
+            "write_granularity_bits": 13
+          }
+        ],
+        "source": {
+          "declaration": {
+            "path": "lotus/taskUnit/TaskUnit.bsv",
+            "line": 403,
+            "sha256": "09b50cd7c40f8e70dedd4f2da422e16f2f7a7769ed5d0a0eb6235826bf41694a"
+          },
+          "verilog": {
+            "path": "/home/ubuntu/lotus_boru/build/fast64t4096e/hdl/bsv/mkTaskUnit.v",
+            "line": 1485
+          }
+        }
+      },
+      "mapping": {
+        "status": "mapped",
+        "macros": [
+          {
+            "id": "sram_4096x16_7c7aa5036603",
+            "depth_words": 4096,
+            "width_bits": 16,
+            "ports": {
+              "read_write": 1,
+              "exclusive_read": 1,
+              "exclusive_write": 0
+            },
+            "uca_banks": 1,
+            "depth_banks": 1,
+            "width_slices": 1,
+            "macros_per_instance": 1,
+            "total_macros": 1
+          }
+        ],
+        "logical_row_depth_words": 4096,
+        "independent_boundary_bits": 13,
+        "bit_slices": [
+          {
+            "lsb": 0,
+            "msb": 12
+          }
+        ],
+        "allocated_bits_per_instance": 65536,
+        "padding_bits_per_instance": 12288,
+        "selection": {
+          "metric": "MacroCompiler DefaultMetric (unmasked candidates)",
+          "cost": 0.28076923076923077,
+          "wasted_fraction": 0.23076923076923078,
+          "instance_penalty": 0.05,
+          "mask_penalty": 0,
+          "evaluated_candidates": 198,
+          "tie_break": "cost, instance count, allocated bits, width, depth",
+          "scope": "One repeated geometry per logical RAM; Lotus mask/asymmetric-port normalization precedes search"
+        },
+        "port_addressing": [
+          {
+            "port": "A",
+            "slices_per_access": 1,
+            "lane_groups": 1,
+            "rule": "group = address % lane_groups; row = address // lane_groups; wide-word bit = group * port width + port bit; locate in bit_slices; macro bit = wide-word bit - slice lsb; depth bank = row // macro depth; macro address = row % macro depth"
+          },
+          {
+            "port": "B",
+            "slices_per_access": 1,
+            "lane_groups": 1,
+            "rule": "group = address % lane_groups; row = address // lane_groups; wide-word bit = group * port width + port bit; locate in bit_slices; macro bit = wide-word bit - slice lsb; depth bank = row // macro depth; macro address = row % macro depth"
+          }
+        ],
+        "decision": "Search the explicit analytical width/depth grid. Split on port-word/write-mask boundaries and at candidate width; allow partially used final slices. Minimize wasted fraction + 0.05 per macro.",
+        "external_adapters": "Address/lane selection, output muxes, mask enables and any bypass/latency/initialization logic are not generated or included in modeled macro area"
+      },
+      "estimation": {
+        "status": "complete",
+        "macro_ids": [
+          "sram_4096x16_7c7aa5036603"
+        ],
+        "area_um2_per_instance": 4628.66,
+        "area_um2_all_instances": 4628.66,
+        "physical_dimensions": "See sram_model.runs[macro_id].result.physical_dimensions_um",
+        "scope": "Uncalibrated macro footprint only; external adapters excluded"
+      }
+    },
+    {
+      "logical": {
+        "module": "mkTaskUnit",
+        "instance": "inEdgesArrivedMem",
+        "type": "XRAM2",
+        "multiplicity": 1,
+        "parameters": {
+          "ADDR_WIDTH": 13,
+          "DATA_WIDTH": 6,
+          "READ_LATENCY": 1,
+          "MODEA": 4,
+          "MODEB": 3,
+          "NUM_WORDS": 8192,
+          "LOG_RATIOB": 0
+        },
+        "raw_bits": 49152,
+        "ports": [
+          {
+            "name": "A",
+            "role": "R",
+            "mode": "READ_ONLY",
+            "depth_words": 8192,
+            "width_bits": 6,
+            "write_granularity_bits": null
+          },
+          {
+            "name": "B",
+            "role": "W",
+            "mode": "WRITE_ONLY",
+            "depth_words": 8192,
+            "width_bits": 6,
+            "write_granularity_bits": 6
+          }
+        ],
+        "source": {
+          "declaration": {
+            "path": "lotus/taskUnit/TaskUnit.bsv",
+            "line": 407,
+            "sha256": "09b50cd7c40f8e70dedd4f2da422e16f2f7a7769ed5d0a0eb6235826bf41694a"
+          },
+          "verilog": {
+            "path": "/home/ubuntu/lotus_boru/build/fast64t4096e/hdl/bsv/mkTaskUnit.v",
+            "line": 1528
+          }
+        }
+      },
+      "mapping": {
+        "status": "mapped",
+        "macros": [
+          {
+            "id": "sram_8192x8_1922f8e21c59",
+            "depth_words": 8192,
+            "width_bits": 8,
+            "ports": {
+              "read_write": 0,
+              "exclusive_read": 1,
+              "exclusive_write": 1
+            },
+            "uca_banks": 1,
+            "depth_banks": 1,
+            "width_slices": 1,
+            "macros_per_instance": 1,
+            "total_macros": 1
+          }
+        ],
+        "logical_row_depth_words": 8192,
+        "independent_boundary_bits": 6,
+        "bit_slices": [
+          {
+            "lsb": 0,
+            "msb": 5
+          }
+        ],
+        "allocated_bits_per_instance": 65536,
+        "padding_bits_per_instance": 16384,
+        "selection": {
+          "metric": "MacroCompiler DefaultMetric (unmasked candidates)",
+          "cost": 0.3833333333333333,
+          "wasted_fraction": 0.3333333333333333,
+          "instance_penalty": 0.05,
+          "mask_penalty": 0,
+          "evaluated_candidates": 198,
+          "tie_break": "cost, instance count, allocated bits, width, depth",
+          "scope": "One repeated geometry per logical RAM; Lotus mask/asymmetric-port normalization precedes search"
+        },
+        "port_addressing": [
+          {
+            "port": "A",
+            "slices_per_access": 1,
+            "lane_groups": 1,
+            "rule": "group = address % lane_groups; row = address // lane_groups; wide-word bit = group * port width + port bit; locate in bit_slices; macro bit = wide-word bit - slice lsb; depth bank = row // macro depth; macro address = row % macro depth"
+          },
+          {
+            "port": "B",
+            "slices_per_access": 1,
+            "lane_groups": 1,
+            "rule": "group = address % lane_groups; row = address // lane_groups; wide-word bit = group * port width + port bit; locate in bit_slices; macro bit = wide-word bit - slice lsb; depth bank = row // macro depth; macro address = row % macro depth"
+          }
+        ],
+        "decision": "Search the explicit analytical width/depth grid. Split on port-word/write-mask boundaries and at candidate width; allow partially used final slices. Minimize wasted fraction + 0.05 per macro.",
+        "external_adapters": "Address/lane selection, output muxes, mask enables and any bypass/latency/initialization logic are not generated or included in modeled macro area"
+      },
+      "estimation": {
+        "status": "complete",
+        "macro_ids": [
+          "sram_8192x8_1922f8e21c59"
+        ],
+        "area_um2_per_instance": 4524.410000000001,
+        "area_um2_all_instances": 4524.410000000001,
+        "physical_dimensions": "See sram_model.runs[macro_id].result.physical_dimensions_um",
+        "scope": "Uncalibrated macro footprint only; external adapters excluded"
+      }
+    },
+    {
+      "logical": {
+        "module": "mkTaskUnit",
+        "instance": "numInEdgesMinusOneMem",
+        "type": "XRAM2",
+        "multiplicity": 1,
+        "parameters": {
+          "ADDR_WIDTH": 12,
+          "DATA_WIDTH": 6,
+          "READ_LATENCY": 1,
+          "MODEA": 4,
+          "MODEB": 3,
+          "NUM_WORDS": 4096,
+          "LOG_RATIOB": 0
+        },
+        "raw_bits": 24576,
+        "ports": [
+          {
+            "name": "A",
+            "role": "R",
+            "mode": "READ_ONLY",
+            "depth_words": 4096,
+            "width_bits": 6,
+            "write_granularity_bits": null
+          },
+          {
+            "name": "B",
+            "role": "W",
+            "mode": "WRITE_ONLY",
+            "depth_words": 4096,
+            "width_bits": 6,
+            "write_granularity_bits": 6
+          }
+        ],
+        "source": {
+          "declaration": {
+            "path": "lotus/taskUnit/TaskUnit.bsv",
+            "line": 406,
+            "sha256": "09b50cd7c40f8e70dedd4f2da422e16f2f7a7769ed5d0a0eb6235826bf41694a"
+          },
+          "verilog": {
+            "path": "/home/ubuntu/lotus_boru/build/fast64t4096e/hdl/bsv/mkTaskUnit.v",
+            "line": 1560
+          }
+        }
+      },
+      "mapping": {
+        "status": "mapped",
+        "macros": [
+          {
+            "id": "sram_4096x8_94aa910732d1",
+            "depth_words": 4096,
+            "width_bits": 8,
+            "ports": {
+              "read_write": 0,
+              "exclusive_read": 1,
+              "exclusive_write": 1
+            },
+            "uca_banks": 1,
+            "depth_banks": 1,
+            "width_slices": 1,
+            "macros_per_instance": 1,
+            "total_macros": 1
+          }
+        ],
+        "logical_row_depth_words": 4096,
+        "independent_boundary_bits": 6,
+        "bit_slices": [
+          {
+            "lsb": 0,
+            "msb": 5
+          }
+        ],
+        "allocated_bits_per_instance": 32768,
+        "padding_bits_per_instance": 8192,
+        "selection": {
+          "metric": "MacroCompiler DefaultMetric (unmasked candidates)",
+          "cost": 0.3833333333333333,
+          "wasted_fraction": 0.3333333333333333,
+          "instance_penalty": 0.05,
+          "mask_penalty": 0,
+          "evaluated_candidates": 198,
+          "tie_break": "cost, instance count, allocated bits, width, depth",
+          "scope": "One repeated geometry per logical RAM; Lotus mask/asymmetric-port normalization precedes search"
+        },
+        "port_addressing": [
+          {
+            "port": "A",
+            "slices_per_access": 1,
+            "lane_groups": 1,
+            "rule": "group = address % lane_groups; row = address // lane_groups; wide-word bit = group * port width + port bit; locate in bit_slices; macro bit = wide-word bit - slice lsb; depth bank = row // macro depth; macro address = row % macro depth"
+          },
+          {
+            "port": "B",
+            "slices_per_access": 1,
+            "lane_groups": 1,
+            "rule": "group = address % lane_groups; row = address // lane_groups; wide-word bit = group * port width + port bit; locate in bit_slices; macro bit = wide-word bit - slice lsb; depth bank = row // macro depth; macro address = row % macro depth"
+          }
+        ],
+        "decision": "Search the explicit analytical width/depth grid. Split on port-word/write-mask boundaries and at candidate width; allow partially used final slices. Minimize wasted fraction + 0.05 per macro.",
+        "external_adapters": "Address/lane selection, output muxes, mask enables and any bypass/latency/initialization logic are not generated or included in modeled macro area"
+      },
+      "estimation": {
+        "status": "complete",
+        "macro_ids": [
+          "sram_4096x8_94aa910732d1"
+        ],
+        "area_um2_per_instance": 2356.0,
+        "area_um2_all_instances": 2356.0,
+        "physical_dimensions": "See sram_model.runs[macro_id].result.physical_dimensions_um",
+        "scope": "Uncalibrated macro footprint only; external adapters excluded"
+      }
+    },
+    {
+      "logical": {
+        "module": "mkTaskUnit",
+        "instance": "taskInfoMemXram",
+        "type": "XRAM1",
+        "multiplicity": 1,
+        "parameters": {
+          "ADDR_WIDTH": 12,
+          "DATA_WIDTH": 69,
+          "READ_LATENCY": 2,
+          "MODE": 0,
+          "NUM_WORDS": 4096
+        },
+        "raw_bits": 282624,
+        "ports": [
+          {
+            "name": "A",
+            "role": "RW",
+            "mode": "NO_CHANGE",
+            "depth_words": 4096,
+            "width_bits": 69,
+            "write_granularity_bits": 69
+          }
+        ],
+        "source": {
+          "declaration": {
+            "path": "lotus/taskUnit/TaskUnit.bsv",
+            "line": 400,
+            "sha256": "09b50cd7c40f8e70dedd4f2da422e16f2f7a7769ed5d0a0eb6235826bf41694a"
+          },
+          "verilog": {
+            "path": "/home/ubuntu/lotus_boru/build/fast64t4096e/hdl/bsv/mkTaskUnit.v",
+            "line": 1655
+          }
+        }
+      },
+      "mapping": {
+        "status": "mapped",
+        "macros": [
+          {
+            "id": "sram_4096x72_fdd8fe6be325",
+            "depth_words": 4096,
+            "width_bits": 72,
+            "ports": {
+              "read_write": 1,
+              "exclusive_read": 0,
+              "exclusive_write": 0
+            },
+            "uca_banks": 1,
+            "depth_banks": 1,
+            "width_slices": 1,
+            "macros_per_instance": 1,
+            "total_macros": 1
+          }
+        ],
+        "logical_row_depth_words": 4096,
+        "independent_boundary_bits": 69,
+        "bit_slices": [
+          {
+            "lsb": 0,
+            "msb": 68
+          }
+        ],
+        "allocated_bits_per_instance": 294912,
+        "padding_bits_per_instance": 12288,
+        "selection": {
+          "metric": "MacroCompiler DefaultMetric (unmasked candidates)",
+          "cost": 0.09347826086956522,
+          "wasted_fraction": 0.043478260869565216,
+          "instance_penalty": 0.05,
+          "mask_penalty": 0,
+          "evaluated_candidates": 198,
+          "tie_break": "cost, instance count, allocated bits, width, depth",
+          "scope": "One repeated geometry per logical RAM; Lotus mask/asymmetric-port normalization precedes search"
+        },
+        "port_addressing": [
+          {
+            "port": "A",
+            "slices_per_access": 1,
+            "lane_groups": 1,
+            "rule": "group = address % lane_groups; row = address // lane_groups; wide-word bit = group * port width + port bit; locate in bit_slices; macro bit = wide-word bit - slice lsb; depth bank = row // macro depth; macro address = row % macro depth"
+          }
+        ],
+        "decision": "Search the explicit analytical width/depth grid. Split on port-word/write-mask boundaries and at candidate width; allow partially used final slices. Minimize wasted fraction + 0.05 per macro.",
+        "external_adapters": "Address/lane selection, output muxes, mask enables and any bypass/latency/initialization logic are not generated or included in modeled macro area"
+      },
+      "estimation": {
+        "status": "complete",
+        "macro_ids": [
+          "sram_4096x72_fdd8fe6be325"
+        ],
+        "area_um2_per_instance": 9660.470000000001,
+        "area_um2_all_instances": 9660.470000000001,
+        "physical_dimensions": "See sram_model.runs[macro_id].result.physical_dimensions_um",
+        "scope": "Uncalibrated macro footprint only; external adapters excluded"
+      }
+    },
+    {
+      "logical": {
+        "module": "mkTaskUnit",
+        "instance": "taskIsSkippableMem",
+        "type": "XRAM2",
+        "multiplicity": 1,
+        "parameters": {
+          "ADDR_WIDTH": 13,
+          "DATA_WIDTH": 1,
+          "READ_LATENCY": 2,
+          "MODEA": 2,
+          "MODEB": 3,
+          "NUM_WORDS": 8192,
+          "LOG_RATIOB": 0
+        },
+        "raw_bits": 8192,
+        "ports": [
+          {
+            "name": "A",
+            "role": "RW",
+            "mode": "READ_FIRST",
+            "depth_words": 8192,
+            "width_bits": 1,
+            "write_granularity_bits": 1
+          },
+          {
+            "name": "B",
+            "role": "W",
+            "mode": "WRITE_ONLY",
+            "depth_words": 8192,
+            "width_bits": 1,
+            "write_granularity_bits": 1
+          }
+        ],
+        "source": {
+          "declaration": {
+            "path": "lotus/taskUnit/TaskUnit.bsv",
+            "line": 409,
+            "sha256": "09b50cd7c40f8e70dedd4f2da422e16f2f7a7769ed5d0a0eb6235826bf41694a"
+          },
+          "verilog": {
+            "path": "/home/ubuntu/lotus_boru/build/fast64t4096e/hdl/bsv/mkTaskUnit.v",
+            "line": 1671
+          }
+        }
+      },
+      "mapping": {
+        "status": "mapped",
+        "macros": [
+          {
+            "id": "sram_8192x8_b81b1cdd3863",
+            "depth_words": 8192,
+            "width_bits": 8,
+            "ports": {
+              "read_write": 1,
+              "exclusive_read": 0,
+              "exclusive_write": 1
+            },
+            "uca_banks": 1,
+            "depth_banks": 1,
+            "width_slices": 1,
+            "macros_per_instance": 1,
+            "total_macros": 1
+          }
+        ],
+        "logical_row_depth_words": 8192,
+        "independent_boundary_bits": 1,
+        "bit_slices": [
+          {
+            "lsb": 0,
+            "msb": 0
+          }
+        ],
+        "allocated_bits_per_instance": 65536,
+        "padding_bits_per_instance": 57344,
+        "selection": {
+          "metric": "MacroCompiler DefaultMetric (unmasked candidates)",
+          "cost": 7.05,
+          "wasted_fraction": 7.0,
+          "instance_penalty": 0.05,
+          "mask_penalty": 0,
+          "evaluated_candidates": 198,
+          "tie_break": "cost, instance count, allocated bits, width, depth",
+          "scope": "One repeated geometry per logical RAM; Lotus mask/asymmetric-port normalization precedes search"
+        },
+        "port_addressing": [
+          {
+            "port": "A",
+            "slices_per_access": 1,
+            "lane_groups": 1,
+            "rule": "group = address % lane_groups; row = address // lane_groups; wide-word bit = group * port width + port bit; locate in bit_slices; macro bit = wide-word bit - slice lsb; depth bank = row // macro depth; macro address = row % macro depth"
+          },
+          {
+            "port": "B",
+            "slices_per_access": 1,
+            "lane_groups": 1,
+            "rule": "group = address % lane_groups; row = address // lane_groups; wide-word bit = group * port width + port bit; locate in bit_slices; macro bit = wide-word bit - slice lsb; depth bank = row // macro depth; macro address = row % macro depth"
+          }
+        ],
+        "decision": "Search the explicit analytical width/depth grid. Split on port-word/write-mask boundaries and at candidate width; allow partially used final slices. Minimize wasted fraction + 0.05 per macro.",
+        "external_adapters": "Address/lane selection, output muxes, mask enables and any bypass/latency/initialization logic are not generated or included in modeled macro area"
+      },
+      "estimation": {
+        "status": "complete",
+        "macro_ids": [
+          "sram_8192x8_b81b1cdd3863"
+        ],
+        "area_um2_per_instance": 4524.410000000001,
+        "area_um2_all_instances": 4524.410000000001,
+        "physical_dimensions": "See sram_model.runs[macro_id].result.physical_dimensions_um",
+        "scope": "Uncalibrated macro footprint only; external adapters excluded"
+      }
+    },
+    {
+      "logical": {
+        "module": "mkTaskPrioQueue",
+        "instance": "l1_bitmap",
+        "type": "XRAM2",
+        "multiplicity": 1,
+        "parameters": {
+          "ADDR_WIDTH": 15,
+          "DATA_WIDTH": 1,
+          "READ_LATENCY": 1,
+          "MODEA": 3,
+          "MODEB": 0,
+          "NUM_WORDS": 32768,
+          "LOG_RATIOB": 4
+        },
+        "raw_bits": 32768,
+        "ports": [
+          {
+            "name": "A",
+            "role": "W",
+            "mode": "WRITE_ONLY",
+            "depth_words": 32768,
+            "width_bits": 1,
+            "write_granularity_bits": 1
+          },
+          {
+            "name": "B",
+            "role": "RW",
+            "mode": "NO_CHANGE",
+            "depth_words": 2048,
+            "width_bits": 16,
+            "write_granularity_bits": 16
+          }
+        ],
+        "source": {
+          "declaration": {
+            "path": "lotus/taskUnit/PrioQueue.bsv",
+            "line": 170,
+            "sha256": "e7950a24b23512b924960fb7d5ffdd0ce070f223553d29591469f87ab69c79ef"
+          },
+          "verilog": {
+            "path": "/home/ubuntu/lotus_boru/build/fast64t4096e/hdl/bsv/mkTaskPrioQueue.v",
+            "line": 419
+          }
+        }
+      },
+      "mapping": {
+        "status": "mapped",
+        "macros": [
+          {
+            "id": "sram_2048x8_573e729c89e0",
+            "depth_words": 2048,
+            "width_bits": 8,
+            "ports": {
+              "read_write": 1,
+              "exclusive_read": 0,
+              "exclusive_write": 1
+            },
+            "uca_banks": 1,
+            "depth_banks": 1,
+            "width_slices": 16,
+            "macros_per_instance": 16,
+            "total_macros": 16
+          }
+        ],
+        "logical_row_depth_words": 2048,
+        "independent_boundary_bits": 1,
+        "bit_slices": [
+          {
+            "lsb": 0,
+            "msb": 0
+          },
+          {
+            "lsb": 1,
+            "msb": 1
+          },
+          {
+            "lsb": 2,
+            "msb": 2
+          },
+          {
+            "lsb": 3,
+            "msb": 3
+          },
+          {
+            "lsb": 4,
+            "msb": 4
+          },
+          {
+            "lsb": 5,
+            "msb": 5
+          },
+          {
+            "lsb": 6,
+            "msb": 6
+          },
+          {
+            "lsb": 7,
+            "msb": 7
+          },
+          {
+            "lsb": 8,
+            "msb": 8
+          },
+          {
+            "lsb": 9,
+            "msb": 9
+          },
+          {
+            "lsb": 10,
+            "msb": 10
+          },
+          {
+            "lsb": 11,
+            "msb": 11
+          },
+          {
+            "lsb": 12,
+            "msb": 12
+          },
+          {
+            "lsb": 13,
+            "msb": 13
+          },
+          {
+            "lsb": 14,
+            "msb": 14
+          },
+          {
+            "lsb": 15,
+            "msb": 15
+          }
+        ],
+        "allocated_bits_per_instance": 262144,
+        "padding_bits_per_instance": 229376,
+        "selection": {
+          "metric": "MacroCompiler DefaultMetric (unmasked candidates)",
+          "cost": 7.8,
+          "wasted_fraction": 7.0,
+          "instance_penalty": 0.8,
+          "mask_penalty": 0,
+          "evaluated_candidates": 198,
+          "tie_break": "cost, instance count, allocated bits, width, depth",
+          "scope": "One repeated geometry per logical RAM; Lotus mask/asymmetric-port normalization precedes search"
+        },
+        "port_addressing": [
+          {
+            "port": "A",
+            "slices_per_access": 1,
+            "lane_groups": 16,
+            "rule": "group = address % lane_groups; row = address // lane_groups; wide-word bit = group * port width + port bit; locate in bit_slices; macro bit = wide-word bit - slice lsb; depth bank = row // macro depth; macro address = row % macro depth"
+          },
+          {
+            "port": "B",
+            "slices_per_access": 16,
+            "lane_groups": 1,
+            "rule": "group = address % lane_groups; row = address // lane_groups; wide-word bit = group * port width + port bit; locate in bit_slices; macro bit = wide-word bit - slice lsb; depth bank = row // macro depth; macro address = row % macro depth"
+          }
+        ],
+        "decision": "Search the explicit analytical width/depth grid. Split on port-word/write-mask boundaries and at candidate width; allow partially used final slices. Minimize wasted fraction + 0.05 per macro.",
+        "external_adapters": "Address/lane selection, output muxes, mask enables and any bypass/latency/initialization logic are not generated or included in modeled macro area"
+      },
+      "estimation": {
+        "status": "complete",
+        "macro_ids": [
+          "sram_2048x8_573e729c89e0"
+        ],
+        "area_um2_per_instance": 19922.24,
+        "area_um2_all_instances": 19922.24,
+        "physical_dimensions": "See sram_model.runs[macro_id].result.physical_dimensions_um",
+        "scope": "Uncalibrated macro footprint only; external adapters excluded"
+      }
+    },
+    {
+      "logical": {
+        "module": "mkTaskPrioQueue",
+        "instance": "l2_bitmap",
+        "type": "XRAM2",
+        "multiplicity": 1,
+        "parameters": {
+          "ADDR_WIDTH": 11,
+          "DATA_WIDTH": 1,
+          "READ_LATENCY": 1,
+          "MODEA": 3,
+          "MODEB": 0,
+          "NUM_WORDS": 2048,
+          "LOG_RATIOB": 4
+        },
+        "raw_bits": 2048,
+        "ports": [
+          {
+            "name": "A",
+            "role": "W",
+            "mode": "WRITE_ONLY",
+            "depth_words": 2048,
+            "width_bits": 1,
+            "write_granularity_bits": 1
+          },
+          {
+            "name": "B",
+            "role": "RW",
+            "mode": "NO_CHANGE",
+            "depth_words": 128,
+            "width_bits": 16,
+            "write_granularity_bits": 16
+          }
+        ],
+        "source": {
+          "declaration": {
+            "path": "lotus/taskUnit/PrioQueue.bsv",
+            "line": 170,
+            "sha256": "e7950a24b23512b924960fb7d5ffdd0ce070f223553d29591469f87ab69c79ef"
+          },
+          "verilog": {
+            "path": "/home/ubuntu/lotus_boru/build/fast64t4096e/hdl/bsv/mkTaskPrioQueue.v",
+            "line": 440
+          }
+        }
+      },
+      "mapping": {
+        "status": "mapped",
+        "macros": [
+          {
+            "id": "sram_128x8_3804d2eb04fe",
+            "depth_words": 128,
+            "width_bits": 8,
+            "ports": {
+              "read_write": 1,
+              "exclusive_read": 0,
+              "exclusive_write": 1
+            },
+            "uca_banks": 1,
+            "depth_banks": 1,
+            "width_slices": 16,
+            "macros_per_instance": 16,
+            "total_macros": 16
+          }
+        ],
+        "logical_row_depth_words": 128,
+        "independent_boundary_bits": 1,
+        "bit_slices": [
+          {
+            "lsb": 0,
+            "msb": 0
+          },
+          {
+            "lsb": 1,
+            "msb": 1
+          },
+          {
+            "lsb": 2,
+            "msb": 2
+          },
+          {
+            "lsb": 3,
+            "msb": 3
+          },
+          {
+            "lsb": 4,
+            "msb": 4
+          },
+          {
+            "lsb": 5,
+            "msb": 5
+          },
+          {
+            "lsb": 6,
+            "msb": 6
+          },
+          {
+            "lsb": 7,
+            "msb": 7
+          },
+          {
+            "lsb": 8,
+            "msb": 8
+          },
+          {
+            "lsb": 9,
+            "msb": 9
+          },
+          {
+            "lsb": 10,
+            "msb": 10
+          },
+          {
+            "lsb": 11,
+            "msb": 11
+          },
+          {
+            "lsb": 12,
+            "msb": 12
+          },
+          {
+            "lsb": 13,
+            "msb": 13
+          },
+          {
+            "lsb": 14,
+            "msb": 14
+          },
+          {
+            "lsb": 15,
+            "msb": 15
+          }
+        ],
+        "allocated_bits_per_instance": 16384,
+        "padding_bits_per_instance": 14336,
+        "selection": {
+          "metric": "MacroCompiler DefaultMetric (unmasked candidates)",
+          "cost": 7.8,
+          "wasted_fraction": 7.0,
+          "instance_penalty": 0.8,
+          "mask_penalty": 0,
+          "evaluated_candidates": 198,
+          "tie_break": "cost, instance count, allocated bits, width, depth",
+          "scope": "One repeated geometry per logical RAM; Lotus mask/asymmetric-port normalization precedes search"
+        },
+        "port_addressing": [
+          {
+            "port": "A",
+            "slices_per_access": 1,
+            "lane_groups": 16,
+            "rule": "group = address % lane_groups; row = address // lane_groups; wide-word bit = group * port width + port bit; locate in bit_slices; macro bit = wide-word bit - slice lsb; depth bank = row // macro depth; macro address = row % macro depth"
+          },
+          {
+            "port": "B",
+            "slices_per_access": 16,
+            "lane_groups": 1,
+            "rule": "group = address % lane_groups; row = address // lane_groups; wide-word bit = group * port width + port bit; locate in bit_slices; macro bit = wide-word bit - slice lsb; depth bank = row // macro depth; macro address = row % macro depth"
+          }
+        ],
+        "decision": "Search the explicit analytical width/depth grid. Split on port-word/write-mask boundaries and at candidate width; allow partially used final slices. Minimize wasted fraction + 0.05 per macro.",
+        "external_adapters": "Address/lane selection, output muxes, mask enables and any bypass/latency/initialization logic are not generated or included in modeled macro area"
+      },
+      "estimation": {
+        "status": "complete",
+        "macro_ids": [
+          "sram_128x8_3804d2eb04fe"
+        ],
+        "area_um2_per_instance": 1801.088,
+        "area_um2_all_instances": 1801.088,
+        "physical_dimensions": "See sram_model.runs[macro_id].result.physical_dimensions_um",
+        "scope": "Uncalibrated macro footprint only; external adapters excluded"
+      }
+    },
+    {
+      "logical": {
+        "module": "mkTaskPrioQueue",
+        "instance": "l3_bitmap",
+        "type": "XRAM2",
+        "multiplicity": 1,
+        "parameters": {
+          "ADDR_WIDTH": 7,
+          "DATA_WIDTH": 1,
+          "READ_LATENCY": 1,
+          "MODEA": 3,
+          "MODEB": 0,
+          "NUM_WORDS": 128,
+          "LOG_RATIOB": 4
+        },
+        "raw_bits": 128,
+        "ports": [
+          {
+            "name": "A",
+            "role": "W",
+            "mode": "WRITE_ONLY",
+            "depth_words": 128,
+            "width_bits": 1,
+            "write_granularity_bits": 1
+          },
+          {
+            "name": "B",
+            "role": "RW",
+            "mode": "NO_CHANGE",
+            "depth_words": 8,
+            "width_bits": 16,
+            "write_granularity_bits": 16
+          }
+        ],
+        "source": {
+          "declaration": {
+            "path": "lotus/taskUnit/PrioQueue.bsv",
+            "line": 170,
+            "sha256": "e7950a24b23512b924960fb7d5ffdd0ce070f223553d29591469f87ab69c79ef"
+          },
+          "verilog": {
+            "path": "/home/ubuntu/lotus_boru/build/fast64t4096e/hdl/bsv/mkTaskPrioQueue.v",
+            "line": 461
+          }
+        }
+      },
+      "mapping": {
+        "status": "mapped",
+        "macros": [
+          {
+            "id": "sram_64x8_c248dd081b00",
+            "depth_words": 64,
+            "width_bits": 8,
+            "ports": {
+              "read_write": 1,
+              "exclusive_read": 0,
+              "exclusive_write": 1
+            },
+            "uca_banks": 1,
+            "depth_banks": 1,
+            "width_slices": 16,
+            "macros_per_instance": 16,
+            "total_macros": 16
+          }
+        ],
+        "logical_row_depth_words": 8,
+        "independent_boundary_bits": 1,
+        "bit_slices": [
+          {
+            "lsb": 0,
+            "msb": 0
+          },
+          {
+            "lsb": 1,
+            "msb": 1
+          },
+          {
+            "lsb": 2,
+            "msb": 2
+          },
+          {
+            "lsb": 3,
+            "msb": 3
+          },
+          {
+            "lsb": 4,
+            "msb": 4
+          },
+          {
+            "lsb": 5,
+            "msb": 5
+          },
+          {
+            "lsb": 6,
+            "msb": 6
+          },
+          {
+            "lsb": 7,
+            "msb": 7
+          },
+          {
+            "lsb": 8,
+            "msb": 8
+          },
+          {
+            "lsb": 9,
+            "msb": 9
+          },
+          {
+            "lsb": 10,
+            "msb": 10
+          },
+          {
+            "lsb": 11,
+            "msb": 11
+          },
+          {
+            "lsb": 12,
+            "msb": 12
+          },
+          {
+            "lsb": 13,
+            "msb": 13
+          },
+          {
+            "lsb": 14,
+            "msb": 14
+          },
+          {
+            "lsb": 15,
+            "msb": 15
+          }
+        ],
+        "allocated_bits_per_instance": 8192,
+        "padding_bits_per_instance": 8064,
+        "selection": {
+          "metric": "MacroCompiler DefaultMetric (unmasked candidates)",
+          "cost": 63.8,
+          "wasted_fraction": 63.0,
+          "instance_penalty": 0.8,
+          "mask_penalty": 0,
+          "evaluated_candidates": 198,
+          "tie_break": "cost, instance count, allocated bits, width, depth",
+          "scope": "One repeated geometry per logical RAM; Lotus mask/asymmetric-port normalization precedes search"
+        },
+        "port_addressing": [
+          {
+            "port": "A",
+            "slices_per_access": 1,
+            "lane_groups": 16,
+            "rule": "group = address % lane_groups; row = address // lane_groups; wide-word bit = group * port width + port bit; locate in bit_slices; macro bit = wide-word bit - slice lsb; depth bank = row // macro depth; macro address = row % macro depth"
+          },
+          {
+            "port": "B",
+            "slices_per_access": 16,
+            "lane_groups": 1,
+            "rule": "group = address % lane_groups; row = address // lane_groups; wide-word bit = group * port width + port bit; locate in bit_slices; macro bit = wide-word bit - slice lsb; depth bank = row // macro depth; macro address = row % macro depth"
+          }
+        ],
+        "decision": "Search the explicit analytical width/depth grid. Split on port-word/write-mask boundaries and at candidate width; allow partially used final slices. Minimize wasted fraction + 0.05 per macro.",
+        "external_adapters": "Address/lane selection, output muxes, mask enables and any bypass/latency/initialization logic are not generated or included in modeled macro area"
+      },
+      "estimation": {
+        "status": "complete",
+        "macro_ids": [
+          "sram_64x8_c248dd081b00"
+        ],
+        "area_um2_per_instance": 1049.1568,
+        "area_um2_all_instances": 1049.1568,
+        "physical_dimensions": "See sram_model.runs[macro_id].result.physical_dimensions_um",
+        "scope": "Uncalibrated macro footprint only; external adapters excluded"
+      }
+    },
+    {
+      "logical": {
+        "module": "mkTokenSender",
+        "instance": "edgeTable_edgeTable",
+        "type": "XRAM2",
+        "multiplicity": 1,
+        "parameters": {
+          "ADDR_WIDTH": 14,
+          "DATA_WIDTH": 72,
+          "READ_LATENCY": 2,
+          "MODEA": 4,
+          "MODEB": 3,
+          "NUM_WORDS": 16384,
+          "LOG_RATIOB": 0
+        },
+        "raw_bits": 1179648,
+        "ports": [
+          {
+            "name": "A",
+            "role": "R",
+            "mode": "READ_ONLY",
+            "depth_words": 16384,
+            "width_bits": 72,
+            "write_granularity_bits": null
+          },
+          {
+            "name": "B",
+            "role": "W",
+            "mode": "WRITE_ONLY",
+            "depth_words": 16384,
+            "width_bits": 72,
+            "write_granularity_bits": 72
+          }
+        ],
+        "source": {
+          "declaration": {
+            "path": "lotus/tokenSender/TokenSender.bsv",
+            "line": 141,
+            "sha256": "c8a845a02f7b27ece0fd4b7c11268ecf098fb17b3ca81234e6132d7562816d53"
+          },
+          "verilog": {
+            "path": "/home/ubuntu/lotus_boru/build/fast64t4096e/hdl/bsv/mkTokenSender.v",
+            "line": 1124
+          }
+        }
+      },
+      "mapping": {
+        "status": "mapped",
+        "macros": [
+          {
+            "id": "sram_16384x72_b652e875328b",
+            "depth_words": 16384,
+            "width_bits": 72,
+            "ports": {
+              "read_write": 0,
+              "exclusive_read": 1,
+              "exclusive_write": 1
+            },
+            "uca_banks": 1,
+            "depth_banks": 1,
+            "width_slices": 1,
+            "macros_per_instance": 1,
+            "total_macros": 1
+          }
+        ],
+        "logical_row_depth_words": 16384,
+        "independent_boundary_bits": 72,
+        "bit_slices": [
+          {
+            "lsb": 0,
+            "msb": 71
+          }
+        ],
+        "allocated_bits_per_instance": 1179648,
+        "padding_bits_per_instance": 0,
+        "selection": {
+          "metric": "MacroCompiler DefaultMetric (unmasked candidates)",
+          "cost": 0.05,
+          "wasted_fraction": 0.0,
+          "instance_penalty": 0.05,
+          "mask_penalty": 0,
+          "evaluated_candidates": 198,
+          "tie_break": "cost, instance count, allocated bits, width, depth",
+          "scope": "One repeated geometry per logical RAM; Lotus mask/asymmetric-port normalization precedes search"
+        },
+        "port_addressing": [
+          {
+            "port": "A",
+            "slices_per_access": 1,
+            "lane_groups": 1,
+            "rule": "group = address % lane_groups; row = address // lane_groups; wide-word bit = group * port width + port bit; locate in bit_slices; macro bit = wide-word bit - slice lsb; depth bank = row // macro depth; macro address = row % macro depth"
+          },
+          {
+            "port": "B",
+            "slices_per_access": 1,
+            "lane_groups": 1,
+            "rule": "group = address % lane_groups; row = address // lane_groups; wide-word bit = group * port width + port bit; locate in bit_slices; macro bit = wide-word bit - slice lsb; depth bank = row // macro depth; macro address = row % macro depth"
+          }
+        ],
+        "decision": "Search the explicit analytical width/depth grid. Split on port-word/write-mask boundaries and at candidate width; allow partially used final slices. Minimize wasted fraction + 0.05 per macro.",
+        "external_adapters": "Address/lane selection, output muxes, mask enables and any bypass/latency/initialization logic are not generated or included in modeled macro area"
+      },
+      "estimation": {
+        "status": "complete",
+        "macro_ids": [
+          "sram_16384x72_b652e875328b"
+        ],
+        "area_um2_per_instance": 76364.0,
+        "area_um2_all_instances": 76364.0,
+        "physical_dimensions": "See sram_model.runs[macro_id].result.physical_dimensions_um",
+        "scope": "Uncalibrated macro footprint only; external adapters excluded"
+      }
+    }
+  ],
+  "sram_model": {
+    "status": "complete_uncalibrated",
+    "policy": {
+      "technology": "fncacti_14nm_devices_7nm_asap7_wires",
+      "allocation": "macrocompiler_default",
+      "objective": "minimum_area",
+      "voltage_v": 0.7,
+      "temperature_k": 300,
+      "candidate_library": "analytical_unmasked",
+      "candidate_width_bits": [
+        8,
+        16,
+        24,
+        32,
+        40,
+        48,
+        56,
+        64,
+        72,
+        80,
+        88,
+        96,
+        104,
+        112,
+        120,
+        128
+      ],
+      "candidate_depth_words": [
+        2,
+        4,
+        8,
+        16,
+        32,
+        64,
+        128,
+        256,
+        512,
+        1024,
+        2048,
+        4096,
+        8192,
+        16384,
+        32768
+      ]
+    },
+    "runs": {
+      "sram_1024x8_75ec716fe44d": {
+        "status": "complete",
+        "macro": {
+          "depth_words": 1024,
+          "width_bits": 8,
+          "ports": {
+            "read_write": 2,
+            "exclusive_read": 0,
+            "exclusive_write": 0
+          },
+          "uca_banks": 1
+        },
+        "config": "/home/ubuntu/lotus_boru/build/hammer-native-1.3ns/fncacti/sram_1024x8_75ec716fe44d/b29caa53bd237256/input.cfg",
+        "config_sha256": "60d93784533fd41399bf002c01bc0252813bd9d79fa82a276a29d4eabc90a297",
+        "binary": "/home/ubuntu/lotus_boru/ext/fncacti/work/pcacti_xml/cacti",
+        "binary_sha256": "afa57cf24af0db0be1bc5f17b437f63c89028b0e778aab0e5f1acaae72e7ef95",
+        "template": "/home/ubuntu/lotus_boru/ext/fncacti/work/pcacti_xml/configs/2MB_fin.cfg",
+        "template_sha256": "9475afa0ce92e0d21f393841673afdaf9b0510567093abe154a2779381c14b6b",
+        "command": [
+          "/home/ubuntu/lotus_boru/ext/fncacti/work/pcacti_xml/cacti",
+          "-infile",
+          "/home/ubuntu/lotus_boru/build/hammer-native-1.3ns/fncacti/sram_1024x8_75ec716fe44d/b29caa53bd237256/input.cfg"
+        ],
+        "cwd": "/home/ubuntu/lotus_boru/build/hammer-native-1.3ns/fncacti/sram_1024x8_75ec716fe44d/b29caa53bd237256",
+        "stdout": "/home/ubuntu/lotus_boru/build/hammer-native-1.3ns/fncacti/sram_1024x8_75ec716fe44d/b29caa53bd237256/stdout.log",
+        "stderr": "/home/ubuntu/lotus_boru/build/hammer-native-1.3ns/fncacti/sram_1024x8_75ec716fe44d/b29caa53bd237256/stderr.log",
+        "started_utc": "2026-10-27T04:58:25.545650+00:00",
+        "exit_code": 0,
+        "result": {
+          "area_um2": 674.785,
+          "physical_dimensions_um": {
+            "height": 31.572000000000003,
+            "width": 21.3729
+          },
+          "access_time_ns": 0.184443,
+          "cycle_time_ns": 0.0962849,
+          "organization": {
+            "Ndwl": 1.0,
+            "Ndbl": 1.0,
+            "Nspd": 8.0,
+            "Ndcm": 1.0,
+            "Ndsam1": 8.0,
+            "Ndsam2": 1.0
+          }
+        },
+        "elapsed_seconds": 0.11675466736778617,
+        "stdout_sha256": "fc5a2da358240f41f29c1aefc20abab2a67f0da770cb140c225d93949a5257dd",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "reused": true,
+        "archived_files": {
+          "config": "reports/fncacti/sram_1024x8_75ec716fe44d/input.cfg",
+          "stdout": "reports/fncacti/sram_1024x8_75ec716fe44d/stdout.txt",
+          "stderr": "reports/fncacti/sram_1024x8_75ec716fe44d/stderr.txt"
+        }
+      },
+      "sram_512x32_2e9397644096": {
+        "status": "complete",
+        "macro": {
+          "depth_words": 512,
+          "width_bits": 32,
+          "ports": {
+            "read_write": 0,
+            "exclusive_read": 1,
+            "exclusive_write": 1
+          },
+          "uca_banks": 1
+        },
+        "config": "/home/ubuntu/lotus_boru/build/hammer-native-1.3ns/fncacti/sram_512x32_2e9397644096/3599791e0b637fd9/input.cfg",
+        "config_sha256": "f67e2cbd09d57f246bbb0e9cb05cfbdb3df86129b5ab47c8e32396c5dbd1039c",
+        "binary": "/home/ubuntu/lotus_boru/ext/fncacti/work/pcacti_xml/cacti",
+        "binary_sha256": "afa57cf24af0db0be1bc5f17b437f63c89028b0e778aab0e5f1acaae72e7ef95",
+        "template": "/home/ubuntu/lotus_boru/ext/fncacti/work/pcacti_xml/configs/2MB_fin.cfg",
+        "template_sha256": "9475afa0ce92e0d21f393841673afdaf9b0510567093abe154a2779381c14b6b",
+        "command": [
+          "/home/ubuntu/lotus_boru/ext/fncacti/work/pcacti_xml/cacti",
+          "-infile",
+          "/home/ubuntu/lotus_boru/build/hammer-native-1.3ns/fncacti/sram_512x32_2e9397644096/3599791e0b637fd9/input.cfg"
+        ],
+        "cwd": "/home/ubuntu/lotus_boru/build/hammer-native-1.3ns/fncacti/sram_512x32_2e9397644096/3599791e0b637fd9",
+        "stdout": "/home/ubuntu/lotus_boru/build/hammer-native-1.3ns/fncacti/sram_512x32_2e9397644096/3599791e0b637fd9/stdout.log",
+        "stderr": "/home/ubuntu/lotus_boru/build/hammer-native-1.3ns/fncacti/sram_512x32_2e9397644096/3599791e0b637fd9/stderr.log",
+        "started_utc": "2026-10-27T04:58:25.666939+00:00",
+        "exit_code": 0,
+        "result": {
+          "area_um2": 1298.74,
+          "physical_dimensions_um": {
+            "height": 58.94,
+            "width": 22.035
+          },
+          "access_time_ns": 0.239363,
+          "cycle_time_ns": 0.104376,
+          "organization": {
+            "Ndwl": 2.0,
+            "Ndbl": 1.0,
+            "Nspd": 2.0,
+            "Ndcm": 1.0,
+            "Ndsam1": 2.0,
+            "Ndsam2": 1.0
+          }
+        },
+        "elapsed_seconds": 0.11496319016441703,
+        "stdout_sha256": "c386be37619525a75a7fad4a5a392c8d150bc9116c1d69f275b88bd006c9f940",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "reused": true,
+        "archived_files": {
+          "config": "reports/fncacti/sram_512x32_2e9397644096/input.cfg",
+          "stdout": "reports/fncacti/sram_512x32_2e9397644096/stdout.txt",
+          "stderr": "reports/fncacti/sram_512x32_2e9397644096/stderr.txt"
+        }
+      },
+      "sram_8192x8_951fbdca9fd8": {
+        "status": "complete",
+        "macro": {
+          "depth_words": 8192,
+          "width_bits": 8,
+          "ports": {
+            "read_write": 2,
+            "exclusive_read": 0,
+            "exclusive_write": 0
+          },
+          "uca_banks": 1
+        },
+        "config": "/home/ubuntu/lotus_boru/build/hammer-native-1.3ns/fncacti/sram_8192x8_951fbdca9fd8/b1e0260c06ee32ba/input.cfg",
+        "config_sha256": "0876b5063443735c3e8ed597c6e5946a2608bc010e40714b80e408af828e12ed",
+        "binary": "/home/ubuntu/lotus_boru/ext/fncacti/work/pcacti_xml/cacti",
+        "binary_sha256": "afa57cf24af0db0be1bc5f17b437f63c89028b0e778aab0e5f1acaae72e7ef95",
+        "template": "/home/ubuntu/lotus_boru/ext/fncacti/work/pcacti_xml/configs/2MB_fin.cfg",
+        "template_sha256": "9475afa0ce92e0d21f393841673afdaf9b0510567093abe154a2779381c14b6b",
+        "command": [
+          "/home/ubuntu/lotus_boru/ext/fncacti/work/pcacti_xml/cacti",
+          "-infile",
+          "/home/ubuntu/lotus_boru/build/hammer-native-1.3ns/fncacti/sram_8192x8_951fbdca9fd8/b1e0260c06ee32ba/input.cfg"
+        ],
+        "cwd": "/home/ubuntu/lotus_boru/build/hammer-native-1.3ns/fncacti/sram_8192x8_951fbdca9fd8/b1e0260c06ee32ba",
+        "stdout": "/home/ubuntu/lotus_boru/build/hammer-native-1.3ns/fncacti/sram_8192x8_951fbdca9fd8/b1e0260c06ee32ba/stdout.log",
+        "stderr": "/home/ubuntu/lotus_boru/build/hammer-native-1.3ns/fncacti/sram_8192x8_951fbdca9fd8/b1e0260c06ee32ba/stderr.log",
+        "started_utc": "2026-10-27T04:58:25.786292+00:00",
+        "exit_code": 0,
+        "result": {
+          "area_um2": 4608.65,
+          "physical_dimensions_um": {
+            "height": 58.79,
+            "width": 78.3917
+          },
+          "access_time_ns": 0.272879,
+          "cycle_time_ns": 0.172635,
+          "organization": {
+            "Ndwl": 2.0,
+            "Ndbl": 1.0,
+            "Nspd": 32.0,
+            "Ndcm": 4.0,
+            "Ndsam1": 8.0,
+            "Ndsam2": 1.0
+          }
+        },
+        "elapsed_seconds": 0.2656162679195404,
+        "stdout_sha256": "33bb3fe3d6bf190a299fa2e9ed0fe708ef560a11aa9858cab7d7bb388618a08b",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "reused": true,
+        "archived_files": {
+          "config": "reports/fncacti/sram_8192x8_951fbdca9fd8/input.cfg",
+          "stdout": "reports/fncacti/sram_8192x8_951fbdca9fd8/stdout.txt",
+          "stderr": "reports/fncacti/sram_8192x8_951fbdca9fd8/stderr.txt"
+        }
+      },
+      "sram_256x16_384ff074f5d9": {
+        "status": "complete",
+        "macro": {
+          "depth_words": 256,
+          "width_bits": 16,
+          "ports": {
+            "read_write": 0,
+            "exclusive_read": 1,
+            "exclusive_write": 1
+          },
+          "uca_banks": 1
+        },
+        "config": "/home/ubuntu/lotus_boru/build/hammer-native-1.3ns/fncacti/sram_256x16_384ff074f5d9/1a18404c7e550141/input.cfg",
+        "config_sha256": "01333863abb41a25c4569384f717d528047e62f980f5253d3b2eafaee6cbef06",
+        "binary": "/home/ubuntu/lotus_boru/ext/fncacti/work/pcacti_xml/cacti",
+        "binary_sha256": "afa57cf24af0db0be1bc5f17b437f63c89028b0e778aab0e5f1acaae72e7ef95",
+        "template": "/home/ubuntu/lotus_boru/ext/fncacti/work/pcacti_xml/configs/2MB_fin.cfg",
+        "template_sha256": "9475afa0ce92e0d21f393841673afdaf9b0510567093abe154a2779381c14b6b",
+        "command": [
+          "/home/ubuntu/lotus_boru/ext/fncacti/work/pcacti_xml/cacti",
+          "-infile",
+          "/home/ubuntu/lotus_boru/build/hammer-native-1.3ns/fncacti/sram_256x16_384ff074f5d9/1a18404c7e550141/input.cfg"
+        ],
+        "cwd": "/home/ubuntu/lotus_boru/build/hammer-native-1.3ns/fncacti/sram_256x16_384ff074f5d9/1a18404c7e550141",
+        "stdout": "/home/ubuntu/lotus_boru/build/hammer-native-1.3ns/fncacti/sram_256x16_384ff074f5d9/1a18404c7e550141/stdout.log",
+        "stderr": "/home/ubuntu/lotus_boru/build/hammer-native-1.3ns/fncacti/sram_256x16_384ff074f5d9/1a18404c7e550141/stderr.log",
+        "started_utc": "2026-10-27T04:58:26.056531+00:00",
+        "exit_code": 0,
+        "result": {
+          "area_um2": 370.252,
+          "physical_dimensions_um": {
+            "height": 33.208,
+            "width": 11.1495
+          },
+          "access_time_ns": 0.142542,
+          "cycle_time_ns": 0.0681549,
+          "organization": {
+            "Ndwl": 1.0,
+            "Ndbl": 2.0,
+            "Nspd": 2.0,
+            "Ndcm": 1.0,
+            "Ndsam1": 4.0,
+            "Ndsam2": 1.0
+          }
+        },
+        "elapsed_seconds": 0.06505161803215742,
+        "stdout_sha256": "febec16bde315b202e188627b6dcd19b6074cedc3fee8e5488b1d1c5c109569d",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "reused": true,
+        "archived_files": {
+          "config": "reports/fncacti/sram_256x16_384ff074f5d9/input.cfg",
+          "stdout": "reports/fncacti/sram_256x16_384ff074f5d9/stdout.txt",
+          "stderr": "reports/fncacti/sram_256x16_384ff074f5d9/stderr.txt"
+        }
+      },
+      "sram_256x24_45eaf7ed8a6a": {
+        "status": "complete",
+        "macro": {
+          "depth_words": 256,
+          "width_bits": 24,
+          "ports": {
+            "read_write": 0,
+            "exclusive_read": 1,
+            "exclusive_write": 1
+          },
+          "uca_banks": 1
+        },
+        "config": "/home/ubuntu/lotus_boru/build/hammer-native-1.3ns/fncacti/sram_256x24_45eaf7ed8a6a/66a1973150359581/input.cfg",
+        "config_sha256": "3c37c30ab7e029a21e4531982debdb21e0332744553ae7c5407433b4810db233",
+        "binary": "/home/ubuntu/lotus_boru/ext/fncacti/work/pcacti_xml/cacti",
+        "binary_sha256": "afa57cf24af0db0be1bc5f17b437f63c89028b0e778aab0e5f1acaae72e7ef95",
+        "template": "/home/ubuntu/lotus_boru/ext/fncacti/work/pcacti_xml/configs/2MB_fin.cfg",
+        "template_sha256": "9475afa0ce92e0d21f393841673afdaf9b0510567093abe154a2779381c14b6b",
+        "command": [
+          "/home/ubuntu/lotus_boru/ext/fncacti/work/pcacti_xml/cacti",
+          "-infile",
+          "/home/ubuntu/lotus_boru/build/hammer-native-1.3ns/fncacti/sram_256x24_45eaf7ed8a6a/66a1973150359581/input.cfg"
+        ],
+        "cwd": "/home/ubuntu/lotus_boru/build/hammer-native-1.3ns/fncacti/sram_256x24_45eaf7ed8a6a/66a1973150359581",
+        "stdout": "/home/ubuntu/lotus_boru/build/hammer-native-1.3ns/fncacti/sram_256x24_45eaf7ed8a6a/66a1973150359581/stdout.log",
+        "stderr": "/home/ubuntu/lotus_boru/build/hammer-native-1.3ns/fncacti/sram_256x24_45eaf7ed8a6a/66a1973150359581/stderr.log",
+        "started_utc": "2026-10-27T04:58:26.126147+00:00",
+        "exit_code": 0,
+        "result": {
+          "area_um2": 543.787,
+          "physical_dimensions_um": {
+            "height": 31.196,
+            "width": 17.4313
+          },
+          "access_time_ns": 0.179905,
+          "cycle_time_ns": 0.0747864,
+          "organization": {
+            "Ndwl": 2.0,
+            "Ndbl": 1.0,
+            "Nspd": 2.0,
+            "Ndcm": 1.0,
+            "Ndsam1": 2.0,
+            "Ndsam2": 1.0
+          }
+        },
+        "elapsed_seconds": 0.0650619687512517,
+        "stdout_sha256": "1b70cfc8c5246e0d879fe612e254f2b0736de982331c5d710d01ba730bb227b3",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "reused": true,
+        "archived_files": {
+          "config": "reports/fncacti/sram_256x24_45eaf7ed8a6a/input.cfg",
+          "stdout": "reports/fncacti/sram_256x24_45eaf7ed8a6a/stdout.txt",
+          "stderr": "reports/fncacti/sram_256x24_45eaf7ed8a6a/stderr.txt"
+        }
+      },
+      "sram_8192x32_6ad57cb9da85": {
+        "status": "complete",
+        "macro": {
+          "depth_words": 8192,
+          "width_bits": 32,
+          "ports": {
+            "read_write": 1,
+            "exclusive_read": 1,
+            "exclusive_write": 0
+          },
+          "uca_banks": 1
+        },
+        "config": "/home/ubuntu/lotus_boru/build/hammer-native-1.3ns/fncacti/sram_8192x32_6ad57cb9da85/b601ae0b1420c2b2/input.cfg",
+        "config_sha256": "48e0a6212febb91df778f0b1d7710137df9772d4fc41eed3697d7a64e544ae05",
+        "binary": "/home/ubuntu/lotus_boru/ext/fncacti/work/pcacti_xml/cacti",
+        "binary_sha256": "afa57cf24af0db0be1bc5f17b437f63c89028b0e778aab0e5f1acaae72e7ef95",
+        "template": "/home/ubuntu/lotus_boru/ext/fncacti/work/pcacti_xml/configs/2MB_fin.cfg",
+        "template_sha256": "9475afa0ce92e0d21f393841673afdaf9b0510567093abe154a2779381c14b6b",
+        "command": [
+          "/home/ubuntu/lotus_boru/ext/fncacti/work/pcacti_xml/cacti",
+          "-infile",
+          "/home/ubuntu/lotus_boru/build/hammer-native-1.3ns/fncacti/sram_8192x32_6ad57cb9da85/b601ae0b1420c2b2/input.cfg"
+        ],
+        "cwd": "/home/ubuntu/lotus_boru/build/hammer-native-1.3ns/fncacti/sram_8192x32_6ad57cb9da85/b601ae0b1420c2b2",
+        "stdout": "/home/ubuntu/lotus_boru/build/hammer-native-1.3ns/fncacti/sram_8192x32_6ad57cb9da85/b601ae0b1420c2b2/stdout.log",
+        "stderr": "/home/ubuntu/lotus_boru/build/hammer-native-1.3ns/fncacti/sram_8192x32_6ad57cb9da85/b601ae0b1420c2b2/stderr.log",
+        "started_utc": "2026-10-27T04:58:26.195738+00:00",
+        "exit_code": 0,
+        "result": {
+          "area_um2": 17524.7,
+          "physical_dimensions_um": {
+            "height": 114.47,
+            "width": 153.095
+          },
+          "access_time_ns": 0.445324,
+          "cycle_time_ns": 0.342312,
+          "organization": {
+            "Ndwl": 2.0,
+            "Ndbl": 1.0,
+            "Nspd": 16.0,
+            "Ndcm": 4.0,
+            "Ndsam1": 4.0,
+            "Ndsam2": 1.0
+          }
+        },
+        "elapsed_seconds": 0.515969917178154,
+        "stdout_sha256": "3d1a3e9bbcc249b2669709e4c3714feea4e7ccc73a9169f0d650c83157e3fd3a",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "reused": true,
+        "archived_files": {
+          "config": "reports/fncacti/sram_8192x32_6ad57cb9da85/input.cfg",
+          "stdout": "reports/fncacti/sram_8192x32_6ad57cb9da85/stdout.txt",
+          "stderr": "reports/fncacti/sram_8192x32_6ad57cb9da85/stderr.txt"
+        }
+      },
+      "sram_4096x16_7c7aa5036603": {
+        "status": "complete",
+        "macro": {
+          "depth_words": 4096,
+          "width_bits": 16,
+          "ports": {
+            "read_write": 1,
+            "exclusive_read": 1,
+            "exclusive_write": 0
+          },
+          "uca_banks": 1
+        },
+        "config": "/home/ubuntu/lotus_boru/build/hammer-native-1.3ns/fncacti/sram_4096x16_7c7aa5036603/bf9fbdbed2b1f56b/input.cfg",
+        "config_sha256": "6b3a73ff5a09100f693c625011cca5d0a83e92b94042ea3e187602c5324f1e48",
+        "binary": "/home/ubuntu/lotus_boru/ext/fncacti/work/pcacti_xml/cacti",
+        "binary_sha256": "afa57cf24af0db0be1bc5f17b437f63c89028b0e778aab0e5f1acaae72e7ef95",
+        "template": "/home/ubuntu/lotus_boru/ext/fncacti/work/pcacti_xml/configs/2MB_fin.cfg",
+        "template_sha256": "9475afa0ce92e0d21f393841673afdaf9b0510567093abe154a2779381c14b6b",
+        "command": [
+          "/home/ubuntu/lotus_boru/ext/fncacti/work/pcacti_xml/cacti",
+          "-infile",
+          "/home/ubuntu/lotus_boru/build/hammer-native-1.3ns/fncacti/sram_4096x16_7c7aa5036603/bf9fbdbed2b1f56b/input.cfg"
+        ],
+        "cwd": "/home/ubuntu/lotus_boru/build/hammer-native-1.3ns/fncacti/sram_4096x16_7c7aa5036603/bf9fbdbed2b1f56b",
+        "stdout": "/home/ubuntu/lotus_boru/build/hammer-native-1.3ns/fncacti/sram_4096x16_7c7aa5036603/bf9fbdbed2b1f56b/stdout.log",
+        "stderr": "/home/ubuntu/lotus_boru/build/hammer-native-1.3ns/fncacti/sram_4096x16_7c7aa5036603/bf9fbdbed2b1f56b/stderr.log",
+        "started_utc": "2026-10-27T04:58:26.716566+00:00",
+        "exit_code": 0,
+        "result": {
+          "area_um2": 4628.66,
+          "physical_dimensions_um": {
+            "height": 59.077999999999996,
+            "width": 78.3483
+          },
+          "access_time_ns": 0.269695,
+          "cycle_time_ns": 0.172635,
+          "organization": {
+            "Ndwl": 2.0,
+            "Ndbl": 1.0,
+            "Nspd": 16.0,
+            "Ndcm": 4.0,
+            "Ndsam1": 4.0,
+            "Ndsam2": 1.0
+          }
+        },
+        "elapsed_seconds": 0.2656476590782404,
+        "stdout_sha256": "b306f809ac2e0f2526fba35c92f0cce421298c8a2ff6d2e8296d4b41a7c09f37",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "reused": true,
+        "archived_files": {
+          "config": "reports/fncacti/sram_4096x16_7c7aa5036603/input.cfg",
+          "stdout": "reports/fncacti/sram_4096x16_7c7aa5036603/stdout.txt",
+          "stderr": "reports/fncacti/sram_4096x16_7c7aa5036603/stderr.txt"
+        }
+      },
+      "sram_8192x8_1922f8e21c59": {
+        "status": "complete",
+        "macro": {
+          "depth_words": 8192,
+          "width_bits": 8,
+          "ports": {
+            "read_write": 0,
+            "exclusive_read": 1,
+            "exclusive_write": 1
+          },
+          "uca_banks": 1
+        },
+        "config": "/home/ubuntu/lotus_boru/build/hammer-native-1.3ns/fncacti/sram_8192x8_1922f8e21c59/73b155625cedd2bb/input.cfg",
+        "config_sha256": "f4c3af305997c3cfef1805391254d8860ea29a7c5aac3fb3eb2d0be122329b5e",
+        "binary": "/home/ubuntu/lotus_boru/ext/fncacti/work/pcacti_xml/cacti",
+        "binary_sha256": "afa57cf24af0db0be1bc5f17b437f63c89028b0e778aab0e5f1acaae72e7ef95",
+        "template": "/home/ubuntu/lotus_boru/ext/fncacti/work/pcacti_xml/configs/2MB_fin.cfg",
+        "template_sha256": "9475afa0ce92e0d21f393841673afdaf9b0510567093abe154a2779381c14b6b",
+        "command": [
+          "/home/ubuntu/lotus_boru/ext/fncacti/work/pcacti_xml/cacti",
+          "-infile",
+          "/home/ubuntu/lotus_boru/build/hammer-native-1.3ns/fncacti/sram_8192x8_1922f8e21c59/73b155625cedd2bb/input.cfg"
+        ],
+        "cwd": "/home/ubuntu/lotus_boru/build/hammer-native-1.3ns/fncacti/sram_8192x8_1922f8e21c59/73b155625cedd2bb",
+        "stdout": "/home/ubuntu/lotus_boru/build/hammer-native-1.3ns/fncacti/sram_8192x8_1922f8e21c59/73b155625cedd2bb/stdout.log",
+        "stderr": "/home/ubuntu/lotus_boru/build/hammer-native-1.3ns/fncacti/sram_8192x8_1922f8e21c59/73b155625cedd2bb/stderr.log",
+        "started_utc": "2026-10-27T04:58:26.987114+00:00",
+        "exit_code": 0,
+        "result": {
+          "area_um2": 4524.410000000001,
+          "physical_dimensions_um": {
+            "height": 57.71,
+            "width": 78.399
+          },
+          "access_time_ns": 0.272794,
+          "cycle_time_ns": 0.17255,
+          "organization": {
+            "Ndwl": 2.0,
+            "Ndbl": 1.0,
+            "Nspd": 32.0,
+            "Ndcm": 4.0,
+            "Ndsam1": 8.0,
+            "Ndsam2": 1.0
+          }
+        },
+        "elapsed_seconds": 0.26562682213261724,
+        "stdout_sha256": "8e807d0959c31b385cea5dca5a3ab3ce446768b01eec56306fd7dde70a855f68",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "reused": true,
+        "archived_files": {
+          "config": "reports/fncacti/sram_8192x8_1922f8e21c59/input.cfg",
+          "stdout": "reports/fncacti/sram_8192x8_1922f8e21c59/stdout.txt",
+          "stderr": "reports/fncacti/sram_8192x8_1922f8e21c59/stderr.txt"
+        }
+      },
+      "sram_4096x8_94aa910732d1": {
+        "status": "complete",
+        "macro": {
+          "depth_words": 4096,
+          "width_bits": 8,
+          "ports": {
+            "read_write": 0,
+            "exclusive_read": 1,
+            "exclusive_write": 1
+          },
+          "uca_banks": 1
+        },
+        "config": "/home/ubuntu/lotus_boru/build/hammer-native-1.3ns/fncacti/sram_4096x8_94aa910732d1/63a168d2ab63a061/input.cfg",
+        "config_sha256": "50ce75a8fd8d79e52ba03c24d51cf756357b72ad7d68505a07a8c7d2000cae33",
+        "binary": "/home/ubuntu/lotus_boru/ext/fncacti/work/pcacti_xml/cacti",
+        "binary_sha256": "afa57cf24af0db0be1bc5f17b437f63c89028b0e778aab0e5f1acaae72e7ef95",
+        "template": "/home/ubuntu/lotus_boru/ext/fncacti/work/pcacti_xml/configs/2MB_fin.cfg",
+        "template_sha256": "9475afa0ce92e0d21f393841673afdaf9b0510567093abe154a2779381c14b6b",
+        "command": [
+          "/home/ubuntu/lotus_boru/ext/fncacti/work/pcacti_xml/cacti",
+          "-infile",
+          "/home/ubuntu/lotus_boru/build/hammer-native-1.3ns/fncacti/sram_4096x8_94aa910732d1/63a168d2ab63a061/input.cfg"
+        ],
+        "cwd": "/home/ubuntu/lotus_boru/build/hammer-native-1.3ns/fncacti/sram_4096x8_94aa910732d1/63a168d2ab63a061",
+        "stdout": "/home/ubuntu/lotus_boru/build/hammer-native-1.3ns/fncacti/sram_4096x8_94aa910732d1/63a168d2ab63a061/stdout.log",
+        "stderr": "/home/ubuntu/lotus_boru/build/hammer-native-1.3ns/fncacti/sram_4096x8_94aa910732d1/63a168d2ab63a061/stderr.log",
+        "started_utc": "2026-10-27T04:58:27.257610+00:00",
+        "exit_code": 0,
+        "result": {
+          "area_um2": 2356.0,
+          "physical_dimensions_um": {
+            "height": 58.19,
+            "width": 40.48800000000001
+          },
+          "access_time_ns": 0.240935,
+          "cycle_time_ns": 0.162472,
+          "organization": {
+            "Ndwl": 1.0,
+            "Ndbl": 1.0,
+            "Nspd": 16.0,
+            "Ndcm": 4.0,
+            "Ndsam1": 4.0,
+            "Ndsam2": 1.0
+          }
+        },
+        "elapsed_seconds": 0.21552386693656445,
+        "stdout_sha256": "3d3f621c727d5ce01e5985d5d40632afbb03436ba1d847b1cdd7fc995ca55be2",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "reused": true,
+        "archived_files": {
+          "config": "reports/fncacti/sram_4096x8_94aa910732d1/input.cfg",
+          "stdout": "reports/fncacti/sram_4096x8_94aa910732d1/stdout.txt",
+          "stderr": "reports/fncacti/sram_4096x8_94aa910732d1/stderr.txt"
+        }
+      },
+      "sram_4096x72_fdd8fe6be325": {
+        "status": "complete",
+        "macro": {
+          "depth_words": 4096,
+          "width_bits": 72,
+          "ports": {
+            "read_write": 1,
+            "exclusive_read": 0,
+            "exclusive_write": 0
+          },
+          "uca_banks": 1
+        },
+        "config": "/home/ubuntu/lotus_boru/build/hammer-native-1.3ns/fncacti/sram_4096x72_fdd8fe6be325/4d8043dd3e151394/input.cfg",
+        "config_sha256": "ff04142f096503f429298151258c5746bcf81773485fe3368884db61d5520cf3",
+        "binary": "/home/ubuntu/lotus_boru/ext/fncacti/work/pcacti_xml/cacti",
+        "binary_sha256": "afa57cf24af0db0be1bc5f17b437f63c89028b0e778aab0e5f1acaae72e7ef95",
+        "template": "/home/ubuntu/lotus_boru/ext/fncacti/work/pcacti_xml/configs/2MB_fin.cfg",
+        "template_sha256": "9475afa0ce92e0d21f393841673afdaf9b0510567093abe154a2779381c14b6b",
+        "command": [
+          "/home/ubuntu/lotus_boru/ext/fncacti/work/pcacti_xml/cacti",
+          "-infile",
+          "/home/ubuntu/lotus_boru/build/hammer-native-1.3ns/fncacti/sram_4096x72_fdd8fe6be325/4d8043dd3e151394/input.cfg"
+        ],
+        "cwd": "/home/ubuntu/lotus_boru/build/hammer-native-1.3ns/fncacti/sram_4096x72_fdd8fe6be325/4d8043dd3e151394",
+        "stdout": "/home/ubuntu/lotus_boru/build/hammer-native-1.3ns/fncacti/sram_4096x72_fdd8fe6be325/4d8043dd3e151394/stdout.log",
+        "stderr": "/home/ubuntu/lotus_boru/build/hammer-native-1.3ns/fncacti/sram_4096x72_fdd8fe6be325/4d8043dd3e151394/stderr.log",
+        "started_utc": "2026-10-27T04:58:27.478023+00:00",
+        "exit_code": 0,
+        "result": {
+          "area_um2": 9660.470000000001,
+          "physical_dimensions_um": {
+            "height": 146.74,
+            "width": 65.8339
+          },
+          "access_time_ns": 0.507503,
+          "cycle_time_ns": 0.274779,
+          "organization": {
+            "Ndwl": 2.0,
+            "Ndbl": 1.0,
+            "Nspd": 4.0,
+            "Ndcm": 1.0,
+            "Ndsam1": 4.0,
+            "Ndsam2": 1.0
+          }
+        },
+        "elapsed_seconds": 0.4662753245793283,
+        "stdout_sha256": "0367536bc4ff78b5e2552ac9b42639b7b42815d2557c17413aed8f990c922361",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "reused": true,
+        "archived_files": {
+          "config": "reports/fncacti/sram_4096x72_fdd8fe6be325/input.cfg",
+          "stdout": "reports/fncacti/sram_4096x72_fdd8fe6be325/stdout.txt",
+          "stderr": "reports/fncacti/sram_4096x72_fdd8fe6be325/stderr.txt"
+        }
+      },
+      "sram_8192x8_b81b1cdd3863": {
+        "status": "complete",
+        "macro": {
+          "depth_words": 8192,
+          "width_bits": 8,
+          "ports": {
+            "read_write": 1,
+            "exclusive_read": 0,
+            "exclusive_write": 1
+          },
+          "uca_banks": 1
+        },
+        "config": "/home/ubuntu/lotus_boru/build/hammer-native-1.3ns/fncacti/sram_8192x8_b81b1cdd3863/263e12ddfa5d2b79/input.cfg",
+        "config_sha256": "39e16202b7be792cf745f203a82c5a8523e736c214a3b6e80779aac64061220e",
+        "binary": "/home/ubuntu/lotus_boru/ext/fncacti/work/pcacti_xml/cacti",
+        "binary_sha256": "afa57cf24af0db0be1bc5f17b437f63c89028b0e778aab0e5f1acaae72e7ef95",
+        "template": "/home/ubuntu/lotus_boru/ext/fncacti/work/pcacti_xml/configs/2MB_fin.cfg",
+        "template_sha256": "9475afa0ce92e0d21f393841673afdaf9b0510567093abe154a2779381c14b6b",
+        "command": [
+          "/home/ubuntu/lotus_boru/ext/fncacti/work/pcacti_xml/cacti",
+          "-infile",
+          "/home/ubuntu/lotus_boru/build/hammer-native-1.3ns/fncacti/sram_8192x8_b81b1cdd3863/263e12ddfa5d2b79/input.cfg"
+        ],
+        "cwd": "/home/ubuntu/lotus_boru/build/hammer-native-1.3ns/fncacti/sram_8192x8_b81b1cdd3863/263e12ddfa5d2b79",
+        "stdout": "/home/ubuntu/lotus_boru/build/hammer-native-1.3ns/fncacti/sram_8192x8_b81b1cdd3863/263e12ddfa5d2b79/stdout.log",
+        "stderr": "/home/ubuntu/lotus_boru/build/hammer-native-1.3ns/fncacti/sram_8192x8_b81b1cdd3863/263e12ddfa5d2b79/stderr.log",
+        "started_utc": "2026-10-27T04:58:27.949373+00:00",
+        "exit_code": 0,
+        "result": {
+          "area_um2": 4524.410000000001,
+          "physical_dimensions_um": {
+            "height": 57.71,
+            "width": 78.399
+          },
+          "access_time_ns": 0.272794,
+          "cycle_time_ns": 0.17255,
+          "organization": {
+            "Ndwl": 2.0,
+            "Ndbl": 1.0,
+            "Nspd": 32.0,
+            "Ndcm": 4.0,
+            "Ndsam1": 8.0,
+            "Ndsam2": 1.0
+          }
+        },
+        "elapsed_seconds": 0.26569326175376773,
+        "stdout_sha256": "06b9bceb7ce3d671b0ae858dc7e78f9cfa34a1374e7dbddfe4bbbf9e5113f0f7",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "reused": true,
+        "archived_files": {
+          "config": "reports/fncacti/sram_8192x8_b81b1cdd3863/input.cfg",
+          "stdout": "reports/fncacti/sram_8192x8_b81b1cdd3863/stdout.txt",
+          "stderr": "reports/fncacti/sram_8192x8_b81b1cdd3863/stderr.txt"
+        }
+      },
+      "sram_2048x8_573e729c89e0": {
+        "status": "complete",
+        "macro": {
+          "depth_words": 2048,
+          "width_bits": 8,
+          "ports": {
+            "read_write": 1,
+            "exclusive_read": 0,
+            "exclusive_write": 1
+          },
+          "uca_banks": 1
+        },
+        "config": "/home/ubuntu/lotus_boru/build/hammer-native-1.3ns/fncacti/sram_2048x8_573e729c89e0/2bd00d603ad225ca/input.cfg",
+        "config_sha256": "d6aa9a726c9575e278310e01571d5fa63a9e6d0f8533e1011eb322ec50f74b7c",
+        "binary": "/home/ubuntu/lotus_boru/ext/fncacti/work/pcacti_xml/cacti",
+        "binary_sha256": "afa57cf24af0db0be1bc5f17b437f63c89028b0e778aab0e5f1acaae72e7ef95",
+        "template": "/home/ubuntu/lotus_boru/ext/fncacti/work/pcacti_xml/configs/2MB_fin.cfg",
+        "template_sha256": "9475afa0ce92e0d21f393841673afdaf9b0510567093abe154a2779381c14b6b",
+        "command": [
+          "/home/ubuntu/lotus_boru/ext/fncacti/work/pcacti_xml/cacti",
+          "-infile",
+          "/home/ubuntu/lotus_boru/build/hammer-native-1.3ns/fncacti/sram_2048x8_573e729c89e0/2bd00d603ad225ca/input.cfg"
+        ],
+        "cwd": "/home/ubuntu/lotus_boru/build/hammer-native-1.3ns/fncacti/sram_2048x8_573e729c89e0/2bd00d603ad225ca",
+        "stdout": "/home/ubuntu/lotus_boru/build/hammer-native-1.3ns/fncacti/sram_2048x8_573e729c89e0/2bd00d603ad225ca/stdout.log",
+        "stderr": "/home/ubuntu/lotus_boru/build/hammer-native-1.3ns/fncacti/sram_2048x8_573e729c89e0/2bd00d603ad225ca/stderr.log",
+        "started_utc": "2026-10-27T04:58:28.220191+00:00",
+        "exit_code": 0,
+        "result": {
+          "area_um2": 1245.14,
+          "physical_dimensions_um": {
+            "height": 31.214,
+            "width": 39.8905
+          },
+          "access_time_ns": 0.198102,
+          "cycle_time_ns": 0.141623,
+          "organization": {
+            "Ndwl": 1.0,
+            "Ndbl": 1.0,
+            "Nspd": 16.0,
+            "Ndcm": 4.0,
+            "Ndsam1": 4.0,
+            "Ndsam2": 1.0
+          }
+        },
+        "elapsed_seconds": 0.16538710286840796,
+        "stdout_sha256": "e9ed020d63938af0989fe989e4bdee521a7148cc7c60e8cecd5597d213ac0e64",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "reused": true,
+        "archived_files": {
+          "config": "reports/fncacti/sram_2048x8_573e729c89e0/input.cfg",
+          "stdout": "reports/fncacti/sram_2048x8_573e729c89e0/stdout.txt",
+          "stderr": "reports/fncacti/sram_2048x8_573e729c89e0/stderr.txt"
+        }
+      },
+      "sram_128x8_3804d2eb04fe": {
+        "status": "complete",
+        "macro": {
+          "depth_words": 128,
+          "width_bits": 8,
+          "ports": {
+            "read_write": 1,
+            "exclusive_read": 0,
+            "exclusive_write": 1
+          },
+          "uca_banks": 1
+        },
+        "config": "/home/ubuntu/lotus_boru/build/hammer-native-1.3ns/fncacti/sram_128x8_3804d2eb04fe/2fa610102cb20f9b/input.cfg",
+        "config_sha256": "0704a8de67288269b7c09d0677f2f2e93c1a3b1bfe985e68cdd51859ee48ba08",
+        "binary": "/home/ubuntu/lotus_boru/ext/fncacti/work/pcacti_xml/cacti",
+        "binary_sha256": "afa57cf24af0db0be1bc5f17b437f63c89028b0e778aab0e5f1acaae72e7ef95",
+        "template": "/home/ubuntu/lotus_boru/ext/fncacti/work/pcacti_xml/configs/2MB_fin.cfg",
+        "template_sha256": "9475afa0ce92e0d21f393841673afdaf9b0510567093abe154a2779381c14b6b",
+        "command": [
+          "/home/ubuntu/lotus_boru/ext/fncacti/work/pcacti_xml/cacti",
+          "-infile",
+          "/home/ubuntu/lotus_boru/build/hammer-native-1.3ns/fncacti/sram_128x8_3804d2eb04fe/2fa610102cb20f9b/input.cfg"
+        ],
+        "cwd": "/home/ubuntu/lotus_boru/build/hammer-native-1.3ns/fncacti/sram_128x8_3804d2eb04fe/2fa610102cb20f9b",
+        "stdout": "/home/ubuntu/lotus_boru/build/hammer-native-1.3ns/fncacti/sram_128x8_3804d2eb04fe/2fa610102cb20f9b/stdout.log",
+        "stderr": "/home/ubuntu/lotus_boru/build/hammer-native-1.3ns/fncacti/sram_128x8_3804d2eb04fe/2fa610102cb20f9b/stderr.log",
+        "started_utc": "2026-10-27T04:58:28.390617+00:00",
+        "exit_code": 0,
+        "result": {
+          "area_um2": 112.568,
+          "physical_dimensions_um": {
+            "height": 16.892,
+            "width": 6.66399
+          },
+          "access_time_ns": 0.134398,
+          "cycle_time_ns": 0.0553888,
+          "organization": {
+            "Ndwl": 1.0,
+            "Ndbl": 1.0,
+            "Nspd": 2.0,
+            "Ndcm": 1.0,
+            "Ndsam1": 2.0,
+            "Ndsam2": 1.0
+          }
+        },
+        "elapsed_seconds": 0.03294803574681282,
+        "stdout_sha256": "748847e412947420519b9d5f77493ce11c261bbb60add1c753f96ecf95a5c702",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "reused": true,
+        "archived_files": {
+          "config": "reports/fncacti/sram_128x8_3804d2eb04fe/input.cfg",
+          "stdout": "reports/fncacti/sram_128x8_3804d2eb04fe/stdout.txt",
+          "stderr": "reports/fncacti/sram_128x8_3804d2eb04fe/stderr.txt"
+        }
+      },
+      "sram_64x8_c248dd081b00": {
+        "status": "complete",
+        "macro": {
+          "depth_words": 64,
+          "width_bits": 8,
+          "ports": {
+            "read_write": 1,
+            "exclusive_read": 0,
+            "exclusive_write": 1
+          },
+          "uca_banks": 1
+        },
+        "config": "/home/ubuntu/lotus_boru/build/hammer-native-1.3ns/fncacti/sram_64x8_c248dd081b00/4b990dc36c3239ad/input.cfg",
+        "config_sha256": "bce7dfe15bfcf9805e6b004af7a2f7ab703f5d2f627faabea03cd36c2d556fa9",
+        "binary": "/home/ubuntu/lotus_boru/ext/fncacti/work/pcacti_xml/cacti",
+        "binary_sha256": "afa57cf24af0db0be1bc5f17b437f63c89028b0e778aab0e5f1acaae72e7ef95",
+        "template": "/home/ubuntu/lotus_boru/ext/fncacti/work/pcacti_xml/configs/2MB_fin.cfg",
+        "template_sha256": "9475afa0ce92e0d21f393841673afdaf9b0510567093abe154a2779381c14b6b",
+        "command": [
+          "/home/ubuntu/lotus_boru/ext/fncacti/work/pcacti_xml/cacti",
+          "-infile",
+          "/home/ubuntu/lotus_boru/build/hammer-native-1.3ns/fncacti/sram_64x8_c248dd081b00/4b990dc36c3239ad/input.cfg"
+        ],
+        "cwd": "/home/ubuntu/lotus_boru/build/hammer-native-1.3ns/fncacti/sram_64x8_c248dd081b00/4b990dc36c3239ad",
+        "stdout": "/home/ubuntu/lotus_boru/build/hammer-native-1.3ns/fncacti/sram_64x8_c248dd081b00/4b990dc36c3239ad/stdout.log",
+        "stderr": "/home/ubuntu/lotus_boru/build/hammer-native-1.3ns/fncacti/sram_64x8_c248dd081b00/4b990dc36c3239ad/stderr.log",
+        "started_utc": "2026-10-27T04:58:28.428590+00:00",
+        "exit_code": 0,
+        "result": {
+          "area_um2": 65.5723,
+          "physical_dimensions_um": {
+            "height": 10.076,
+            "width": 6.50778
+          },
+          "access_time_ns": 0.123688,
+          "cycle_time_ns": 0.0506784,
+          "organization": {
+            "Ndwl": 1.0,
+            "Ndbl": 1.0,
+            "Nspd": 2.0,
+            "Ndcm": 1.0,
+            "Ndsam1": 2.0,
+            "Ndsam2": 1.0
+          }
+        },
+        "elapsed_seconds": 0.016740938182920218,
+        "stdout_sha256": "e40e7368348db8898be3c851f2d21dfa121b87706790ea9c6dc1ce9f4c0c6d53",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "reused": true,
+        "archived_files": {
+          "config": "reports/fncacti/sram_64x8_c248dd081b00/input.cfg",
+          "stdout": "reports/fncacti/sram_64x8_c248dd081b00/stdout.txt",
+          "stderr": "reports/fncacti/sram_64x8_c248dd081b00/stderr.txt"
+        }
+      },
+      "sram_16384x72_b652e875328b": {
+        "status": "complete",
+        "macro": {
+          "depth_words": 16384,
+          "width_bits": 72,
+          "ports": {
+            "read_write": 0,
+            "exclusive_read": 1,
+            "exclusive_write": 1
+          },
+          "uca_banks": 1
+        },
+        "config": "/home/ubuntu/lotus_boru/build/hammer-native-1.3ns/fncacti/sram_16384x72_b652e875328b/8daf2e221eb8a2db/input.cfg",
+        "config_sha256": "fde0dd6ec76420acfdfe2a86a5ca3367c2bc04003358437939ae0c347908a923",
+        "binary": "/home/ubuntu/lotus_boru/ext/fncacti/work/pcacti_xml/cacti",
+        "binary_sha256": "afa57cf24af0db0be1bc5f17b437f63c89028b0e778aab0e5f1acaae72e7ef95",
+        "template": "/home/ubuntu/lotus_boru/ext/fncacti/work/pcacti_xml/configs/2MB_fin.cfg",
+        "template_sha256": "9475afa0ce92e0d21f393841673afdaf9b0510567093abe154a2779381c14b6b",
+        "command": [
+          "/home/ubuntu/lotus_boru/ext/fncacti/work/pcacti_xml/cacti",
+          "-infile",
+          "/home/ubuntu/lotus_boru/build/hammer-native-1.3ns/fncacti/sram_16384x72_b652e875328b/8daf2e221eb8a2db/input.cfg"
+        ],
+        "cwd": "/home/ubuntu/lotus_boru/build/hammer-native-1.3ns/fncacti/sram_16384x72_b652e875328b/8daf2e221eb8a2db",
+        "stdout": "/home/ubuntu/lotus_boru/build/hammer-native-1.3ns/fncacti/sram_16384x72_b652e875328b/8daf2e221eb8a2db/stdout.log",
+        "stderr": "/home/ubuntu/lotus_boru/build/hammer-native-1.3ns/fncacti/sram_16384x72_b652e875328b/8daf2e221eb8a2db/stderr.log",
+        "started_utc": "2026-10-27T04:58:28.450465+00:00",
+        "exit_code": 0,
+        "result": {
+          "area_um2": 76364.0,
+          "physical_dimensions_um": {
+            "height": 441.40000000000003,
+            "width": 173.004
+          },
+          "access_time_ns": 0.815936,
+          "cycle_time_ns": 0.495417,
+          "organization": {
+            "Ndwl": 2.0,
+            "Ndbl": 2.0,
+            "Nspd": 8.0,
+            "Ndcm": 1.0,
+            "Ndsam1": 16.0,
+            "Ndsam2": 1.0
+          }
+        },
+        "elapsed_seconds": 0.8169573401100934,
+        "stdout_sha256": "98ee4341421d2a80484ed91773c0b94738646200ce35ae2eb1eabc4fa1c225c1",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "reused": true,
+        "archived_files": {
+          "config": "reports/fncacti/sram_16384x72_b652e875328b/input.cfg",
+          "stdout": "reports/fncacti/sram_16384x72_b652e875328b/stdout.txt",
+          "stderr": "reports/fncacti/sram_16384x72_b652e875328b/stderr.txt"
+        }
+      }
+    },
+    "technology_note": "Uncalibrated 14 nm FinFET devices with 7 nm ASAP7 wires; do not add this area to ASAP7 standard-cell area as a calibrated 7 nm total.",
+    "totals": {
+      "logical_instances": 25,
+      "logical_bits": 4033664,
+      "macro_instances": 108,
+      "allocated_bits": 4407296,
+      "padding_bits": 373632,
+      "uncalibrated_sram_area_um2": 294944.9148
+    }
+  }
+}

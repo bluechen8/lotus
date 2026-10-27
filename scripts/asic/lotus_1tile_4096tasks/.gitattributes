@@ -1,0 +1,3 @@
+# Preserve archived model inputs/outputs byte-for-byte for recorded SHA-256 hashes.
+# Native tool formatting includes trailing spaces and blank lines.
+reports/fncacti/** -text -whitespace

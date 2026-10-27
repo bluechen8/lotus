@@ -1,0 +1,4 @@
+=== build/fast64t4096e/hdl/bsv:
+mkTile.v: 8223cfb62ae053b7fd02edd4a79a147b
+        73845d63adb479746e9653777865fa91 [cd build/fast64t4096e/hdl/bsv && rm -f *.bo *.sched && bsc +RTS -K2G -RTS -steps-max-intervals 80000000  -D NUM_TILES_DEFINE=64 -D NUM_DEVICES_DEFINE=1 -D NUM_CORES_PER_TILE_DEFINE=4 -D NUM_TASKS_PER_TILE_DEFINE=4096 -D AVG_OUT_EDGES_PER_TASK_DEFINE=8 -D MAX_OUT_EDGES_PER_TASK_DEFINE=63 -D AVG_ARGS_PER_TASK_DEFINE=4 -D MAX_ARGS_PER_TASK_DEFINE=15 -D L2_CACHE_SIZE_KB=128 -D L2_CACHE_BANKS=2 -D NUM_TILES_PER_SWITCH_PORT=4 -D NUM_TILES_PER_MEM_CHANNEL=4 -D LOTUS_API_VERSION_DEFINE=2026041401 -check-assert -aggressive-conditions -show-schedule -opt-undetermined-vals -unspecified-to X -verilog -g mkMultiTile -u MultiTile.bsv
+checkBscVerilogFiles(target, source, env)]
