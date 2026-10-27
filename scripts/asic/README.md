@@ -12,8 +12,9 @@ or functional-simulation flow.
 
 ## Set up Hammer and the tool environment
 
-The current host is already configured. To verify it, activate `lotus` and use
-the checks below. The installation commands are for a new environment/checkout.
+The Yosys instructions below describe the original `lotus` environment. For
+the current Berkeley host and Genus, use [the Genus setup](#genus-on-the-berkeley-host).
+The installation commands are for a new environment/checkout.
 Run these examples from the Lotus repository root.
 
 ### 1. Install the Python package and CLI
@@ -64,7 +65,7 @@ The modifications are visible with `git -C "$HOME/tools/hammer" diff`.
 selected libraries to `dfflibmap`, ABC and `stat`, use normal flip-flop
 legalization, and fail structural checks. It also handles an absent latch map,
 selects one explicit corner, and orders libraries deterministically. There is
-no Lotus Hammer plugin or Python tool hook. See [the patch review](FLOW.md#hammer-backend-patch).
+no Lotus Yosys plugin or Python tool hook. See [the patch review](FLOW.md#hammer-backend-patch).
 
 ### 3. Check the non-Python dependencies
 
@@ -89,6 +90,72 @@ The synthesis scripts use these host paths as defaults. Override `--yosys`,
 `--pdk-root` (the parent of `asap7sc7p5t_28`) or `--bsc-lib` for other installs.
 FN-CACTI accepts `--binary` and `--template`. The optional SRAM comparison also
 requires `$HOME/asap7_pdk/asap7_sram_0p0`; override it with `--sram-root`.
+
+### Genus on the Berkeley host
+
+Environment inspected on 2026-10-27:
+
+| Dependency | Location / result |
+|---|---|
+| Python / Hammer 1.2.0 | `/scratch/boru/miniforge3/bin/python`; installed `hammer.synthesis.genus` backend |
+| Genus 25.11-s095_1 | `/ecad/tools/cadence/DDI/DDI251/GENUS251/bin/genus`; license checkout verified |
+| Cadence license | `5280@license-srv.eecs.berkeley.edu`, from the existing Chipyard `vlsi/env.yml` |
+| ASAP7 v28 RVT TT | `ext/asap7/asap7sc7p5t_28`, commit `e5bd25da72cd297b8c0ec6f77600e0cbaa1124d0` |
+| Bluespec 2024.01 | `ext/bsc-2024.01-rockylinux-9.3/{bin,lib}` |
+| Minispec / SCons | `ext/minispec/msc`; workspace-local SCons in `ext/python` |
+
+Genus needs Hammer 1.2.0, a Cadence license and `sha256sum` (GNU coreutils),
+but not Yosys or `hammer-yosys.patch`. The `ext/` dependencies below are ignored
+build inputs; pass their paths explicitly because the original
+`/home/ubuntu/...` defaults do not exist on this host.
+
+To reproduce this local dependency setup, download and extract the
+[Bluespec Rocky Linux 9.3 release](https://github.com/B-Lang-org/bsc/releases/tag/2024.01)
+under `ext/`, clone the standard-cell repository above into
+`ext/asap7/asap7sc7p5t_28`, and clone
+`https://github.com/minispec-hdl/minispec` into `ext/minispec`.
+Install SCons with `python -m pip install --target ext/python scons`.
+On this host, Minispec's optional `-static` link flags need to be replaced by
+`-pthread` in its local `SConstruct` because static system libraries are absent.
+Build with `PYTHONPATH="$PWD/ext/python" python ext/python/bin/scons -C ext/minispec -j8`.
+
+From the repository root:
+
+```bash
+export PATH="$PWD/ext/bsc-2024.01-rockylinux-9.3/bin:$PATH"
+PYTHONPATH="$PWD/ext/python" python ext/python/bin/scons \
+  --cfg=fast --tiles=64 --tasksPerTile=4096 \
+  MINISPEC="$PWD/ext/minispec" asic-tile
+
+export CDS_LIC_FILE=5280@license-srv.eecs.berkeley.edu
+python scripts/asic/hammer_syn.py --tool genus \
+  --build-dir build/fast64t4096e --out build/hammer-genus-1ns \
+  --pdk-root ext/asap7 --bsc-lib ext/bsc-2024.01-rockylinux-9.3/lib \
+  --genus /ecad/tools/cadence/DDI/DDI251/GENUS251/bin/genus \
+  --genus-version 251 --clock-period-ns 1 --max-threads 8
+```
+
+The flow follows the Hammer driver/hook structure of the
+[Chipyard ASAP7 tutorial](https://chipyard.readthedocs.io/en/latest/vlsi/asap7-tutorial/),
+using the existing v28 Liberty files for logic-only synthesis. Setup and hold
+both use RVT TT; automatic clock gating is disabled. See
+[Genus hooks](FLOW.md#genus-hooks) for the initialization and validation details.
+
+`--prepare-only` writes the inputs and `run_hammer.sh`; `--report-only` validates
+existing outputs for either backend. `--cds-lic-file` overrides `CDS_LIC_FILE`.
+The backends have separate default output directories. Genus timing reports
+are under `obj/syn-rundir/reports/`. Report validation checks input fingerprints
+and hashes of the exported netlist, cell inventory and timing report; older
+Genus runs without these hashes require synthesis to be rerun. SRAM area is
+excluded. SRAM timing arcs, I/O budgets and routed parasitics are absent, so
+the reports do not establish full-tile timing closure.
+
+The full `fast64t4096e` validation on 2026-10-27 completed with **197,099
+standard cells and 28,362.9114 µm² logic area**, retaining all **25 logical
+SRAMs** (8 XRAM2BE, 16 XRAM2, 1 XRAM1). The native report's worst setup path
+had +11 ps slack at 1 ns, subject to the timing limitations above. Results are
+in `build/hammer-genus-1ns/hammer_summary.json`; the mapped netlist, SDC, SDF
+and native reports are under its `obj/syn-rundir/` directory.
 
 ## Run the flow
 
@@ -209,9 +276,12 @@ Paths below are relative to the selected output directory unless stated otherwis
 | `rtl/`, `synthesis_input.v` | Prepared design and include entry file |
 | `design.yml`, `run_hammer.sh` | Reviewable Hammer configuration and CLI invocation |
 | `derived_libraries/`, `pdk_provenance.json` | Unmodified extracted libraries, area-unit checks, PDK and synthesis/backend fingerprints |
-| `obj/syn-rundir/syn.tcl` | Actual Yosys commands generated by Hammer |
+| `obj/syn-rundir/syn.tcl` | Actual Yosys or Genus commands generated by Hammer |
 | `obj/syn-rundir/mkTile.mapped.v` | Standard-cell netlist with logical SRAM blackboxes |
-| `mapped_stats.json`, `validate.log`, `hammer_summary.json` | Yosys area, structural/SRAM-count checks and ABC partition delays |
+| `hammer_summary.json` | Validated logic area and SRAM counts for the selected backend |
+| `mapped_stats.json`, `validate.log` | Yosys area and structural checks |
+| `obj/syn-rundir/lotus_cells.tsv`, `obj/syn-rundir/lotus_artifacts.sha256` | Genus cell/logic-abstract inventory and output hashes |
+| `obj/syn-rundir/reports/lotus_timing.rpt` | Genus timing report |
 | `fncacti/<macro-id>/<signature>/` | Model config, invocation, logs and result hashes |
 | Repository `build/fncacti/asap7-comparison/` | Optional comparison JSON/CSV and model runs |
 
@@ -233,12 +303,19 @@ python -m unittest discover -s scripts/asic/tests -p 'test_*.py' -v
 # Also exercise the real Hammer CLI with the prepared libraries:
 LOTUS_HAMMER_TEST_CONFIG="$PWD/build/hammer-native-1ns/design.yml" \
   python -m unittest discover -s scripts/asic/tests -p 'test_*.py' -v
+
+# Licensed Genus integration, independent of Yosys:
+LOTUS_GENUS_TEST_CONFIG="$PWD/build/hammer-genus-1ns/design.yml" \
+  python -m unittest discover -s scripts/asic/tests -p 'test_genus_backend.py' -v
 ```
 
-The integration test synthesizes a small design and proves its mapped
+The Yosys integration test synthesizes a small design and proves its mapped
 reset/enable priorities and both clock polarities equivalent to its RTL. It
 does not prove whole-tile equivalence or ASIC startup correctness. Separate RTL
 checks verify initialization is preserved by default and disabled when requested,
 functional reset priority, and register-file write gating without reset clearing.
 The other tests cover extraction, source freshness, SRAM allocation, model
 input/output handling, area reporting and failed-result rejection.
+The Genus integration test maps both clock polarities and checks all three
+XRAM interfaces, parameterized variants, unused-memory retention, native area
+units and clock conversion. It is not a functional equivalence proof.

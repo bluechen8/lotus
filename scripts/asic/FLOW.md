@@ -12,9 +12,9 @@ separate, uncalibrated SRAM estimate**.
 | RTL generation | Lotus, Minispec and Bluespec | An `asic-tile` branch in [SConstruct](../../SConstruct) consumes raw BSC output and avoids unrelated software/FPGA tool bootstrap |
 | RTL preparation | BSC-generated modules and generic BSC FIFO libraries | [prepare.py](prepare.py) traverses `mkTile`, counts hierarchy instances, removes incoming Verilog attributes, guards simulation regions and packages the required sources |
 | Support logic | Original RTL under [lotus/utils](../../lotus/utils) and [XRegFile.sv](../../lotus/xram/XRegFile.sv) | Source guards disable FPGA power-up initialization for ASIC area synthesis and omit simulation diagnostics; no duplicated implementations or added reset ports |
-| SRAM exclusion | Yosys `blackbox` and `keep` attributes | [rtl/memory_blackboxes.sv](rtl/memory_blackboxes.sv) declares the three XRAM interfaces; preparation marks their instances `keep` |
+| SRAM exclusion | Yosys `blackbox`/`keep`; Genus logic abstracts and `preserve` | [rtl/memory_blackboxes.sv](rtl/memory_blackboxes.sv) declares the three XRAM interfaces |
 | Library preparation | Upstream ASAP7 v28 libraries, LEF and native libarchive | [libraries.py](libraries.py) extracts five RVT TT groups, checks Liberty area against native LEF, and records provenance; it does not rewrite cells or merge libraries |
-| Synthesis orchestration | Hammer's normal CLI, YAML format and Yosys backend | [hammer_syn.py](hammer_syn.py) emits project inputs/constraints, invokes Hammer, then validates the mapped result |
+| Synthesis orchestration | Hammer's CLI, YAML and Yosys/Genus backends | [hammer_syn.py](hammer_syn.py) selects the backend, emits inputs/constraints, invokes Hammer and validates results; [genus_driver.py](genus_driver.py) supplies logic-only initialization and inventory hooks |
 | Synthesis algorithms | Yosys legalization/mapping, ABC optimization and Hammer's ASAP7 latch map | [hammer-yosys.patch](hammer-yosys.patch) corrects the backend's library handling and legalization invocation; no local synthesis algorithm or plugin |
 | Logical SRAM inventory | Numeric parameters in raw BSC Verilog | [sram.py](sram.py) decodes port roles, capacities, masks and source references into the manifest |
 | Logical RAM to macro allocation | MacroCompiler's repeated-geometry search and DefaultMetric as a reference | `sram.py` **reimplements** the selection in Python, adds Lotus mask/asymmetry normalization, and searches our [analytical candidate policy](fncacti_policy.json); it does not call MacroCompiler |
@@ -34,9 +34,11 @@ flowchart TD
     B --> C[prepare.py: prepared RTL + manifest]
     C --> D[hammer_syn.py: include file + YAML]
     L[Five unmodified ASAP7 Liberty files] --> D
-    D --> E[Hammer CLI with recorded backend patch]
-    E --> F[Yosys + ABC: mapped standard cells and XRAM blackboxes]
+    D --> E[Hammer CLI]
+    E --> F[Patched Yosys + ABC: mapped standard cells and XRAM blackboxes]
     F --> G[Yosys stat + structural and SRAM-count checks]
+    E --> N[Genus: mapped standard cells and XRAM logic abstracts]
+    N --> O[Native leaf inventory + Liberty area and SRAM-count checks]
     C --> H[sram.py: logical RAM to analytical macro geometries]
     P[fncacti_policy.json] --> H
     H --> I[fncacti.py: one config per unique macro]
@@ -105,8 +107,9 @@ Hammer dummy SRAMs.
 
 `libraries.py` uses libarchive through Python ctypes to extract the upstream
 `.lib.7z` files. Its small Liberty reader only obtains cell names/areas for
-validation and reference comparisons. Yosys parses the actual libraries and
-calculates the reported logic area; Python no longer sums cell areas manually.
+validation and reference comparisons. Yosys calculates area with `stat`.
+For Genus, Python sums selected Liberty areas over the native leaf inventory
+and checks each instance's Genus area against its Liberty area.
 The upstream standard-cell checkout must be clean. Each selected cell's area
 must agree with its native 1x LEF footprint.
 
@@ -117,7 +120,7 @@ scales; the current flow therefore retains the validated v28 inputs.
 
 ### Hammer backend patch
 
-The patch is applied to the upstream checkout, not dynamically inserted by
+The Yosys-only patch is applied to the upstream checkout, not dynamically inserted by
 Lotus. [README setup](README.md#set-up-hammer-and-the-tool-environment) pins
 its base and explains activation and verification.
 
@@ -148,6 +151,32 @@ The clock period becomes `abc -D <picoseconds>`. No explicit driver/load or
 SRAM timing arcs are supplied in this setup. `clock.sdc` records clock intent;
 it is not evidence that full STA ran. ABC partition delays cannot establish
 end-to-end 1 ns closure.
+
+### Genus hooks
+
+`--tool genus` invokes Hammer through `genus_driver.py`, using the installed
+`hammer.synthesis.genus` backend without the Yosys patch. The initialization
+hook reads Hammer's MMMC configuration and the shared SystemVerilog entry,
+marks only the three declared XRAM architectures blackbox, elaborates the
+design, and preserves their hierarchical instances. Missing RTL modules still
+cause elaboration errors. It skips physical LEFs and power-intent setup for
+this logic-only area flow. Automatic clock gating is disabled.
+
+The remaining mapping/report/output steps come from Hammer. A final hook
+exports every mapped leaf cell and hierarchical logic abstract. Validation
+rejects unknown cells, duplicate instance paths, Genus/Liberty area mismatches,
+missing native reports, logged errors, and SRAM count changes. As with Yosys,
+counts by type are not a wiring or functional equivalence proof. The Genus
+driver itself is included in the input fingerprint; no latch map is used.
+After export, the hook records SHA-256 hashes of the mapped netlist, inventory
+and timing report. `--report-only` rejects modified or unrecorded artifacts,
+so a changed netlist cannot silently reuse an older native cell inventory.
+
+Setup and hold views use the same RVT TT libraries. Hammer derives native ps
+units from Liberty for its generated clock SDC. Genus's native timing reports
+remain available, but the summary does not claim closure or manufacture ABC
+delay fields. No SRAM timing arcs, I/O timing budgets or physical parasitics
+are supplied. FN-CACTI consumes the same manifest for either backend.
 
 ## Manifest and SRAM estimation
 
