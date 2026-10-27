@@ -1,0 +1,2 @@
+logic_area_um2,logic_area_mm2,mapped_standard_cells,sequential_cells,combinational_cells,evaluated_tiles,elaboration_tiles,tasks_per_tile,target_period_ns,worst_setup_slack_ps,total_negative_slack_ps,violating_setup_paths,genus_wall_seconds,max_threads,sram_area_included,timing_closure_verified
+28362.9114,0.0283629114,197099,55087,142012,1,64,4096,1.0,11.0,0.0,0,2861.381,32,False,False

@@ -9,6 +9,7 @@ or functional-simulation flow.
 | **README.md** | Environment setup, patched Hammer installation, commands and outputs |
 | **[FLOW.md](FLOW.md)** | What each file does, what we add beyond upstream tools, and which implementation choices need review |
 | **[FNCACTI.md](FNCACTI.md)** | Logical-RAM-to-macro mapping, model parameters, area accounting and accuracy limits |
+| **[One tile, 4096 tasks: Genus results](lotus_1tile_4096tasks/README.md)** | Validated 1 ns logic results, configuration, runtime and native reports; SRAM area excluded |
 
 ## Set up Hammer and the tool environment
 

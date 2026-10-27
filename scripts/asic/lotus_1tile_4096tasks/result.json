@@ -1,0 +1,232 @@
+{
+  "schema_version": 1,
+  "status": "validated",
+  "configuration": {
+    "synthesized_top": "mkTile",
+    "evaluated_tiles": 1,
+    "elaboration_tiles": 64,
+    "cores_per_tile": 4,
+    "tasks_per_tile": 4096,
+    "l2_cache_size_kib": 128,
+    "l2_cache_banks": 2,
+    "elaboration_defines": {
+      "NUM_TILES_DEFINE": 64,
+      "NUM_DEVICES_DEFINE": 1,
+      "NUM_CORES_PER_TILE_DEFINE": 4,
+      "NUM_TASKS_PER_TILE_DEFINE": 4096,
+      "AVG_OUT_EDGES_PER_TASK_DEFINE": 8,
+      "MAX_OUT_EDGES_PER_TASK_DEFINE": 63,
+      "AVG_ARGS_PER_TASK_DEFINE": 4,
+      "MAX_ARGS_PER_TASK_DEFINE": 15,
+      "L2_CACHE_SIZE_KB": 128,
+      "L2_CACHE_BANKS": 2,
+      "NUM_TILES_PER_SWITCH_PORT": 4,
+      "NUM_TILES_PER_MEM_CHANNEL": 4,
+      "LOTUS_API_VERSION_DEFINE": 2026041401
+    },
+    "source_build": "build/fast64t4096e",
+    "target_period_ns": 1.0,
+    "max_threads": 32,
+    "clock_uncertainty_ns": 0,
+    "clock_gating": "off",
+    "standard_cell_corner": "ASAP7 v28 RVT TT 0.7V 25C",
+    "sram_evaluation": "Excluded; evaluated separately with FNCACTI"
+  },
+  "logic_area_um2": 28362.9114,
+  "logic_area_mm2": 0.0283629114,
+  "mapped_standard_cells": 197099,
+  "sequential_cells": 55087,
+  "combinational_cells": 142012,
+  "area_breakdown": [
+    {
+      "block": "cores_0",
+      "standard_cells": 28488,
+      "logic_area_um2": 3891.37284
+    },
+    {
+      "block": "cores_1",
+      "standard_cells": 28318,
+      "logic_area_um2": 3886.96968
+    },
+    {
+      "block": "cores_2",
+      "standard_cells": 28487,
+      "logic_area_um2": 3891.16872
+    },
+    {
+      "block": "cores_3",
+      "standard_cells": 28401,
+      "logic_area_um2": 3888.80676
+    },
+    {
+      "block": "l2",
+      "standard_cells": 25754,
+      "logic_area_um2": 3973.98312
+    },
+    {
+      "block": "other_tile_logic",
+      "standard_cells": 10086,
+      "logic_area_um2": 1608.07194
+    },
+    {
+      "block": "taskUnit",
+      "standard_cells": 26734,
+      "logic_area_um2": 4179.9402
+    },
+    {
+      "block": "tokenSender",
+      "standard_cells": 20831,
+      "logic_area_um2": 3042.59814
+    }
+  ],
+  "timing": {
+    "target_period_ns": 1.0,
+    "worst_setup_slack_ps": 11.0,
+    "total_negative_slack_ps": 0.0,
+    "violating_setup_paths": 0,
+    "timing_closure_verified": false,
+    "scope": "Genus synthesis timing; no SRAM timing arcs, I/O budgets, or routing"
+  },
+  "runtime": {
+    "start": "2026-10-27T11:03:28-07:00",
+    "end": "2026-10-27T11:51:09.380931-07:00",
+    "genus_wall_seconds": 2861.381,
+    "elapsed_at_final_qor_seconds": 2495.0,
+    "scope": "Logged Genus session, through final license summary; excludes RTL elaboration and Hammer preparation/validation"
+  },
+  "tools": {
+    "genus": "25.11-s095_1",
+    "hammer": "1.2.0"
+  },
+  "scope": "Standard cells outside logical XRAM boundaries; includes XRegFile",
+  "limitations": [
+    "SRAM storage and internal initialization, banking, masks, bypass and latency adapters excluded",
+    "FPGA power-up initialization disabled; no added ASIC startup/reset circuitry",
+    "No placement/utilization, clock tree, routing, or inter-tile area",
+    "SRAM area is excluded and will be evaluated separately with FNCACTI."
+  ],
+  "validation": {
+    "normal_exit": true,
+    "report_only_passed": true,
+    "input_fingerprints_verified": true,
+    "netlist_inventory_timing_hashes_verified": true,
+    "liberty_inventory_areas_verified": true,
+    "logical_memory_retention_verified": true,
+    "full_timing_closure": false
+  },
+  "provenance": {
+    "lotus_commit": "0cc42debea55d12c90a7c0fe72664a08385dec53",
+    "run_directory": "build/hammer-genus-1ns-final",
+    "pdk": {
+      "asap7sc7p5t_28": {
+        "path": "/scratch/boru/lotus/ext/asap7/asap7sc7p5t_28",
+        "remote": "https://github.com/The-OpenROAD-Project/asap7sc7p5t_28.git",
+        "commit": "e5bd25da72cd297b8c0ec6f77600e0cbaa1124d0"
+      }
+    },
+    "raw_rtl_sha256": {
+      "mkTile": "c2a5064a425b50ce5f6be1ad261cfd782f5659702ed0e694e3ef1f8a5e96cc91",
+      "mkCoreBsv": "f9be0edfe3eaacd8262dfc2535ff524b119635a0c0b790c702378afa679aaa8e",
+      "mkL2Cache": "1837e070eb5b25bf38df7b4c8acb45af5779cccdd7813baa35ed659baf762acd",
+      "mkL2CacheBank": "fdb87f393bfcfaa6ce34aacbf1effb23d1562e88bb46dd685ebe576fdd1aa246",
+      "mkCoreReqSwitch": "40d376edbf2fa25dd62141606941614057de5c9c7e24fdce1d7e9604eeb4dd06",
+      "mkCoreRespSwitchEven": "78e2e40a005aede8f2aa49bfb103494fd59b647ecaaa08ccaceb40b6dd6bb800",
+      "mkCoreRespSwitchOdd": "ea359e74868a4b49b20a8c91026146f7b11da31fd06500061c7e096526f48562",
+      "mkMemToSIP": "66cdab2350be8fd3610297b20e914cb3a26d0f87f5f5f8ea1310e4834d262897",
+      "mkTaskUnit": "b403a5ee4dba8f71aafbe92de93e8bfc652ffdf2fd1bdbddd0beda2911b04ecf",
+      "mkTaskPrioQueue": "d4f35c40cfbc0ca1bd6cccf92f0241e9311074ecce617a630365945c2e8d23b8",
+      "mkTokenSender": "ea9747ec7e0f0198922ebba4aceeafd7ca96591550e004067f162e2cff6f73dc"
+    },
+    "hammer_backend": {
+      "path": "/scratch/boru/miniforge3/lib/python3.12/site-packages/hammer/synthesis/genus/__init__.py",
+      "sha256": "0c1e4354577220df9c671b9176f42deff9fbcf4e082dd15c8730b58040910730"
+    },
+    "library_archive_sha256": [
+      {
+        "path": "/scratch/boru/lotus/ext/asap7/asap7sc7p5t_28/LIB/NLDM/asap7sc7p5t_INVBUF_RVT_TT_nldm_220122.lib.7z",
+        "sha256": "3803bb90380bc39445db17d2f60a2c53bd4baf63ddffbc742ab7ae651dc649e0"
+      },
+      {
+        "path": "/scratch/boru/lotus/ext/asap7/asap7sc7p5t_28/LIB/NLDM/asap7sc7p5t_SIMPLE_RVT_TT_nldm_211120.lib.7z",
+        "sha256": "78c5e55ec239efe080458532f9f55dff5457c3ce4144d8c9f2bac1a484b634c4"
+      },
+      {
+        "path": "/scratch/boru/lotus/ext/asap7/asap7sc7p5t_28/LIB/NLDM/asap7sc7p5t_AO_RVT_TT_nldm_211120.lib.7z",
+        "sha256": "d8ec2c98f0709817cf9bf08ac6bd3363ba086789bdbeb9d1036b3e5b2ea56041"
+      },
+      {
+        "path": "/scratch/boru/lotus/ext/asap7/asap7sc7p5t_28/LIB/NLDM/asap7sc7p5t_OA_RVT_TT_nldm_211120.lib.7z",
+        "sha256": "6a5204f97ffc242e999bafedf5de95dc06a49624928f98dbb7b415c9e492e689"
+      },
+      {
+        "path": "/scratch/boru/lotus/ext/asap7/asap7sc7p5t_28/LIB/NLDM/asap7sc7p5t_SEQ_RVT_TT_nldm_220123.lib.7z",
+        "sha256": "e2895b3b0b32e4d0aa10e04c465b6297eec5a8eb3615058edc8595faeb094138"
+      }
+    ],
+    "synthesis_inputs": {
+      "source_sha256": {
+        "mkTile": "c2a5064a425b50ce5f6be1ad261cfd782f5659702ed0e694e3ef1f8a5e96cc91",
+        "mkCoreBsv": "f9be0edfe3eaacd8262dfc2535ff524b119635a0c0b790c702378afa679aaa8e",
+        "mkL2Cache": "1837e070eb5b25bf38df7b4c8acb45af5779cccdd7813baa35ed659baf762acd",
+        "mkL2CacheBank": "fdb87f393bfcfaa6ce34aacbf1effb23d1562e88bb46dd685ebe576fdd1aa246",
+        "mkCoreReqSwitch": "40d376edbf2fa25dd62141606941614057de5c9c7e24fdce1d7e9604eeb4dd06",
+        "mkCoreRespSwitchEven": "78e2e40a005aede8f2aa49bfb103494fd59b647ecaaa08ccaceb40b6dd6bb800",
+        "mkCoreRespSwitchOdd": "ea359e74868a4b49b20a8c91026146f7b11da31fd06500061c7e096526f48562",
+        "mkMemToSIP": "66cdab2350be8fd3610297b20e914cb3a26d0f87f5f5f8ea1310e4834d262897",
+        "mkTaskUnit": "b403a5ee4dba8f71aafbe92de93e8bfc652ffdf2fd1bdbddd0beda2911b04ecf",
+        "mkTaskPrioQueue": "d4f35c40cfbc0ca1bd6cccf92f0241e9311074ecce617a630365945c2e8d23b8",
+        "mkTokenSender": "ea9747ec7e0f0198922ebba4aceeafd7ca96591550e004067f162e2cff6f73dc"
+      },
+      "files_sha256": {
+        "/scratch/boru/lotus/build/hammer-genus-1ns-final/rtl/mkTile.v": "6ed56cb68c5e13b452678cf8efa25063259ff5ecf6fc4d9580156c0305210b5a",
+        "/scratch/boru/lotus/build/hammer-genus-1ns-final/rtl/mkCoreBsv.v": "cd3b4466bb8ccc22859213862c9022a304bd9a3fd2456c0471be54d9469f6f33",
+        "/scratch/boru/lotus/build/hammer-genus-1ns-final/rtl/mkL2Cache.v": "9b13b7494fdcbf3ae51bb86fd1f5003bec1871433b68cc0acc7e50ba2e368a13",
+        "/scratch/boru/lotus/build/hammer-genus-1ns-final/rtl/mkL2CacheBank.v": "c167965b93d2e6686fc640961ce80644464e47adadddfdc051ce79f41222eef1",
+        "/scratch/boru/lotus/build/hammer-genus-1ns-final/rtl/mkCoreReqSwitch.v": "4bed6c6e890df6bcc7460e9333acbb8c92c0a0d50b102125d2e48b41f3cef9fa",
+        "/scratch/boru/lotus/build/hammer-genus-1ns-final/rtl/mkCoreRespSwitchEven.v": "14b45a9e1ebc120bfbdc738ab5c32f81576bb8febdc8ec703d9ef3877240375a",
+        "/scratch/boru/lotus/build/hammer-genus-1ns-final/rtl/mkCoreRespSwitchOdd.v": "876a5b83324f149f5ca3939614da3023f63bf6ce26ba1d7eb510a2d323262823",
+        "/scratch/boru/lotus/build/hammer-genus-1ns-final/rtl/mkMemToSIP.v": "a6543ea7fbb92fbc860c67a3aaa1878672ad0cb357efaca4fa8ca77fe151054a",
+        "/scratch/boru/lotus/build/hammer-genus-1ns-final/rtl/mkTaskUnit.v": "2b5f8e07aabb7b1bc1f93cc1f201c91b8b6aa34f0c05d2ab0e21444c79621de9",
+        "/scratch/boru/lotus/build/hammer-genus-1ns-final/rtl/mkTaskPrioQueue.v": "928d81cc314e86b3d2104517ebd76e949ca273fbed91cb8a496a09db4ef4ab13",
+        "/scratch/boru/lotus/build/hammer-genus-1ns-final/rtl/mkTokenSender.v": "5d2cc456b55829e881b4f5c0057a9d99b1e92acea538d18cd44f66274bf4f934",
+        "/scratch/boru/lotus/build/hammer-genus-1ns-final/rtl/FIFO1.v": "07b7cb750261e18da75f596b1aaad793d370ab14ce6c0ee817d602ac666b450f",
+        "/scratch/boru/lotus/build/hammer-genus-1ns-final/rtl/FIFO10.v": "549a05e7f0db332b23c85c28a502ff8d56b414897b764abe3cb5383f1d11f39f",
+        "/scratch/boru/lotus/build/hammer-genus-1ns-final/rtl/FIFO2.v": "303ef80bc55aa492d6a65e3afe89266354988f9b442056b6e62c997b4b1bbff6",
+        "/scratch/boru/lotus/build/hammer-genus-1ns-final/rtl/FIFOL1.v": "daa4f234897a17ebe0e3f2dfee186291ea8f0599c40155c93c9957752c8f6b7a",
+        "/scratch/boru/lotus/build/hammer-genus-1ns-final/rtl/CreditFIFO.sv": "4b9f50601bf8640cd79e5b5337f3d2a01184ab325edf6f63df464a2b382223fc",
+        "/scratch/boru/lotus/build/hammer-genus-1ns-final/rtl/NonBlockingPipe.sv": "f524f12ec3b63fbc9965769d2c0f2ee7ee6b059daeee974298c3942b4b0c64d7",
+        "/scratch/boru/lotus/build/hammer-genus-1ns-final/rtl/RegWithReset.sv": "f57857263fd6d1d3fc2edf0748e939aaa0b086dea983882657ca6b27295ffddb",
+        "/scratch/boru/lotus/build/hammer-genus-1ns-final/rtl/ShiftRegister.sv": "2705bc0d089f90ead1abfb425f12ab0f654581a437425bacc52936ac2d1f6280",
+        "/scratch/boru/lotus/build/hammer-genus-1ns-final/rtl/XRegFile.sv": "a1a8223cc4423890eab33cadb80fa5e6cc88220adf5ad0217c161e7cb87f648f",
+        "/scratch/boru/lotus/build/hammer-genus-1ns-final/rtl/memory_blackboxes.sv": "85e1866373f13eb48d1f9d83923e57b515fa6cac765a036e554c99fcf96e5593",
+        "/scratch/boru/lotus/build/hammer-genus-1ns-final/synthesis_input.v": "a76ea29663c549131728c7caefc6b2121c3357be73c3446b40c742ffd3dd3c88",
+        "/scratch/boru/lotus/build/hammer-genus-1ns-final/design.yml": "f3e3f7d22b4337f2e820e71fd95eae1a1af57e56f84fa2e9b3c6048ec594776a",
+        "/scratch/boru/lotus/build/hammer-genus-1ns-final/derived_libraries/asap7sc7p5t_INVBUF_RVT_TT_nldm_220122.lib": "a4ceb32e418e1aac8667e28fbd8e9e46baf520180be4db075598a4d7c681a56e",
+        "/scratch/boru/lotus/build/hammer-genus-1ns-final/derived_libraries/asap7sc7p5t_SIMPLE_RVT_TT_nldm_211120.lib": "fa92e6ab1481810602811b1eea54bc016a341f11fb5188d7512c026599adf038",
+        "/scratch/boru/lotus/build/hammer-genus-1ns-final/derived_libraries/asap7sc7p5t_AO_RVT_TT_nldm_211120.lib": "b1ece108c0a2acd8d01c05cee6daee2834425037b1d9aad625d6f1dd640f1940",
+        "/scratch/boru/lotus/build/hammer-genus-1ns-final/derived_libraries/asap7sc7p5t_OA_RVT_TT_nldm_211120.lib": "6529c6c72465cd133dfbfb03952327ab2774bb6aa4be866d78fd7bc6c58c9f6f",
+        "/scratch/boru/lotus/build/hammer-genus-1ns-final/derived_libraries/asap7sc7p5t_SEQ_RVT_TT_nldm_220123.lib": "57a0b403485b99ebd676942af4673ac086b86c7c75fbdc3e5c0038501dd22ba3",
+        "/scratch/boru/miniforge3/lib/python3.12/site-packages/hammer/synthesis/genus/__init__.py": "0c1e4354577220df9c671b9176f42deff9fbcf4e082dd15c8730b58040910730",
+        "/scratch/boru/lotus/scripts/asic/genus_driver.py": "e2d93452e6e2b8a031ef025c70b208d8721f9da28ca002456f7a572a27469abb"
+      }
+    },
+    "area_verification": {
+      "stdcell_areas_checked": 202,
+      "matches_1x_lef": true
+    },
+    "artifacts_sha256": {
+      "build/hammer-genus-1ns-final/hammer_summary.json": "ab6ed31e3db3576e89c4d07b7aabc02c0fdb52713c31e1e6bf2f9d11e580d92f",
+      "build/hammer-genus-1ns-final/design.yml": "f3e3f7d22b4337f2e820e71fd95eae1a1af57e56f84fa2e9b3c6048ec594776a",
+      "build/hammer-genus-1ns-final/pdk_provenance.json": "1f8520985ef9777fa6737f6bae4ee91f4d513a53195a86ed670492f9c5ce45eb",
+      "build/hammer-genus-1ns-final/manifest.json": "6a76db49b4ce014fe12e004481e5e9f4c14bda0521f0efad9b78fcf936b5becb",
+      "build/hammer-genus-1ns-final/obj/syn-rundir/genus.log": "638f5173f3d982b3fe0105147918ae62815f3e74bdae9acbf344db93a6129d61",
+      "build/hammer-genus-1ns-final/obj/syn-rundir/mkTile.mapped.v": "f5e723bf55ad1254ef2cf8bdfd6699cc20ea9ef164116cc145b81d11d5920daf",
+      "build/hammer-genus-1ns-final/obj/syn-rundir/lotus_cells.tsv": "e0ce687affc18ec6f4f48b8e2aa7a7d0143e8e1f51c29766a6c3b8c716664a5d",
+      "build/hammer-genus-1ns-final/obj/syn-rundir/lotus_artifacts.sha256": "b446cc41884bf0e60be23b3f6aa9bfea05c8737e7fd9c69a0a8453a90e9b3f04",
+      "build/asic-tile-build.log": "66d20610ee486c9a6632690580510bfa374e8ad560f436a3294cfbe8b8bdd78c",
+      "build/hammer-genus-1ns-final/obj/syn-rundir/reports/final_qor.rpt": "170d45a311d309382b9391b5126645880b79e6a0b18d3614c62ee17f5ea0b741",
+      "build/hammer-genus-1ns-final/obj/syn-rundir/reports/final_area.rpt": "3dab55cfd2fc81db8d665a371932b23c5e3700be45c79387245e0805869ada32",
+      "build/hammer-genus-1ns-final/obj/syn-rundir/reports/lotus_timing.rpt": "c5bcc76791f9cab69f4e05593b8f04bdc24e99c0b8793f6bd31de7b905469c30"
+    }
+  }
+}

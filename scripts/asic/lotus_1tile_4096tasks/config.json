@@ -1,0 +1,31 @@
+{
+  "synthesized_top": "mkTile",
+  "evaluated_tiles": 1,
+  "elaboration_tiles": 64,
+  "cores_per_tile": 4,
+  "tasks_per_tile": 4096,
+  "l2_cache_size_kib": 128,
+  "l2_cache_banks": 2,
+  "elaboration_defines": {
+    "NUM_TILES_DEFINE": 64,
+    "NUM_DEVICES_DEFINE": 1,
+    "NUM_CORES_PER_TILE_DEFINE": 4,
+    "NUM_TASKS_PER_TILE_DEFINE": 4096,
+    "AVG_OUT_EDGES_PER_TASK_DEFINE": 8,
+    "MAX_OUT_EDGES_PER_TASK_DEFINE": 63,
+    "AVG_ARGS_PER_TASK_DEFINE": 4,
+    "MAX_ARGS_PER_TASK_DEFINE": 15,
+    "L2_CACHE_SIZE_KB": 128,
+    "L2_CACHE_BANKS": 2,
+    "NUM_TILES_PER_SWITCH_PORT": 4,
+    "NUM_TILES_PER_MEM_CHANNEL": 4,
+    "LOTUS_API_VERSION_DEFINE": 2026041401
+  },
+  "source_build": "build/fast64t4096e",
+  "target_period_ns": 1.0,
+  "max_threads": 32,
+  "clock_uncertainty_ns": 0,
+  "clock_gating": "off",
+  "standard_cell_corner": "ASAP7 v28 RVT TT 0.7V 25C",
+  "sram_evaluation": "Excluded; evaluated separately with FNCACTI"
+}
