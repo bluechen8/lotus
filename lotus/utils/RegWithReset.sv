@@ -30,7 +30,10 @@ module RegWithReset#(
 
 reg [WIDTH-1:0] val;
 
+// ASIC area synthesis disables FPGA power-up initialization explicitly.
+`ifndef BSV_NO_INITIAL_BLOCKS
 initial val = INITIAL_VALUE;
+`endif
 
 always @(posedge clk) begin
     if (reset) val <= INITIAL_VALUE;

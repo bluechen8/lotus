@@ -1,0 +1,113 @@
+--- a/hammer/synthesis/yosys/__init__.py
++++ b/hammer/synthesis/yosys/__init__.py
+@@ -124,13 +124,13 @@
+     def mapped_blif_path(self) -> str:
+         return os.path.join(self.run_dir, "{}.mapped.blif".format(self.top_module))
+ 
+-    def get_timing_libs(self, corner: Optional[MMMCCorner] = None) -> str:
++    def get_timing_libs(self, corner: Optional[MMMCCorner] = None) -> List[str]:
+         """
+-        Helper function to get the list of ASCII timing .lib files in space separated format.
++        Get the selected ASCII timing .lib files in deterministic order.
+ 
+         :param corner: Optional corner to consider. If supplied, this will use filter_for_mmmc to select libraries that
+         match a given corner (voltage/temperature).
+-        :return: List of lib files separated by spaces
++        :return: List of lib file paths
+         """
+         pre_filters = optional_map(corner, lambda c: [self.filter_for_mmmc(voltage=c.voltage,
+                                                                            temp=c.temp)])  # type: Optional[List[Callable[[hammer_tech.Library],bool]]]
+@@ -142,7 +142,12 @@
+         # lib files are often in a zipped format, so unzip them if they are
+         lib_args_unzipped = self.technology.extract_gz_files(lib_args)
+ 
+-        return " ".join(lib_args_unzipped)
++        return sorted(set(lib_args_unzipped))
++
++    @property
++    def liberty_args(self) -> str:
++        # Yosys 0.62 supports repeated -liberty for dfflibmap, abc and stat.
++        return " ".join("-liberty {" + p + "}" for p in self.liberty_files_tt)
+ 
+     def run_yosys(self) -> bool:
+         """Close out the synthesis script and run Yosys."""
+@@ -214,15 +219,15 @@
+             self.driver_ports_in = driver_cells[0].input_ports[0]
+             self.driver_ports_out = driver_cells[0].output_ports[0]
+ 
+-        # Yosys commands only take a single lib file
+-        #   so use typical corner liberty file
++        # Use one selected corner consistently for reading, mapping and reports.
+         corners = self.get_mmmc_corners()  # type: List[MMMCCorner]
+-        try:
+-            corner_tt = next((corner for corner in corners if corner.type == MMMCCornerType.Extra), None)
+-        except:
++        corner_tt = next((corner for corner in corners if corner.type == MMMCCornerType.Extra), None)
++        if corner_tt is None:
+             raise ValueError("An extra corner is required for Yosys.")
+ 
+         self.liberty_files_tt = self.get_timing_libs(corner_tt)
++        if not self.liberty_files_tt:
++            raise ValueError("No timing libraries match the selected Yosys corner.")
+ 
+         self.append("yosys -import")
+ 
+@@ -241,15 +246,14 @@
+         for verilog_file in abspath_input_files:
+             self.append(f"read_verilog -sv {verilog_file}")
+ 
+-        liberty_files = self.technology.read_libs([hammer_tech.filters.timing_lib_with_ecsm_filter], hammer_tech.HammerTechnologyUtils.to_plain_item)
+-        for lib_file in liberty_files:
+-            self.append(f"read_liberty -lib {lib_file}")
++        for lib_file in self.liberty_files_tt:
++            self.append(f'read_liberty -lib "{lib_file}"')
+ 
+         return True
+ 
+     def syn_generic(self) -> bool:
+         # TODO: is there a better way to do this? like self.get_setting()
+-        if self._database.has_setting("synthesis.yosys.latch_map_file"):
++        if self._database.has_setting("synthesis.yosys.latch_map_file") and self.get_setting('synthesis.yosys.latch_map_file') is not None:
+             latch_map = f"techmap -map {self.get_setting('synthesis.yosys.latch_map_file')}"
+         else:  # TODO: make the else case better
+             latch_map = ""
+@@ -269,8 +273,9 @@
+ 
+         # Technology mapping of flip-flops
+         """)
+-        for liberty_file in self.liberty_files_tt.split():
+-            self.verbose_append(f"dfflibmap -map-only -liberty {liberty_file}")
++        # Normal dfflibmap performs legalization as well as cell mapping.
++        # Pass all groups together: a combinational-only group has no legal DFF.
++        self.verbose_append(f"dfflibmap {self.liberty_args}")
+         self.verbose_append("opt")
+ 
+         self.write_sdc_file()
+@@ -281,12 +286,10 @@
+ 
+         self.block_append(f"""
+         # Technology mapping for cells
+-        # ABC supports multiple liberty files, but the hook from Yosys to ABC doesn't
+-        # TODO: this is a bad way of getting one liberty file, need a way to merge all std cell lib files
+-        # NOTE: this breaks for any PDK that has multiple LIB files for std cell library
++        # Pass every selected cell group to ABC (requires Yosys 0.62).
+         abc -D {self.clock_period} \\
+             -constr "{self.mapped_sdc_path}" \\
+-            -liberty "{self.liberty_files_tt.split()[0]}" \\
++            {self.liberty_args} \\
+             -showtmp
+ 
+         # Replace undef values with defined constants
+@@ -336,9 +339,9 @@
+     def generate_reports(self) -> bool:
+         # TODO: generate all reports (will probably need to parse the log file)
+         self.block_append(f"""
+-        tee -o {self.run_dir}/{self.top_module}.synth_check.rpt check
+-
+-        tee -o {self.run_dir}/{self.top_module}.synth_stat.txt stat -top {self.top_module} -liberty {self.liberty_files_tt.split()[0]}
++        tee -o {self.run_dir}/{self.top_module}.synth_check.rpt check -assert
++
++        tee -o {self.run_dir}/{self.top_module}.synth_stat.txt stat -top {self.top_module} {self.liberty_args}
+         """)
+         return True
+ 

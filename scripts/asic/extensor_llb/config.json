@@ -1,0 +1,23 @@
+{
+  "name": "ExTensor LLB",
+  "logical_memory": {
+    "depth_words": 15360,
+    "width_bits": 4096,
+    "multiplicity": 4,
+    "port_roles": [
+      "RW",
+      "RW"
+    ]
+  },
+  "assumptions": [
+    "Exactly four independent 7.5 MiB logical banks, totaling 30 MiB.",
+    "Two RW ports per bank, following shared_SRAM's n_bank_rd_ports + n_bank_wr_ports conversion.",
+    "Whole-word writes; no independent byte or bit write masks.",
+    "Use multiplicity four rather than the upstream inclusive SRAM_bank[0..nbanks] range.",
+    "Macro footprints only: crossbars, controllers, external routing and timing closure are excluded."
+  ],
+  "source_references": {
+    "shared_sram": "https://github.com/FPSG-UIUC/micro23-teaal-artifact/blob/da8f5569c713e7d188f3a912bcaca62a5fcd40dc/yamls/accelergy/extensor/shared_SRAM.yaml",
+    "commented_llb_configuration": "https://github.com/FPSG-UIUC/micro23-teaal-artifact/blob/da8f5569c713e7d188f3a912bcaca62a5fcd40dc/yamls/accelergy/extensor/architecture_extensor_v1.yaml"
+  }
+}

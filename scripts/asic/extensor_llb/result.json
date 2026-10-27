@@ -1,0 +1,333 @@
+{
+  "name": "four_banks_mapped_2rw",
+  "status": "complete_uncalibrated",
+  "configuration": {
+    "name": "ExTensor LLB",
+    "logical_memory": {
+      "depth_words": 15360,
+      "width_bits": 4096,
+      "multiplicity": 4,
+      "port_roles": [
+        "RW",
+        "RW"
+      ]
+    },
+    "assumptions": [
+      "Exactly four independent 7.5 MiB logical banks, totaling 30 MiB.",
+      "Two RW ports per bank, following shared_SRAM's n_bank_rd_ports + n_bank_wr_ports conversion.",
+      "Whole-word writes; no independent byte or bit write masks.",
+      "Use multiplicity four rather than the upstream inclusive SRAM_bank[0..nbanks] range.",
+      "Macro footprints only: crossbars, controllers, external routing and timing closure are excluded."
+    ],
+    "source_references": {
+      "shared_sram": "https://github.com/FPSG-UIUC/micro23-teaal-artifact/blob/da8f5569c713e7d188f3a912bcaca62a5fcd40dc/yamls/accelergy/extensor/shared_SRAM.yaml",
+      "commented_llb_configuration": "https://github.com/FPSG-UIUC/micro23-teaal-artifact/blob/da8f5569c713e7d188f3a912bcaca62a5fcd40dc/yamls/accelergy/extensor/architecture_extensor_v1.yaml"
+    }
+  },
+  "policy": {
+    "technology": "fncacti_14nm_devices_7nm_asap7_wires",
+    "allocation": "macrocompiler_default",
+    "objective": "minimum_area",
+    "voltage_v": 0.7,
+    "temperature_k": 300,
+    "candidate_library": "analytical_unmasked",
+    "candidate_width_bits": [
+      8,
+      16,
+      24,
+      32,
+      40,
+      48,
+      56,
+      64,
+      72,
+      80,
+      88,
+      96,
+      104,
+      112,
+      120,
+      128
+    ],
+    "candidate_depth_words": [
+      2,
+      4,
+      8,
+      16,
+      32,
+      64,
+      128,
+      256,
+      512,
+      1024,
+      2048,
+      4096,
+      8192,
+      16384,
+      32768
+    ]
+  },
+  "source_hashes": {
+    "/home/ubuntu/lotus_boru/scripts/asic/extensor_llb/evaluate.py": "3237ce2fedc1735717151fd3acfa9d02e938b5cd86c25ad9ca1bb17ded8431e1",
+    "/home/ubuntu/lotus_boru/scripts/asic/extensor_llb/config.json": "97ca1d60051956d4c629579f8bae665a8537a7f658fcc653ab88a8ba24d3ffb2",
+    "/home/ubuntu/lotus_boru/scripts/asic/fncacti_policy.json": "11d7499c093239c998591da149c37ed03041b0b33b8c75e6122e1014d73b1987",
+    "/home/ubuntu/lotus_boru/scripts/asic/fncacti.py": "d95fac3ab58eca641698cfbf9b28f7cf5ec42655c4bee9318cbb0aad6a6fc20f",
+    "/home/ubuntu/lotus_boru/scripts/asic/sram.py": "c0e3338ae877d16a3159553dd960374fef601f99589c8539dc26dca71e10eae4"
+  },
+  "logical": {
+    "raw_bits": 62914560,
+    "multiplicity": 4,
+    "ports": [
+      {
+        "name": "0",
+        "role": "RW",
+        "width_bits": 4096,
+        "depth_words": 15360,
+        "write_granularity_bits": 4096
+      },
+      {
+        "name": "1",
+        "role": "RW",
+        "width_bits": 4096,
+        "depth_words": 15360,
+        "write_granularity_bits": 4096
+      }
+    ]
+  },
+  "mapping": {
+    "status": "mapped",
+    "macros": [
+      {
+        "id": "sram_16384x128_55d58a501fc6",
+        "depth_words": 16384,
+        "width_bits": 128,
+        "ports": {
+          "read_write": 2,
+          "exclusive_read": 0,
+          "exclusive_write": 0
+        },
+        "uca_banks": 1,
+        "depth_banks": 1,
+        "width_slices": 32,
+        "macros_per_instance": 32,
+        "total_macros": 128
+      }
+    ],
+    "logical_row_depth_words": 15360,
+    "independent_boundary_bits": 4096,
+    "bit_slices": [
+      {
+        "lsb": 0,
+        "msb": 127
+      },
+      {
+        "lsb": 128,
+        "msb": 255
+      },
+      {
+        "lsb": 256,
+        "msb": 383
+      },
+      {
+        "lsb": 384,
+        "msb": 511
+      },
+      {
+        "lsb": 512,
+        "msb": 639
+      },
+      {
+        "lsb": 640,
+        "msb": 767
+      },
+      {
+        "lsb": 768,
+        "msb": 895
+      },
+      {
+        "lsb": 896,
+        "msb": 1023
+      },
+      {
+        "lsb": 1024,
+        "msb": 1151
+      },
+      {
+        "lsb": 1152,
+        "msb": 1279
+      },
+      {
+        "lsb": 1280,
+        "msb": 1407
+      },
+      {
+        "lsb": 1408,
+        "msb": 1535
+      },
+      {
+        "lsb": 1536,
+        "msb": 1663
+      },
+      {
+        "lsb": 1664,
+        "msb": 1791
+      },
+      {
+        "lsb": 1792,
+        "msb": 1919
+      },
+      {
+        "lsb": 1920,
+        "msb": 2047
+      },
+      {
+        "lsb": 2048,
+        "msb": 2175
+      },
+      {
+        "lsb": 2176,
+        "msb": 2303
+      },
+      {
+        "lsb": 2304,
+        "msb": 2431
+      },
+      {
+        "lsb": 2432,
+        "msb": 2559
+      },
+      {
+        "lsb": 2560,
+        "msb": 2687
+      },
+      {
+        "lsb": 2688,
+        "msb": 2815
+      },
+      {
+        "lsb": 2816,
+        "msb": 2943
+      },
+      {
+        "lsb": 2944,
+        "msb": 3071
+      },
+      {
+        "lsb": 3072,
+        "msb": 3199
+      },
+      {
+        "lsb": 3200,
+        "msb": 3327
+      },
+      {
+        "lsb": 3328,
+        "msb": 3455
+      },
+      {
+        "lsb": 3456,
+        "msb": 3583
+      },
+      {
+        "lsb": 3584,
+        "msb": 3711
+      },
+      {
+        "lsb": 3712,
+        "msb": 3839
+      },
+      {
+        "lsb": 3840,
+        "msb": 3967
+      },
+      {
+        "lsb": 3968,
+        "msb": 4095
+      }
+    ],
+    "allocated_bits_per_instance": 67108864,
+    "padding_bits_per_instance": 4194304,
+    "selection": {
+      "metric": "MacroCompiler DefaultMetric (unmasked candidates)",
+      "cost": 1.6666666666666667,
+      "wasted_fraction": 0.06666666666666667,
+      "instance_penalty": 1.6,
+      "mask_penalty": 0,
+      "evaluated_candidates": 198,
+      "tie_break": "cost, instance count, allocated bits, width, depth",
+      "scope": "One repeated geometry per logical RAM; Lotus mask/asymmetric-port normalization precedes search"
+    },
+    "port_addressing": [
+      {
+        "port": "0",
+        "slices_per_access": 32,
+        "lane_groups": 1,
+        "rule": "group = address % lane_groups; row = address // lane_groups; wide-word bit = group * port width + port bit; locate in bit_slices; macro bit = wide-word bit - slice lsb; depth bank = row // macro depth; macro address = row % macro depth"
+      },
+      {
+        "port": "1",
+        "slices_per_access": 32,
+        "lane_groups": 1,
+        "rule": "group = address % lane_groups; row = address // lane_groups; wide-word bit = group * port width + port bit; locate in bit_slices; macro bit = wide-word bit - slice lsb; depth bank = row // macro depth; macro address = row % macro depth"
+      }
+    ],
+    "decision": "Search the explicit analytical width/depth grid. Split on port-word/write-mask boundaries and at candidate width; allow partially used final slices. Minimize wasted fraction + 0.05 per macro.",
+    "external_adapters": "Address/lane selection, output muxes, mask enables and any bypass/latency/initialization logic are not generated or included in modeled macro area"
+  },
+  "macro_count": 128,
+  "logical_MiB": 30.0,
+  "allocated_MiB": 32.0,
+  "note": "Uncalibrated macro footprints; crossbars, controllers, external routing and timing closure excluded.",
+  "run": {
+    "status": "complete",
+    "macro": {
+      "depth_words": 16384,
+      "width_bits": 128,
+      "ports": {
+        "read_write": 2,
+        "exclusive_read": 0,
+        "exclusive_write": 0
+      },
+      "uca_banks": 1
+    },
+    "config": "/home/ubuntu/lotus_boru/scripts/asic/extensor_llb/fncacti/four_banks_mapped_2rw/0048e23e375e1a18/input.cfg",
+    "config_sha256": "bb26a87cc1aa5ddefeff9df254a50cc18f2051eb8362e3ffd675f3d058386ddb",
+    "binary": "/home/ubuntu/lotus_boru/ext/fncacti/work/pcacti_xml/cacti",
+    "binary_sha256": "afa57cf24af0db0be1bc5f17b437f63c89028b0e778aab0e5f1acaae72e7ef95",
+    "template": "/home/ubuntu/lotus_boru/ext/fncacti/work/pcacti_xml/configs/2MB_fin.cfg",
+    "template_sha256": "9475afa0ce92e0d21f393841673afdaf9b0510567093abe154a2779381c14b6b",
+    "command": [
+      "/home/ubuntu/lotus_boru/ext/fncacti/work/pcacti_xml/cacti",
+      "-infile",
+      "/home/ubuntu/lotus_boru/scripts/asic/extensor_llb/fncacti/four_banks_mapped_2rw/0048e23e375e1a18/input.cfg"
+    ],
+    "cwd": "/home/ubuntu/lotus_boru/scripts/asic/extensor_llb/fncacti/four_banks_mapped_2rw/0048e23e375e1a18",
+    "stdout": "/home/ubuntu/lotus_boru/scripts/asic/extensor_llb/fncacti/four_banks_mapped_2rw/0048e23e375e1a18/stdout.log",
+    "stderr": "/home/ubuntu/lotus_boru/scripts/asic/extensor_llb/fncacti/four_banks_mapped_2rw/0048e23e375e1a18/stderr.log",
+    "started_utc": "2026-10-27T04:45:32.897473+00:00",
+    "exit_code": 0,
+    "result": {
+      "area_um2": 135653.0,
+      "physical_dimensions_um": {
+        "height": 448.104,
+        "width": 302.72700000000003
+      },
+      "access_time_ns": 0.930081,
+      "cycle_time_ns": 0.798595,
+      "organization": {
+        "Ndwl": 2.0,
+        "Ndbl": 2.0,
+        "Nspd": 8.0,
+        "Ndcm": 1.0,
+        "Ndsam1": 16.0,
+        "Ndsam2": 1.0
+      }
+    },
+    "elapsed_seconds": 1.0692360526882112,
+    "stdout_sha256": "37acb609c85b5553a9bb7b8c2b20d1ce028ccdbe0e008121041b507468edbbe4",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reused": true
+  },
+  "area_mm2": 17.363584,
+  "area_mm2_per_bank": 4.340896
+}

@@ -40,11 +40,14 @@ reg creditOut;
 reg val_valid;
 reg [WIDTH-1:0] val;
 
+// ASIC area synthesis disables FPGA power-up initialization explicitly.
+`ifndef BSV_NO_INITIAL_BLOCKS
 initial begin
     downstreamCredits = 0;
     creditOut = 1;
     val_valid = 0;
 end
+`endif
 
 // rule tick
 wire deq = val_valid && ((downstreamCredits != 0) || send_creditin);
@@ -60,10 +63,12 @@ always @(posedge clk) begin
 
     if (deq != send_creditin) begin
         downstreamCredits <= downstreamCredits + (deq? -1 : 1);
+`ifndef SYNTHESIS
         if (send_creditin && downstreamCredits == MAX_CREDITS_VALUE) begin
             $display("CreditFIFO ERROR: %m received credit with credits already at max! downstreamCredits=%d", downstreamCredits);
             $finish;
         end
+`endif
     end
 
     if (BYPASS_CREDIT) creditOut <= creditOut && send_creditin;

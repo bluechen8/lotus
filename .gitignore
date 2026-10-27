@@ -1,0 +1,28 @@
+# Generated build outputs and downloaded/built dependencies
+/build/
+/ext/
+/pcacti.tar
+/generated/
+/hammer-vlsi/
+/obj_dir/
+
+# Python and tool caches
+__pycache__/
+*.py[cod]
+.cache/
+cache/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# SCons state
+.sconsign*
+.scons_untracked_lock
+
+# Run logs
+*.log
+*.log.*
+logs/
+
+# Generated ExTensor LLB FN-CACTI run
+/scripts/asic/extensor_llb/fncacti/four_banks_mapped_2rw/0048e23e375e1a18/

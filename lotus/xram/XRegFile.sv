@@ -53,11 +53,14 @@ module XRegFile #(
 (* RAM_STYLE = STYLE *)
 reg [DATA_WIDTH-1:0] ram [0:NUM_WORDS-1];
 
+// ASIC area synthesis disables FPGA power-up initialization explicitly.
+`ifndef BSV_NO_INITIAL_BLOCKS
 initial begin : init_block
     for (integer i = 0; i < NUM_WORDS; i = i + 1) begin
         ram[i] = INITIAL_VALUE;
     end
 end
+`endif
 
 always_ff @(posedge clk) if (wrEn && (rstn != `BSV_RESET_VALUE)) ram[wrAddr] <= wrData;
 

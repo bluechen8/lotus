@@ -20,10 +20,13 @@ module NonBlockingPipe #(
 (* shreg_extract = "no" *)
 logic [WIDTH-1:0] regs [STAGES-1:0];
 
+// ASIC area synthesis disables FPGA power-up initialization explicitly.
+`ifndef BSV_NO_INITIAL_BLOCKS
 initial begin
     for (integer i = 0; i < STAGES; i = i + 1)
         regs[i] = INITIAL_VALUE;
 end
+`endif
 
 always @(posedge clk) begin
     regs[0] <= in;
@@ -52,11 +55,15 @@ localparam AUTOPIPE_MAX_STAGES = MAX_STAGES - 2;
 (* autopipeline_group = "autopipe", autopipeline_limit = AUTOPIPE_MAX_STAGES *) reg [WIDTH-1:0] pipe;
 reg [WIDTH-1:0] dst;
 
+`ifndef BSV_NO_INITIAL_BLOCKS
 initial begin
+`ifndef SYNTHESIS
     assert (MAX_STAGES >= 2) else $error("NonBlockingAutoPipe needs MAX_STAGES to be at least 2");
+`endif
     pipe = INITIAL_VALUE;
     dst = INITIAL_VALUE;
 end
+`endif
 
 always @(posedge clk) begin
     pipe <= in;

@@ -220,6 +220,9 @@ AddOption("--coresSize", default=1, type=int, help="Number of cores in cores and
 AddOption("--checkOutputs", default=False, action="store_true", help="Add tasks (and overheads) that check correctness")
 
 isFastflow = GetOption("fastflow")
+# An ASIC-only invocation elaborates RTL; no software, simulator, or FPGA
+# toolchain is needed. Mixed/default builds retain the normal bootstrap.
+asicOnly = bool(COMMAND_LINE_TARGETS) and all(t == "asic-tile" for t in COMMAND_LINE_TARGETS)
 
 
 # Configuration step - check for external tools, and if not available, build them
@@ -263,32 +266,33 @@ with Flock(".scons_untracked_lock"):
         buildExtSw("Minispec", "mkdir -p ext/ && cd ext/ && ([ -d minispec ] || git clone --depth 1 https://github.com/minispec-hdl/minispec) && cd minispec && scons -j`nproc`")
         env["MINISPEC"] = "ext/minispec"
 
-    if "RISCV_TOOLCHAIN" not in env:
+    if not asicOnly and "RISCV_TOOLCHAIN" not in env:
         buildExtSw("RISC-V toolchain", "mkdir -p ext/repos && cd ext/repos && ([ -d riscv-gnu-toolchain ] || git clone --depth 1 https://github.com/riscv-collab/riscv-gnu-toolchain -b 2026.06.06) && cd riscv-gnu-toolchain && mkdir -p ../../riscv_toolchain && ./configure --prefix=`realpath ../../riscv_toolchain` --with-arch=rv32ima --with-abi=ilp32 && make -j`nproc`")
         env["RISCV_TOOLCHAIN"] = "ext/riscv_toolchain"
 
-    if "SPIKE" not in env:
-        buildExtSw("Spike", "mkdir -p ext/repos && cd ext/repos && ([ -d riscv-isa-sim ] || git clone --depth 1 https://github.com/riscv-software-src/riscv-isa-sim.git) && cd riscv-isa-sim && mkdir -p ../../spike && ./configure --prefix=`realpath ../../spike` && make -j`nproc` && make install")
+    if not asicOnly and "SPIKE" not in env:
+        buildExtSw("Spike", "mkdir -p ext/repos && cd ext/repos && ([ -d riscv-isa-sim ] || git clone --depth 1 https://github.com/riscv-software-src/riscv-isa-sim.git) && cd riscv-isa-sim && git submodule update --init --recursive && mkdir -p ../../spike && ./configure --prefix=`realpath ../../spike` && make -j`nproc` && make install")
         buildExtSw("RISC-V PK", f"cd ext/repos && ([ -d riscv-pk ] || git clone --depth 1 https://github.com/riscv-software-src/riscv-pk.git) && cd riscv-pk && mkdir -p build && cd build && PATH={os.path.abspath(env['RISCV_TOOLCHAIN'])}/bin:$PATH bash -c '../configure --prefix=`realpath ../../../spike` --host=riscv32-unknown-elf --with-arch=rv32i_zicsr_zifencei && make -j`nproc` && make install'")
         env["SPIKE"] = "ext/spike"
 
-    if "LOTUS_LLVM" not in env:
+    if not asicOnly and "LOTUS_LLVM" not in env:
         buildExtSw("Lotus LLVM", "mkdir -p ext/repos && cd ext/repos && if [ ! -d llvm-project ]; then git clone --depth 1 --branch llvmorg-21.1.4 https://github.com/llvm/llvm-project.git && (cd llvm-project && git apply ../../../misc/lotus_llvm_patch/riscv_lotus_task_cc.patch); fi && cd llvm-project && mkdir -p ../../lotus_llvm && cmake -S llvm -B build -G Ninja -DCMAKE_BUILD_TYPE='Release' -DLLVM_ENABLE_PROJECTS='clang;lld' -DLLVM_ENABLE_LLD=ON -DLLVM_INSTALL_UTILS=ON -DCMAKE_INSTALL_PREFIX=`realpath ../../lotus_llvm` && ninja -C build install")
         env["LOTUS_LLVM"] = "ext/lotus_llvm"
 
-    if "VERILATOR_ROOT" not in env:
+    if not asicOnly and "VERILATOR_ROOT" not in env:
         buildExtSw("Verilator", "mkdir -p ext && cd ext && ([ -d verilator ] || git clone --depth 1 --branch v4.228 https://github.com/verilator/verilator) && cd verilator && autoconf && ./configure && make -j`nproc`")
         env["VERILATOR_ROOT"] = "ext/verilator"
 
-    if "PATOH" not in env:
+    if not asicOnly and "PATOH" not in env:
         buildExtSw("PaToH", "mkdir -p ext/repos && cd ext/repos && ([ -f patoh-Linux-x86_64.tar.gz ] || wget https://faculty.cc.gatech.edu/~umit/PaToH/patoh-Linux-x86_64.tar.gz) && mkdir -p ../patoh && cd ../patoh && tar xf ../repos/patoh-Linux-x86_64.tar.gz")
         env["PATOH"] = "ext/patoh/build/Linux-x86_64"
 
-    if isFastflow and 'RAPIDWRIGHT' not in env:
+    if not asicOnly and isFastflow and 'RAPIDWRIGHT' not in env:
         buildExtSw("RapidWright", "mkdir -p ext && cd ext && git clone --depth 1 https://github.com/Xilinx/RapidWright.git && (cd RapidWright && ./gradlew compileJava)")
         env['RAPIDWRIGHT'] = "ext/RapidWright"
 
-    pathVars.Save('.path_vars.py', env)
+    if not asicOnly:
+        pathVars.Save('.path_vars.py', env)
 
     # Check python dependencies
     def checkPythonDep(package):
@@ -298,13 +302,15 @@ with Flock(".scons_untracked_lock"):
             print(f"  pip3 show output: {res.stderr.strip()}")
             print(f"Please install this package, e.g., pip3 install {package} (or use a venv)")
             Exit(-1)
-    checkPythonDep("networkx")
-    checkPythonDep("pydot")
-    checkPythonDep("sortedcontainers")
+    if not asicOnly:
+        checkPythonDep("networkx")
+        checkPythonDep("pydot")
+        checkPythonDep("sortedcontainers")
 
 # The following paths are used by other tools and should be in the ENV
 for path in ["MINISPEC", "RISCV_TOOLCHAIN", "SPIKE", "VERILATOR_ROOT", "PATOH"]:
-    env["ENV"][path] = os.path.abspath(env[path])
+    if path in env:
+        env["ENV"][path] = os.path.abspath(env[path])
 
 
 # Parse config
@@ -521,6 +527,27 @@ def importBsvLibFile(fileName):
     env.Command(dstFile, [srcFile, postprocessScript], f"python3 {postprocessScript} --noRegReset < $SOURCE > $TARGET")
     return dstFile
 hdlFiles += map(importBsvLibFile, bsvLibFiles)
+
+# Independent ASIC preparation branch: consume raw BSC output, never the FPGA
+# reset-removing postprocess results. SRAMs are opaque boundaries for logic-area
+# synthesis; logical SRAM requirements and model mappings share one manifest.
+asicPrepareScript = "scripts/asic/prepare.py"
+asicSupportFiles = (Glob("scripts/asic/rtl/*.sv") +
+    ["lotus/utils/" + name + ".sv" for name in
+     ("CreditFIFO", "NonBlockingPipe", "ShiftRegister", "RegWithReset")] +
+    ["lotus/xram/XRegFile.sv"])
+asicManifest = os.path.join(buildDir, "asic", "manifest.json")
+asicPrepare = env.Command(asicManifest,
+    bscVerilogFiles + [asicPrepareScript, "scripts/asic/sram.py"] + asicSupportFiles +
+    [os.path.join(bsvLibBase, "Verilog", f) for f in bsvLibFiles],
+    f"python3 {asicPrepareScript} --build-dir {buildDir} "
+    f"--out {os.path.join(buildDir, 'asic')} --bsc-lib {bsvLibBase}")
+Alias("asic-tile", asicPrepare)
+Precious(asicPrepare)  # prepare.py reads the previous manifest to preserve SRAM estimates.
+AlwaysBuild(asicPrepare)  # inexpensive packaging; recreate any missing generated files
+
+if asicOnly:
+    Return()  # Do not construct unrelated simulator/host/FPGA build rules.
 
 
 # Finally, clean up old files in hdl/ folder. Since this dir is globbed by

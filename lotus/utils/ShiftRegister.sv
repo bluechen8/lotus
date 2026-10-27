@@ -21,7 +21,10 @@ module ShiftRegister #(
 );
 
 reg [WIDTH-1:0] shiftReg [DEPTH-1:0];
+// ASIC area synthesis disables FPGA power-up initialization explicitly.
+`ifndef BSV_NO_INITIAL_BLOCKS
 initial for (int i = 0; i < DEPTH; i = i + 1) shiftReg[i] = INITIAL_VALUE[i*WIDTH +: WIDTH];
+`endif
 
 always @(posedge clk) begin
     if (shiftEn) begin

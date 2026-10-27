@@ -1,0 +1,2 @@
+model,status,macro_depth,macro_width_bits,macro_count,logical_MiB,allocated_MiB,total_area_mm2,area_mm2_per_bank,macro_access_ns,macro_cycle_ns
+four_banks_mapped_2rw,complete_uncalibrated,16384,128,128,30.0,32.0,17.363584,4.340896,0.930081,0.798595
